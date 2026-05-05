@@ -1,14 +1,7 @@
-# Projeto da Associação dos Artesãos de Caxias
+# Associação dos Artesãos de Caxias
 
-> Plataforma web que reúne e exibe os produtos, eventos e a história da **Associação dos Artesãos de Caxias**. Construída com **Laravel 12** e **Bootstrap 5**, focada em design premium, navegação fluida e total responsividade.
+> Plataforma web que reúne e exibe os produtos, eventos e a história da associação. Construída com **Laravel 12** e **Bootstrap 5**, focada em design premium, navegação fluida e total responsividade.
 
----
-
-# Associação dos Artesãos de Caxias  
-
-> Plataforma web que reúne e exibe os produtos, eventos e a história da Associação dos Artesãos de Caxias. Construída com **Laravel 12** e **Bootstrap 5**, com foco em design premiado, navegação fluida e total responsividade.
-
----
 
 ## 📖 Sumário  
 
