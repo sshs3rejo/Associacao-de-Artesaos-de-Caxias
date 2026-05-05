@@ -1,69 +1,117 @@
 @extends('layouts.main')
-@section('titulo', 'Eventos')
+@section('titulo', 'Eventos da Associação')
 
 @section('style')
-<link rel="stylesheet" href="{{asset('css/style-eventos.css')}}">
+<style>
+    .evento-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(122, 47, 31, 0.1);
+        background-color: #ffffff;
+    }
+    .evento-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(122, 47, 31, 0.15) !important;
+    }
+    .btn-brown {
+        background-color: #7a2f1f;
+        color: #F9F7D3;
+        border: none;
+        transition: all 0.2s ease;
+    }
+    .btn-brown:hover {
+        background-color: #8c3b2a;
+        color: #ffffff;
+    }
+    .badge-status {
+        background-color: #c85a3a;
+        color: white;
+    }
+</style>
 @endsection
 
 @section('scripts')
-{{-- O teu JS original só tem a função de 'alternarDetalhesEvento' --}}
 <script src="{{asset('js/script-eventos.js')}}"></script>
 @endsection
 
 @section('content')
-    <div class="container py-4">
-        <div class="row"><h1>Eventos</h1></div>
-        <div class="row">
-            {{-- PASSO 1: Checar se a variável $eventos (que veio do Controller) está vazia --}}
-            @if($eventos->isEmpty())
-                <div class="col-12">
-                    <p class="text-center text-muted fs-5">Nenhum evento futuro cadastrado no momento. Volte em breve!</p>
-                </div>
-            @else
-                {{-- PASSO 2: Se não estiver vazia, faz um loop nela --}}
-                @foreach($eventos as $evento)
-                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex gap-2">
-
-                        <div class="card eventoCard shadow-sm rounded-3 w-100 d-flex flex-column h-100">
-                            {{-- Opcional: Adicionar a imagem do evento --}}
-                            @if($evento->imagem)
-                                <img src="{{$evento->imagem}}" alt="{{$evento->nome}}" class="card-img-top p-3" style="height: 200px; object-fit: contain;">
-                            @endif
-
-                            <div class="card-body d-flex flex-column text-center">
-                                {{-- PASSO 3: Trocar dados estáticos por dados dinâmicos --}}
-                                <div class="nomeEvento">
-                                    <p class="card-title fw-semibold ">{{$evento->nome}}</p>
-                                </div>
-                                <div class="statusEvento">
-                                    <span class="badge bg-success">{{ $evento->status }}</span>
-                                </div>
-                                
-                                <div class="precoEvento">
-                                    {{-- Usando a função 'isGratuito()' do teu Model --}}
-                                    <strong>
-                                        @if($evento->isGratuito())
-                                            Gratuito
-                                        @else
-                                            R$ {{ number_format($evento->valor_inscricao, 2, ',', '.') }}
-                                        @endif
-                                    </strong>
-                                </div>
-                            </div>
-
-                            <div class="card-footer d-flex p-0">
-                                <a href="{{route('eventos.show', $evento->id_evento)}}" class="btn btn-success btnDetalhes">Mais Detalhes</a>
-                            </div>
-
-                        </div>
-                    </div>    
-
-
-
-
-                @endforeach
-            @endif
-
+<div class="container-fluid px-4 px-lg-5 py-5">
+    
+    <!-- Cabeçalho da Página -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="fw-bold display-5 mb-3" style="color: #7a2f1f;">Nossos Eventos</h1>
+            <p class="text-muted fs-5 mx-auto" style="max-width: 600px;">
+                Fique por dentro das feiras, exposições e oficinas organizadas pela Associação dos Artesãos de Caxias.
+            </p>
+            <hr class="mx-auto mt-4" style="width: 80px; height: 3px; background-color: #c85a3a; opacity: 1; border: none; border-radius: 2px;">
         </div>
     </div>
+
+    <!-- Grid de Eventos -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-xxl-10">
+            @if($eventos->isEmpty())
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm border-0" style="border: 1px dashed rgba(122, 47, 31, 0.2) !important;">
+                    <i class="bi bi-calendar-x display-1 mb-3" style="color: #d1b8a4;"></i>
+                    <h3 class="fw-semibold" style="color: #7a2f1f;">Nenhum evento no momento</h3>
+                    <p class="text-muted fs-5">Fique de olho! Em breve teremos novidades.</p>
+                </div>
+            @else
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                    @foreach($eventos as $evento)
+                        <div class="col">
+                            <div class="card h-100 rounded-4 overflow-hidden evento-card d-flex flex-column shadow-sm">
+                                
+                                <!-- Imagem do Evento -->
+                                <div class="position-relative" style="height: 200px; background-color: #f5f1ed;">
+                                    @if($evento->imagem)
+                                        <img src="{{$evento->imagem}}" alt="{{$evento->nome}}" class="w-100 h-100" style="object-fit: cover;">
+                                    @else
+                                        <!-- Placeholder se não houver imagem -->
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-calendar-event display-3" style="color: #d1b8a4;"></i>
+                                        </div>
+                                    @endif
+                                    
+                                    <!-- Badge de Status -->
+                                    <div class="position-absolute top-0 end-0 m-3">
+                                        <span class="badge rounded-pill badge-status px-3 py-2 fw-semibold shadow-sm">
+                                            {{ $evento->status }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Corpo do Card -->
+                                <div class="card-body p-4 d-flex flex-column text-center">
+                                    <h4 class="card-title fw-bold mb-3 text-truncate" title="{{$evento->nome}}" style="color: #7a2f1f;">
+                                        {{$evento->nome}}
+                                    </h4>
+                                    
+                                    <div class="mt-auto d-flex flex-column align-items-center gap-2">
+                                        <!-- Valor / Gratuito -->
+                                        <div class="fs-5 fw-bold" style="color: #c85a3a;">
+                                            @if($evento->isGratuito())
+                                                <i class="bi bi-tag-fill me-1"></i> Gratuito
+                                            @else
+                                                R$ {{ number_format($evento->valor_inscricao, 2, ',', '.') }}
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rodapé do Card (Botão) -->
+                                <div class="card-footer bg-transparent border-0 p-3 pt-0 mt-auto">
+                                    <a href="{{route('eventos.show', $evento->id_evento)}}" class="btn btn-brown w-100 rounded-pill py-2 fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">
+                                        Mais Detalhes
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>    
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
 @endsection

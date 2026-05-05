@@ -8,8 +8,6 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-}
-
 body {
     display: flex;
     flex-direction: column;
@@ -17,13 +15,21 @@ body {
     background-color: #F9F7D3;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif;
     color: #333;
-    transition: opacity 0.4s ease-in-out;
     overflow-x: hidden;
 }
 
 .layout-main {
     flex: 1 0 auto;
     width: 100%;
+    
+    /* Configuração da Transição (Apenas Conteúdo) */
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+}
+
+/* Quando o JS carrega, a classe é adicionada e o conteúdo aparece */
+.layout-main.page-loaded {
+    opacity: 1;
 }
 
 footer {

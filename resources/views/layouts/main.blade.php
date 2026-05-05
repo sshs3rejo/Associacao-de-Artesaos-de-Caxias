@@ -37,5 +37,36 @@
     
     <!-- Scripts específicos de cada página -->
     @yield('scripts')
+
+    <!-- Transição de Página Suave (Fade In/Fade Out Apenas no Conteúdo) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const mainContent = document.querySelector('.layout-main');
+            
+            // 1. A página terminou de carregar, adicionamos a classe para o Fade In
+            if(mainContent) mainContent.classList.add('page-loaded');
+
+            // 2. Interceptamos os cliques nos links
+            const links = document.querySelectorAll('a[href]:not([target="_blank"]):not([href^="#"]):not([href^="javascript:"])');
+            
+            links.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    // Verifica se é um link do mesmo domínio e não é o link da página atual
+                    if (this.hostname === window.location.hostname && this.href !== window.location.href) {
+                        e.preventDefault(); // Impede o redirecionamento imediato
+                        const destination = this.href;
+
+                        // Remove a classe para iniciar o Fade Out
+                        if(mainContent) mainContent.classList.remove('page-loaded');
+
+                        // Aguarda 150ms (tempo da transição CSS) antes de redirecionar
+                        setTimeout(() => {
+                            window.location.href = destination;
+                        }, 150);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
