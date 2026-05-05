@@ -3,257 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Associação dos Artesãos</title>
-    <link rel="stylesheet" href="{{ url('css/style-index.css') }}">
+    <title>Login Administrativo - Associação dos Artesãos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* ==========================================
-           ESTILOS PARA LOGIN SOCIAL
-           ========================================== */
-        .social-login-container {
-            margin-top: 20px;
-            text-align: center;
+        :root {
+            --primary-color: #7a2f1f;
+            --accent-color: #F9F7D3;
+            --text-dark: #333;
+            --glass-bg: rgba(249, 247, 211, 0.98);
+            --glass-border: rgba(122, 47, 31, 0.15);
         }
-        .social-login-title {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 15px;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #7a2f1f 0%, #4a1d13 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
             position: relative;
         }
-        .social-login-title::before, .social-login-title::after {
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            height: 600px;
+            display: flex;
+            background: var(--glass-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* FOTO DESLIZANTE (DESKTOP) */
+        .foto {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background-image: url('/imagens/fundo.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 10;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent-color);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .foto::before {
             content: "";
             position: absolute;
-            top: 50%;
-            width: 30%;
-            height: 1px;
-            background: #ccc;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(122, 47, 31, 0.3);
+            z-index: -1;
         }
-        .social-login-title::before { left: 0; }
-        .social-login-title::after { right: 0; }
-        
+
+        .foto h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .foto p {
+            font-size: 1rem;
+            opacity: 0.95;
+            max-width: 85%;
+        }
+
+        /* PAINÉIS */
+        .esquerda, .direita {
+            width: 50%;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .titulo h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .sub-titulo {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .inputarea {
+            margin-bottom: 15px;
+        }
+
+        .inputarea label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .inputarea input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 2px solid #eee;
+            background: #fff;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .inputarea input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+
+        .btosLines button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary-color);
+            color: var(--accent-color);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(122, 47, 31, 0.2);
+        }
+
+        .btosLines button:hover {
+            background: #5c2417;
+            transform: translateY(-2px);
+        }
+
+        .social-login-container {
+            margin-top: 25px;
+        }
+
+        .social-login-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .social-login-title::before, .social-login-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
         .social-buttons {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
         }
+
         .btn-social {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
             color: white;
-            transition: transform 0.2s, opacity 0.2s;
+            transition: all 0.3s ease;
             text-decoration: none;
         }
+
         .btn-social:hover {
-            transform: scale(1.1);
+            transform: translateY(-3px);
             opacity: 0.9;
         }
-        .btn-google { background-color: #db4437; }
-        .btn-apple { background-color: #000000; }
-        .btn-microsoft { background-color: #00a4ef; }
+
+        .btn-google { background: #fff; color: #db4437; border: 1px solid #eee; }
+        .btn-apple { background: #000; }
+        .btn-microsoft { background: #00a4ef; }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--primary-color);
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
 
         .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
+            background: #ffecec;
+            color: #e74c3c;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
             margin-bottom: 15px;
-            font-size: 0.9rem;
-            border: 1px solid #f5c6cb;
+            font-size: 0.85rem;
+            border-left: 3px solid #e74c3c;
         }
 
-        /* ==========================================
-           RESPONSIVIDADE DO LOGIN - MOBILE
-           ========================================== */
-        
+        /* RESPONSIVIDADE MOBILE */
         @media (max-width: 767px) {
-            .container {
-                flex-direction: column !important;
-                height: auto !important;
-                background: linear-gradient(135deg, #e6d2c7ff 0%, #daccc6ff 100%) !important;
-                min-height: 100vh;
-                padding: 20px;
-            }
+            body { background: var(--primary-color); padding: 20px; }
+            .container { height: auto; flex-direction: column; background: transparent; box-shadow: none; }
+            .foto { display: none; }
             .esquerda, .direita {
-                width: 100% !important;
-                max-width: none !important;
-                padding: 20px !important;
-                background: transparent !important;
+                width: 100%;
+                background: var(--accent-color);
+                border-radius: 20px;
+                padding: 35px 25px;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             }
-            .foto {
-                display: none !important;
-            }
-            body {
-                background: linear-gradient(135deg, #8B5A42 0%, #5C3A2C 100%) !important;
-            }
-            .direita {
-                display: none !important;
-            }
-            .direita.show-register {
-                display: block !important;
-            }
-            .container.register-active .esquerda {
-                display: none !important;
-            }
-            .areaLogin, .areaCadastro {
-                background: rgba(255, 255, 255, 0.95) !important;
-                padding: 30px 20px !important;
-                border-radius: 15px !important;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-            }
-            .inputarea input {
-                font-size: 16px !important;
-                padding: 12px !important;
-            }
-            .btosLines button {
-                font-size: 16px !important;
-                padding: 14px !important;
-                width: 100% !important;
-            }
-        }
-        
-        @media (min-width: 768px) {
-            .foto { display: block !important; }
-            .container.register-active .esquerda,
-            .direita.show-register { display: flex !important; }
+            .direita { display: none; }
+            .container.register-active .esquerda { display: none; }
+            .container.register-active .direita { display: flex; }
+            .titulo h1 { font-size: 1.8rem; text-align: center; }
+            .sub-titulo { text-align: center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="foto"></div> 
+    <div class="container" id="mainContainer">
+        
+        <!-- FOTO DESLIZANTE -->
+        <div class="foto" id="caixaFoto">
+            <h2 id="sideTitle">Bem-vindo!</h2>
+            <p id="sideDesc">Acesse o painel administrativo da Associação.</p>
+        </div>
 
-        <!-- ================= LOGIN ================= -->
+        <!-- LOGIN -->
         <div class="esquerda">
-            <div class="areaLogin">
-                <div class="titulo"><h1>Acesso Administrativo</h1></div>
+            <div class="titulo"><h1>Acesso Admin</h1></div>
+            <p class="sub-titulo">Entre com sua conta administrativa.</p>
 
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        @foreach ($errors->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-                    <div class="inputarea">
-                        <label for="email">EMAIL</label>
-                        <input type="email" name="email" placeholder="Exemplo@gmail.com" required autofocus>
-                    </div>
-                    <div class="inputarea">
-                        <label for="password">SENHA</label>
-                        <input type="password" name="password" placeholder="Digite sua senha" required>
-                    </div>
-                    <div class="btosLines">
-                        <button type="submit" id="btnLogin">LOGIN</button>
-                    </div>
-                </form>
-
-                <div class="social-login-container">
-                    <p class="social-login-title">Ou entre com</p>
-                    <div class="social-buttons">
-                        <a href="{{ route('social.login', 'google') }}" class="btn-social btn-google" title="Google">
-                            <i class="fab fa-google"></i>
-                        </a>
-                        <a href="{{ route('social.login', 'apple') }}" class="btn-social btn-apple" title="Apple">
-                            <i class="fab fa-apple"></i>
-                        </a>
-                        <a href="{{ route('social.login', 'microsoft') }}" class="btn-social btn-microsoft" title="Microsoft">
-                            <i class="fab fa-microsoft"></i>
-                        </a>
-                    </div>
+            @if ($errors->any())
+                <div class="alert-danger">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
                 </div>
+            @endif
 
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <div class="inputarea">
+                    <label>E-mail</label>
+                    <input type="email" name="email" placeholder="nome@exemplo.com" required autofocus>
+                </div>
+                <div class="inputarea">
+                    <label>Senha</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
                 <div class="btosLines">
-                    <p id="LoginBtn">Solicitar acesso</p>
+                    <button type="submit">Entrar no Painel</button>
+                </div>
+            </form>
+
+            <div class="social-login-container">
+                <p class="social-login-title">Ou continue com</p>
+                <div class="social-buttons">
+                    <a href="{{ route('social.login', 'google') }}" class="btn-social btn-google"><i class="fab fa-google"></i></a>
+                    <a href="{{ route('social.login', 'apple') }}" class="btn-social btn-apple"><i class="fab fa-apple"></i></a>
+                    <a href="{{ route('social.login', 'microsoft') }}" class="btn-social btn-microsoft"><i class="fab fa-microsoft"></i></a>
                 </div>
             </div>
+
+            <p class="toggle-link" id="LoginBtn">Solicitar novo acesso</p>
         </div>
 
-        <!-- ================= CADASTRO (Oculto para Admin-only se desejar, mas mantendo a estrutura) ================= -->
+        <!-- CADASTRO -->
         <div class="direita">
-            <div class="areaCadastro">
-                <div class="titulo"><h1>Solicitar Registro</h1></div>
-                <form method="POST" action="{{ route('register') }}">
-                    @csrf
-                    <div class="inputarea">
-                        <label for="name">NOME</label>
-                        <input type="text" name="name" placeholder="Seu nome" value="{{ old('name') }}" required>
-                    </div>
-                    <div class="inputarea">
-                        <label for="email">EMAIL</label>
-                        <input type="email" name="email" placeholder="Exemplo@gmail.com" required>
-                    </div>
-                    <div class="inputarea">
-                        <label for="password">SENHA</label>
-                        <input type="password" name="password" placeholder="Crie sua senha" required>
-                    </div>
-                    <div class="inputarea">
-                        <label for="password_confirmation">CONFIRMAR SENHA</label>
-                        <input type="password" name="password_confirmation" placeholder="Repita sua senha" required>
-                    </div>
-                    <div class="btosLines">
-                        <button type="submit">SOLICITAR</button>
-                    </div>
-                    <div class="btosLines">
-                        <p id="RegistrarBtn">Já tenho uma conta</p>
-                    </div>
-                </form>
-            </div>
+            <div class="titulo"><h1>Solicitar Acesso</h1></div>
+            <p class="sub-titulo">Cadastre seus dados para avaliação.</p>
+            
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+                <div class="inputarea">
+                    <label>Nome Completo</label>
+                    <input type="text" name="name" placeholder="Seu nome" value="{{ old('name') }}" required>
+                </div>
+                <div class="inputarea">
+                    <label>E-mail</label>
+                    <input type="email" name="email" placeholder="nome@exemplo.com" required>
+                </div>
+                <div class="inputarea">
+                    <label>Senha</label>
+                    <input type="password" name="password" placeholder="Mínimo 8 caracteres" required>
+                </div>
+                <div class="inputarea">
+                    <label>Confirmar Senha</label>
+                    <input type="password" name="password_confirmation" placeholder="Repita a senha" required>
+                </div>
+                <div class="btosLines">
+                    <button type="submit">Enviar Solicitação</button>
+                </div>
+            </form>
+            
+            <p class="toggle-link" id="RegistrarBtn">Já possui conta? Entrar</p>
         </div>
+
     </div>
 
     <script>
-        let caixaFoto = document.querySelector(".foto");
-        let irLogin = document.getElementById("RegistrarBtn");
-        let irRegister = document.getElementById("LoginBtn");
-        let container = document.querySelector(".container");
-        let direita = document.querySelector(".direita");
+        const caixaFoto = document.getElementById('caixaFoto');
+        const irLogin = document.getElementById("RegistrarBtn");
+        const irRegister = document.getElementById("LoginBtn");
+        const container = document.getElementById("mainContainer");
+        const sideTitle = document.getElementById('sideTitle');
+        const sideDesc = document.getElementById('sideDesc');
 
         function isMobile() { return window.innerWidth <= 767; }
 
         function showRegister() {
             if (isMobile()) {
                 container.classList.add("register-active");
-                direita.classList.add("show-register");
             } else {
-                if (caixaFoto) {
-                    caixaFoto.style.right = "50vw";
-                    setTimeout(() => {
-                        caixaFoto.style.backgroundImage = "url(/imagens/banquin.png)";
-                    }, 200);
-                }
+                caixaFoto.style.right = "50%";
+                setTimeout(() => {
+                    caixaFoto.style.backgroundImage = "url(/imagens/banquin.png)";
+                    sideTitle.innerText = "Novo por aqui?";
+                    sideDesc.innerText = "Solicite seu acesso administrativo.";
+                }, 200);
             }
         }
 
         function showLogin() {
             if (isMobile()) {
                 container.classList.remove("register-active");
-                direita.classList.remove("show-register");
             } else {
-                if (caixaFoto) {
-                    caixaFoto.style.right = "0";
-                    setTimeout(() => {
-                        caixaFoto.style.backgroundImage = "url(/imagens/fundo.png)";
-                    }, 200);
-                }
+                caixaFoto.style.right = "0";
+                setTimeout(() => {
+                    caixaFoto.style.backgroundImage = "url(/imagens/fundo.png)";
+                    sideTitle.innerText = "Bem-vindo!";
+                    sideDesc.innerText = "Acesse o painel administrativo da Associação.";
+                }, 200);
             }
         }
 
-        if (irRegister) irRegister.addEventListener("click", showRegister);
-        if (irLogin) irLogin.addEventListener("click", showLogin);
+        irRegister.addEventListener("click", showRegister);
+        irLogin.addEventListener("click", showLogin);
 
         window.addEventListener("resize", () => {
             if (!isMobile()) {
                 container.classList.remove("register-active");
-                direita.classList.remove("show-register");
+                caixaFoto.style.right = container.classList.contains("register-active") ? "50%" : "0";
             }
         });
     </script>
