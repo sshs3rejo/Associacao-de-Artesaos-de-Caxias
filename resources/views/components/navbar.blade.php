@@ -14,6 +14,10 @@
         .navbar-logo { height: 45px; }
         .brand-text { font-size: 1.4rem; }
     }
+    /* Estilo para o dropdown de admin */
+    .admin-dropdown .dropdown-toggle::after {
+        display: none;
+    }
 </style>
 <header>
     <nav class="navbar navbar-expand-xl navbar-dark shadow-sm py-2" style="background-color: #7a2f1f; transition: all 0.3s ease;">
@@ -44,20 +48,46 @@
                     </li>
                     @guest
                         <li class="nav-item">
-                            <a class="nav-link fw-semibold px-4 py-2 rounded-pill border" style="color: #F9F7D3; font-size: 1.1rem; border-color: rgba(249, 247, 211, 0.3) !important;" onmouseover="this.style.backgroundColor='rgba(249, 247, 211, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#F9F7D3'" href="{{ route('login.form') }}">Login</a>
+                            <a class="nav-link fw-semibold px-4 py-2 rounded-pill border" style="color: #F9F7D3; font-size: 1.1rem; border-color: rgba(249, 247, 211, 0.3) !important;" onmouseover="this.style.backgroundColor='rgba(249, 247, 211, 0.1)'; this.style.color='#ffffff'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#F9F7D3'" href="{{ route('login.form') }}">Login Admin</a>
                         </li>
                     @endguest
                     @auth
-                        @if(auth()->user()->isAdmin())
-                            <li class="nav-item">
-                                <a class="nav-link fw-semibold" style="color: #F9F7D3; font-size: 1.1rem;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#F9F7D3'" href="{{ route('admin.dashboard') }}">Painel Admin</a>
-                            </li>
-                        @endif
-                        <li class="nav-item ms-xl-2">
-                            <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn nav-link fw-bold px-4 py-2 rounded-pill" style="color: #7a2f1f; background-color: #F9F7D3; font-size: 1.1rem;" onmouseover="this.style.backgroundColor='#ffffff'" onmouseout="this.style.backgroundColor='#F9F7D3'">Sair</button>
-                            </form>
+                        <li class="nav-item dropdown admin-dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 px-3 py-2 rounded-pill" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #7a2f1f; background-color: #F9F7D3;">
+                                <i class="fas fa-user-shield"></i>
+                                <span class="fw-bold d-xl-none">Menu Admin</span>
+                                <i class="fas fa-cog"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2" style="background-color: #F9F7D3;">
+                                <li>
+                                    <h6 class="dropdown-header fw-bold" style="color: #7a2f1f;">Olá, {{ auth()->user()->name }}</h6>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ route('admin.dashboard') }}" style="color: #7a2f1f;">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ route('admin.vendas.index') }}" style="color: #7a2f1f;">
+                                        <i class="fas fa-history"></i> Histórico de Vendas
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ route('admin.settings') }}" style="color: #7a2f1f;">
+                                        <i class="fas fa-tools"></i> Configurações do Sistema
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger fw-bold">
+                                            <i class="fas fa-sign-out-alt"></i> Sair
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                     @endauth
                 </ul>

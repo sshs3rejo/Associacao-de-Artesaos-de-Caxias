@@ -7,10 +7,10 @@
     <section id="home-section" class="py-5" style="background: linear-gradient(rgba(249, 247, 211, 0.8), rgba(249, 247, 211, 0.8)), url('{{ asset('imagens/artesanato_alunos/back-logo.png') }}') no-repeat center/contain; min-height: 80vh; display: flex; align-items: center;">
         <div class="container text-center">
             <h1 class="display-4 fw-bold mb-4" style="color: #7a2f1f;">Aqui, o simples ganha forma, o barro respira, a palha canta e as mãos viram poesia.</h1>
-            <p class="lead mb-5 text-muted">Bem-vindo ao Artesãos de Caxias MA, um espaço onde a arte popular se encontra com o empreendedorismo criativo. Nosso propósito é conectar quem cria com quem valoriza o feito à mão.</p>
+            <p class="lead mb-5 text-muted">A Associação dos Artesãos de Caxias é um espaço onde a arte popular se encontra com o empreendedorismo criativo. Nosso propósito é conectar quem cria com quem valoriza o feito à mão.</p>
             
             <div class="d-flex flex-wrap justify-content-center gap-3">
-                <a href="#sobre-section" class="btn btn-lg px-4 fw-bold" style="background-color: #7a2f1f; color: #F9F7D3;">Conhecer a Associação</a>
+                <a href="{{ route('sobrenos') }}" class="btn btn-lg px-4 fw-bold" style="background-color: #7a2f1f; color: #F9F7D3;">Conhecer a Associação</a>
                 <a href="{{ route('produtos') }}" class="btn btn-lg btn-outline-dark px-4 fw-bold" style="border-color: #7a2f1f; color: #7a2f1f;">Ver Produtos</a>
             </div>
         </div>

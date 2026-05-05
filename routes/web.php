@@ -5,23 +5,32 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\ContatoController;
+use App\Http\Controllers\Admin\VendaController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas de Autenticação
+Route::get('/login', [AuthController::class, 'index'])->name('login.form');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register.form');
 Route::post('/register', [AuthController::class, 'store'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/login', [AuthController::class, 'index'])->name('login.form');
-Route::get('/', fn () => redirect()->route('login.form'));
+
+// Rotas de Login Social
+Route::get('/auth/{provider}/redirect', [AuthController::class, 'redirectToProvider'])->name('social.login');
+Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
+
+// Rota Padrão (Home agora é a raiz)
+Route::get('/', [PaginaController::class, 'home'])->name('home');
 
 // Rotas Públicas
-Route::get('/home', [PaginaController::class, 'home'])->name('home');
+Route::get('/home', fn () => redirect()->route('home'));
 Route::get('/paginainicial', function () {
     return redirect()->route('home');
 })->name('paginainicial');
 Route::get('/sobre', [PaginaController::class, 'sobre'])->name('sobrenos');
 Route::get('/contato', [PaginaController::class, 'contato'])->name('contato');
+Route::post('/contato', [ContatoController::class, 'store'])->name('contato.store');
 
 // Rota de teste das funcionalidades
 Route::get('/teste', function() {
@@ -37,9 +46,13 @@ Route::get('/auto-login', function() {
 Route::get('/eventos', [EventoController::class, 'index'])->name('evento');
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
 
-// Rotas Administrativas - Produtos (Protegidas)
+// Rotas Administrativas (Protegidas)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/vendas', [VendaController::class, 'index'])->name('admin.vendas.index');
+    Route::get('/admin/settings', function() {
+        return view('admin.settings');
+    })->name('admin.settings');
 
     // ✅ Rotas específicas devem vir antes das com {id}
     Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');
