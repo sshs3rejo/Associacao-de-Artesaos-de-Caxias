@@ -114,9 +114,8 @@ php artisan serve
 http://localhost:8000
 ```
 
-### Credenciais de Admin (Seeders)
-- **Email:** `admin@artesao.com`
-- **Senha:** `password`
+### Acesso Administrativo
+Os acessos administrativos são configurados via Seeders. Consulte o arquivo `DatabaseSeeder.php` para verificar as credenciais padrão ou crie um novo usuário administrativo via terminal utilizando o comando `php artisan tinker`.
 
 ---
 
