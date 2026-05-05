@@ -2,7 +2,7 @@
     <div class="container py-4">
         <div class="row g-4 text-center text-md-start align-items-center">
             <div class="col-md-4">
-                <h3 class="h6 fw-bold mb-2" style="color: #F2EB85;">Artesãos de Caxias</h3>
+                <h3 class="h6 fw-bold mb-2" style="color: #F2EB85;">Associação dos Artesãos de Caxias</h3>
                 <p class="small mb-0 opacity-75">Fortalecendo o artesanato local, cultura e tradição.</p>
             </div>
             <div class="col-md-4 text-md-center">

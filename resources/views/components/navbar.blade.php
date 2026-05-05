@@ -1,9 +1,26 @@
+<style>
+    .navbar-logo {
+        height: 30px;
+    }
+    .brand-text {
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+    @media (min-width: 576px) {
+        .navbar-logo { height: 40px; }
+        .brand-text { font-size: 1.1rem; }
+    }
+    @media (min-width: 768px) {
+        .navbar-logo { height: 45px; }
+        .brand-text { font-size: 1.4rem; }
+    }
+</style>
 <header>
     <nav class="navbar navbar-expand-xl navbar-dark shadow-sm py-2" style="background-color: #7a2f1f; transition: all 0.3s ease;">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
-                <img src="{{ asset('imagens/artesanato_alunos/logo-artesaos.png') }}" alt="Logo" style="height: 45px; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                <span class="fw-bold fs-4" style="color: #F9F7D3;">Artesãos de Caxias</span>
+        <div class="container-fluid px-2 px-sm-4">
+            <a class="navbar-brand d-flex align-items-center gap-1 gap-sm-2" href="{{ route('home') }}">
+                <img src="{{ asset('imagens/artesanato_alunos/logo-artesaos.png') }}" alt="Logo" class="navbar-logo" style="transition: transform 0.3s ease;">
+                <span class="fw-bold brand-text" style="color: #F9F7D3;">Associação dos Artesãos de Caxias</span>
             </a>
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

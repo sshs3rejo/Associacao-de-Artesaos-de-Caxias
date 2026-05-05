@@ -7,58 +7,58 @@
 @section('content')
     <div class="container-fluid px-3 py-4">
         <div class="row g-3">
-            <!-- Sidebar / Filtros -->
-            <aside class="col-xxl-2 col-lg-3">
-                <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 sticky-top" style="background-color: #f0eecf; top: 80px; z-index: 10;">
-                    <h3 class="h6 fw-bold mb-3" style="color: #7a2f1f;">Categorias</h3>
-                    <ul class="nav flex-column gap-1">
-                        <li class="nav-item">
-                            <a class="nav-link rounded-3 px-3 py-2 small {{ request('categoria') ? 'text-dark' : 'active bg-brown text-white fw-bold shadow-sm' }}" 
-                               href="{{ route('produtos') }}"
-                               style="{{ request('categoria') ? '' : 'background-color: #7a2f1f;' }}">
-                                Todas as Categorias
-                            </a>
-                        </li>
-                        @foreach($categorias as $categoria)
-                        <li class="nav-item">
-                            <a class="nav-link rounded-3 px-3 py-2 small {{ request('categoria') == $categoria->id_categoria ? 'active bg-brown text-white fw-bold shadow-sm' : 'text-dark' }}" 
-                               href="{{ route('produtos', ['categoria' => $categoria->id_categoria]) }}"
-                               style="{{ request('categoria') == $categoria->id_categoria ? 'background-color: #7a2f1f;' : '' }}">
-                                {{ $categoria->nome_categoria }}
-                            </a>
-                        </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </aside>
-
-            <!-- Grid de Produtos -->
-            <div class="col-xxl-10 col-lg-9">
-                <!-- Barra de busca e Resumo -->
-                <div class="row g-3 mb-4 align-items-center">
-                    <div class="col-md-8">
-                        <div class="card border-0 shadow-sm rounded-4 p-2 bg-white">
-                            <form action="{{ route('produtos') }}" method="GET" class="d-flex gap-2">
+            <!-- Grid de Produtos Ocupando a Tela Inteira -->
+            <div class="col-12">
+                <!-- Barra de busca, Filtro e Resumo -->
+                <div class="row g-3 mb-4 align-items-center position-relative" style="z-index: 1050;">
+                    <!-- Aumentado para dar mais espaço à barra -->
+                    <div class="col-lg-9 col-xl-10">
+                        <div class="card border-0 shadow-sm rounded-pill p-1 bg-white">
+                            <form action="{{ route('produtos') }}" method="GET" class="d-flex w-100 m-0">
                                 @if(request('categoria'))
                                     <input type="hidden" name="categoria" value="{{ request('categoria') }}">
                                 @endif
-                                <div class="input-group">
-                                    <span class="input-group-text bg-transparent border-0">
-                                        <i class="fa fa-search text-muted"></i>
-                                    </span>
-                                    <input type="text" name="busca" class="form-control border-0 shadow-none"
-                                           placeholder="Buscar artesanato..."
+                                
+                                <div class="input-group input-group-lg border-0 bg-transparent">
+                                    <!-- Botão/Popup de Categorias acoplado -->
+                                    <button class="btn dropdown-toggle d-flex align-items-center gap-2 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f0eecf; color: #7a2f1f; border-top-left-radius: 50rem; border-bottom-left-radius: 50rem; padding-left: 1rem; padding-right: 1rem; font-size: 0.95rem;">
+                                        <i class="fa fa-filter"></i>
+                                        <span class="d-none d-sm-inline fw-bold">Categorias</span>
+                                    </button>
+                                    <ul class="dropdown-menu shadow-lg border-0 mt-2 rounded-4 p-2" style="min-width: 250px; z-index: 1060; animation: fadeInPage 0.2s ease;">
+                                        <li>
+                                            <a class="dropdown-item rounded-3 py-2 mb-1 {{ !request('categoria') ? 'bg-light fw-bold' : '' }}" href="{{ route('produtos', ['busca' => request('busca')]) }}" style="color: #7a2f1f;">
+                                                <i class="bi bi-grid-fill me-2 opacity-50"></i> Todas as Categorias
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider opacity-10"></li>
+                                        @foreach($categorias as $categoria)
+                                        <li>
+                                            <a class="dropdown-item rounded-3 py-2 {{ request('categoria') == $categoria->id_categoria ? 'bg-light fw-bold' : '' }}" 
+                                               href="{{ route('produtos', ['categoria' => $categoria->id_categoria, 'busca' => request('busca')]) }}" 
+                                               style="color: #333;">
+                                                {{ $categoria->nome_categoria }}
+                                            </a>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+
+                                    <!-- Campo de Busca no Meio -->
+                                    <input type="text" name="busca" class="form-control border-0 shadow-none bg-transparent fs-6 ps-4"
+                                           placeholder="Buscar artesanatos..."
                                            value="{{ request('busca') }}">
+                                    
+                                    <!-- Botão Buscar acoplado com Ícone -->
+                                    <button type="submit" class="btn px-4 text-white" style="background-color: #7a2f1f; border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
-                                <button type="submit" class="btn fw-bold px-4 text-white rounded-3" style="background-color: #7a2f1f;">
-                                    Buscar
-                                </button>
                             </form>
                         </div>
                     </div>
-                    <div class="col-md-4 text-md-end">
-                        <span class="small text-muted fw-bold">
-                            {{ $produtos->count() }} itens encontrados
+                    <div class="col-lg-3 col-xl-2 text-lg-end text-center mt-3 mt-lg-0">
+                        <span class="small text-muted fw-bold bg-white px-3 py-2 rounded-pill shadow-sm text-nowrap">
+                            <i class="bi bi-box-seam me-1"></i> {{ $produtos->count() }} itens
                         </span>
                     </div>
                 </div>
