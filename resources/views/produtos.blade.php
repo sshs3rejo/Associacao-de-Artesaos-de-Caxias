@@ -6,7 +6,7 @@
     
 @section('content')
 
-    <main class="main-content">
+    <div class="main-content">
         <aside class="sidebar">
             <h3>Categorias</h3>
             <ul class="categoria-list">
@@ -88,7 +88,7 @@
 
             </div>
         </section>
-    </main>
+    </div>
 
     <div id="modal-detalhes" class="modal">
         <div class="modal-content">

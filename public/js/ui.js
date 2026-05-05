@@ -377,18 +377,23 @@
   function setupNavbar() {
     const navbarToggler = document.querySelector('.navbar-toggler');
     const navMenu = document.getElementById('navbarNav');
+    const navOptions = document.querySelector('.navbar-options');
     
     if (navbarToggler && navMenu) {
       const toggleMenu = () => {
         const isExpanded = navMenu.classList.toggle('active');
+        if (navOptions) navOptions.classList.toggle('active');
         navbarToggler.setAttribute('aria-expanded', isExpanded);
         navbarToggler.innerHTML = isExpanded ? '×' : '☰';
       };
 
-      navbarToggler.addEventListener('click', toggleMenu);
+      navbarToggler.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+      });
 
       // Fechar menu ao clicar em um link (mobile)
-      const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+      const navLinks = document.querySelectorAll('.nav-link');
       navLinks.forEach(link => {
         link.addEventListener('click', () => {
           if (window.innerWidth < 900 && navMenu.classList.contains('active')) {
@@ -397,10 +402,18 @@
         });
       });
 
+      // Fechar menu ao clicar fora
+      document.addEventListener('click', (e) => {
+        if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !navbarToggler.contains(e.target)) {
+          toggleMenu();
+        }
+      });
+
       // Fechar menu ao redimensionar para desktop
       window.addEventListener('resize', () => {
         if (window.innerWidth >= 900 && navMenu.classList.contains('active')) {
           navMenu.classList.remove('active');
+          if (navOptions) navOptions.classList.remove('active');
           navbarToggler.setAttribute('aria-expanded', false);
           navbarToggler.innerHTML = '☰';
         }

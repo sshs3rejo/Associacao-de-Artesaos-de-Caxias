@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-<main class="container mt-4 mb-5 shadow border">
+<div class="container mt-4 mb-5 shadow border p-4 bg-white rounded">
     <div class="row justify-content-center">
         <!-- Imagem -->
         <div class="col-12 col-md-5 text-center mb-4">
@@ -55,5 +55,5 @@
             </form>
         </div>
     </div>
-</main>
+</div>
 @endsection
