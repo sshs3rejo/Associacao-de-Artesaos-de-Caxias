@@ -22,7 +22,7 @@ class ProdutoController extends Controller
             $query->where('id_categoria', $request->categoria);
         }
 
-        $produtos = $query->get();
+        $produtos = $query->paginate(8);
 
         return view('produtos', [
             'produtos' => $produtos,
@@ -60,7 +60,7 @@ class ProdutoController extends Controller
 
         Produto::create($validated);
 
-        return redirect()->route('produtos')->with('success', 'Produto criado com sucesso!');
+        return redirect()->route('admin.dashboard')->with('success', 'Produto criado com sucesso!');
     }
 
     /**
@@ -100,7 +100,7 @@ class ProdutoController extends Controller
 
         $produto->update($validated);
 
-        return redirect()->route('produtos')->with('success', 'Produto atualizado com sucesso!');
+        return redirect()->route('admin.dashboard')->with('success', 'Produto atualizado com sucesso!');
     }
 
     /**
@@ -117,6 +117,6 @@ class ProdutoController extends Controller
 
         $produto->delete();
 
-        return redirect()->route('produtos')->with('success', 'Produto removido com sucesso!');
+        return redirect()->route('admin.dashboard')->with('success', 'Produto removido com sucesso!');
     }
 }

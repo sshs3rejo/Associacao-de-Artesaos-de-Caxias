@@ -71,7 +71,7 @@ class EventoController extends Controller
 
         Eventos::create($validated);
 
-        return redirect()->route('evento')->with('success', 'Evento criado com sucesso!');
+        return redirect()->route('admin.dashboard')->with('success', 'Evento criado com sucesso!');
     }
 
     /**
@@ -123,7 +123,7 @@ class EventoController extends Controller
 
         $evento->update($validated);
 
-        return redirect()->route('evento')->with('success', 'Evento atualizado com sucesso!');
+        return redirect()->route('admin.dashboard')->with('success', 'Evento atualizado com sucesso!');
     }
 
     /**
@@ -140,6 +140,6 @@ class EventoController extends Controller
 
         $evento->delete();
 
-        return redirect()->route('evento')->with('success', 'Evento removido com sucesso!');
+        return redirect()->route('admin.dashboard')->with('success', 'Evento removido com sucesso!');
     }
 }

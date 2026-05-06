@@ -8,6 +8,8 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -82,7 +84,7 @@ footer {
 footer {
     background-color: #7a2f1f;
     color: #F9F7D3;
-    margin-top: 50px;
+    margin-top: 20px;
 }
 
 footer a {
@@ -132,4 +134,88 @@ footer a:hover {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+/* Ajustes de Paginação Responsiva */
+@media (max-width: 768px) {
+    /* Esconde o texto "Showing X to Y of Z results" no mobile */
+    nav .flex-1.d-none.d-sm-flex {
+        display: none !important;
+    }
+    
+    /* Centraliza os botões de página no mobile */
+    nav .relative.z-0.inline-flex, 
+    nav .pagination {
+        margin: 0 auto;
+    }
+
+    /* Se o Laravel usar o template padrão do Bootstrap */
+    nav p.small.text-muted {
+        display: none !important;
+    }
+    
+    nav .justify-content-between {
+        justify-content: center !important;
+    }
+}
+
+/* Estilização da Paginação para ficar mais premium */
+.pagination-wrapper {
+    display: inline-block;
+}
+
+.pagination-wrapper .pagination {
+    margin-bottom: 0;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+}
+
+/* Esconde COMPLETAMENTE o texto "Showing X to Y" em qualquer tela */
+.pagination-wrapper nav div:first-child,
+.pagination-wrapper nav p.small.text-muted {
+    display: none !important;
+}
+
+.pagination-wrapper .page-link {
+    border-radius: 50% !important; /* Deixa os números circulares */
+    color: #7a2f1f;
+    border: 1px solid rgba(122, 47, 31, 0.1);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    background-color: transparent;
+}
+
+.pagination-wrapper .page-item.active .page-link {
+    background-color: #7a2f1f;
+    border-color: #7a2f1f;
+    color: #F9F7D3;
+}
+
+.pagination-wrapper .page-link:hover {
+    background-color: #F0EECF;
+    color: #7a2f1f;
+}
+
+/* Garante que o conteúdo principal ocupe o espaço necessário para empurrar o footer */
+.layout-main {
+    min-height: calc(100vh - 200px); /* Ajuste baseado na altura aproximada da navbar+footer */
+}
+
+/* RESOLUÇÃO DEFINITIVA DO BUG DE TELA ESCURA (Z-INDEX BATTLE) */
+.modal {
+    z-index: 2050 !important;
+}
+
+.modal-backdrop {
+    z-index: 2040 !important;
+}
+
+/* Garante que nada no layout-main "prenda" o modal */
+.layout-main {
+    position: relative;
+    z-index: 1;
 }

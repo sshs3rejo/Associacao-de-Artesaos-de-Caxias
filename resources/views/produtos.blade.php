@@ -5,12 +5,12 @@
 @endsection
     
 @section('content')
-    <div class="container-fluid px-3 py-4">
+    <div class="container-fluid px-3 py-2">
         <div class="row g-3">
             <!-- Grid de Produtos Ocupando a Tela Inteira -->
             <div class="col-12">
                 <!-- Barra de busca, Filtro e Resumo -->
-                <div class="row g-3 mb-4 align-items-center position-relative" style="z-index: 1050;">
+                <div class="row g-3 mb-2 align-items-center position-relative" style="z-index: 1050;">
                     <!-- Aumentado para dar mais espaço à barra -->
                     <div class="col-lg-9 col-xl-10">
                         <div class="card border-0 shadow-sm rounded-pill p-1 bg-white">
@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-lg-3 col-xl-2 text-lg-end text-center mt-3 mt-lg-0">
                         <span class="small text-muted fw-bold bg-white px-3 py-2 rounded-pill shadow-sm text-nowrap">
-                            <i class="bi bi-box-seam me-1"></i> {{ $produtos->count() }} itens
+                            <i class="bi bi-box-seam me-1"></i> {{ $produtos->total() }} itens
                         </span>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                     </div>
                 @endif
 
-                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xxl-6 g-3" id="produtos-grid">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4" id="produtos-grid">
                     @foreach($produtos as $produto)
                     <div class="col">
                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden produto-card" 
@@ -80,10 +80,10 @@
                              data-preco="{{ $produto->preco }}"
                              data-descricao="{{ $produto->descricao }}"
                              data-estoque="{{ $produto->estoque ? $produto->estoque->quantidade : 0 }}"
-                             data-imagem="{{ $produto->imagem ? asset('storage/imagens_produtos/' . $produto->imagem) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
+                             data-imagem="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
                             
-                            <div class="position-relative overflow-hidden" style="height: 180px; background-color: #f8f9fa;">
-                                <img src="{{ $produto->imagem ? asset('storage/imagens_produtos/' . $produto->imagem) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}" 
+                            <div class="position-relative overflow-hidden" style="height: 210px; background-color: #f8f9fa;">
+                                <img src="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}" 
                                      class="card-img-top w-100 h-100" alt="{{ $produto->nome }}" style="object-fit: cover; transition: transform 0.3s ease;">
                                 @if($produto->estoque && $produto->estoque->quantidade <= 0)
                                     <div class="position-absolute top-0 end-0 m-2">
@@ -110,11 +110,23 @@
                     </div>
                     @endforeach
                 </div>
+
+                <!-- Paginação -->
+                <div class="row mt-3 mb-4">
+                    <div class="col-12 d-flex justify-content-center">
+                        <div class="pagination-wrapper p-2 bg-white rounded-pill shadow-sm">
+                            {{ $produtos->links('pagination::bootstrap-5') }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
 
+@endsection
+
+@section('modals')
     <!-- MODAL DA GALERIA (Bootstrap Modal) -->
     <div class="modal fade" id="modal-detalhes" tabindex="-1" aria-labelledby="modal-nome" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -220,7 +232,10 @@
                 estoqueDiv.innerHTML = `<span class="fora-estoque">Fora de estoque</span>`;
             }
 
-            document.getElementById("modal-detalhes").style.display = "block";
+            // Abrir o modal corretamente usando o Bootstrap 5 (sem duplicar o fundo escuro)
+            const modalElement = document.getElementById("modal-detalhes");
+            const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modalBootstrap.show();
         }
 
         /**
