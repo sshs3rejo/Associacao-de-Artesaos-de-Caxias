@@ -138,8 +138,25 @@
             <input class="form-control" type="file" id="imagem" name="imagem" accept="image/*">
 
             @if ($produto->imagem)
-                <small class="text-muted d-block mt-2">Imagem atual:</small>
-                <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem atual do produto" class="img-preview">
+                <div id="container-imagem-atual" class="mt-3">
+                    <small class="text-muted d-block mb-2">Imagem atual:</small>
+                    <div class="position-relative d-inline-block mt-2">
+                        <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem atual do produto" class="img-preview mt-0" id="img-atual">
+                        
+                        <div id="area-acoes-imagem">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute" style="top: 8px; right: 8px; width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);" onclick="marcarParaRemover()" title="Remover Imagem">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="remover_imagem" id="input-remover-imagem" value="0">
+
+                    <div id="aviso-remocao" class="alert alert-warning py-2 mt-2 d-none" style="font-size: 0.85rem; max-width: 250px;">
+                        <i class="fa fa-exclamation-triangle me-1"></i> Será removida ao salvar.
+                        <button type="button" class="btn btn-link btn-sm p-0 ms-1 text-decoration-none fw-bold" onclick="desfazerRemocao()">Desfazer</button>
+                    </div>
+                </div>
             @endif
         </div>
 
@@ -150,4 +167,31 @@
         </div>
     </form>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function marcarParaRemover() {
+        document.getElementById('input-remover-imagem').value = '1';
+        document.getElementById('img-atual').style.opacity = '0.3';
+        document.getElementById('img-atual').style.filter = 'grayscale(100%)';
+        document.getElementById('area-acoes-imagem').classList.add('d-none');
+        document.getElementById('aviso-remocao').classList.remove('d-none');
+    }
+
+    function desfazerRemocao() {
+        document.getElementById('input-remover-imagem').value = '0';
+        document.getElementById('img-atual').style.opacity = '1';
+        document.getElementById('img-atual').style.filter = 'none';
+        document.getElementById('area-acoes-imagem').classList.remove('d-none');
+        document.getElementById('aviso-remocao').classList.add('d-none');
+    }
+
+    // Se o usuário selecionar um novo arquivo, desfaz a marcação de remoção manual
+    document.getElementById('imagem').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            desfazerRemocao();
+        }
+    });
+</script>
 @endsection

@@ -22,7 +22,15 @@ class ProdutoController extends Controller
             $query->where('id_categoria', $request->categoria);
         }
 
-        $produtos = $query->paginate(8);
+        if ($request->has('busca') && $request->busca != '') {
+            $termo = '%' . $request->busca . '%';
+            $query->where(function($q) use ($termo) {
+                $q->where('nome', 'like', $termo)
+                  ->orWhere('descricao', 'like', $termo);
+            });
+        }
+
+        $produtos = $query->get();
 
         return view('produtos', [
             'produtos' => $produtos,
@@ -51,6 +59,7 @@ class ProdutoController extends Controller
             'preco' => 'required|numeric|min:0',
             'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'quantidade' => 'required|integer|min:0',
         ]);
 
         // Upload da imagem se fornecida
@@ -58,7 +67,13 @@ class ProdutoController extends Controller
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
         }
 
-        Produto::create($validated);
+        $produto = Produto::create($validated);
+
+        // Cria o registro no estoque
+        $produto->estoque()->create([
+            'id_produto' => $produto->id_produto,
+            'quantidade' => $request->quantidade,
+        ]);
 
         return redirect()->route('admin.dashboard')->with('success', 'Produto criado com sucesso!');
     }
@@ -87,18 +102,31 @@ class ProdutoController extends Controller
             'preco' => 'required|numeric|min:0',
             'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'quantidade' => 'required|integer|min:0',
         ]);
 
-        // Upload da nova imagem se fornecida
+        // Lógica de remoção/substituição de imagem
         if ($request->hasFile('imagem')) {
-            // Deleta a imagem antiga se existir
+            // Se enviou uma nova imagem, deleta a antiga e salva a nova
             if ($produto->imagem) {
                 Storage::disk('public')->delete($produto->imagem);
             }
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
+        } elseif ($request->boolean('remover_imagem')) {
+            // Se marcou para remover e não enviou uma nova
+            if ($produto->imagem) {
+                Storage::disk('public')->delete($produto->imagem);
+            }
+            $validated['imagem'] = null;
         }
 
         $produto->update($validated);
+
+        // Atualiza a quantidade no estoque
+        $produto->estoque()->updateOrCreate(
+            ['id_produto' => $produto->id_produto],
+            ['quantidade' => $request->quantidade]
+        );
 
         return redirect()->route('admin.dashboard')->with('success', 'Produto atualizado com sucesso!');
     }

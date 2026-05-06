@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-lg-3 col-xl-2 text-lg-end text-center mt-3 mt-lg-0">
                         <span class="small text-muted fw-bold bg-white px-3 py-2 rounded-pill shadow-sm text-nowrap">
-                            <i class="bi bi-box-seam me-1"></i> {{ $produtos->total() }} itens
+                            <i class="bi bi-box-seam me-1"></i> {{ $produtos->count() }} itens
                         </span>
                     </div>
                 </div>
@@ -111,14 +111,7 @@
                     @endforeach
                 </div>
 
-                <!-- Paginação -->
-                <div class="row mt-3 mb-4">
-                    <div class="col-12 d-flex justify-content-center">
-                        <div class="pagination-wrapper p-2 bg-white rounded-pill shadow-sm">
-                            {{ $produtos->links('pagination::bootstrap-5') }}
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
