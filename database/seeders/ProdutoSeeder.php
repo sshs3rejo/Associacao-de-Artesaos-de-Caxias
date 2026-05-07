@@ -65,33 +65,7 @@ class ProdutoSeeder extends Seeder
                 'updated_at' => now(),
             ],
 
-            // Artesanato em Cerâmica
-            [
-                'nome' => 'Vaso Decorativo em Cerâmica',
-                'descricao' => 'Vaso decorativo feito à mão em cerâmica, com pintura artística. Peça única.',
-                'preco' => 68.90,
-                'id_categoria' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nome' => 'Conjunto de Canecas Artesanais',
-                'descricao' => 'Conjunto com 4 canecas em cerâmica, pintadas à mão. Cada peça é única.',
-                'preco' => 95.00,
-                'id_categoria' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nome' => 'Prato Decorativo de Parede',
-                'descricao' => 'Prato decorativo em cerâmica para parede, com desenhos tradicionais pintados à mão.',
-                'preco' => 125.00,
-                'id_categoria' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-
-            // Bijuterias
+            // Bijuterias e Biojoias
             [
                 'nome' => 'Colar Artesanal com Pedras',
                 'descricao' => 'Colar artesanal com pedras naturais e fecho em metal dourado. Design exclusivo.',
@@ -143,12 +117,12 @@ class ProdutoSeeder extends Seeder
                 'updated_at' => now(),
             ],
 
-            // Acessórios
+            // Acessórios incorporados a Bijuterias e Biojoias
             [
                 'nome' => 'Necessaire em Tecido',
                 'descricao' => 'Necessaire artesanal em tecido impermeável com zíper. Estampas variadas.',
                 'preco' => 38.00,
-                'id_categoria' => 6,
+                'id_categoria' => 4,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -156,7 +130,7 @@ class ProdutoSeeder extends Seeder
                 'nome' => 'Porta-Celular de Mesa',
                 'descricao' => 'Suporte para celular feito em madeira, design minimalista e funcional.',
                 'preco' => 29.90,
-                'id_categoria' => 6,
+                'id_categoria' => 4,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -164,7 +138,7 @@ class ProdutoSeeder extends Seeder
                 'nome' => 'Chaveiro Personalizado',
                 'descricao' => 'Chaveiro artesanal em couro sintético, pode ser personalizado com iniciais.',
                 'preco' => 18.50,
-                'id_categoria' => 6,
+                'id_categoria' => 4,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

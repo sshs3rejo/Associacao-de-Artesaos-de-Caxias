@@ -49,13 +49,10 @@
                         <a class="btn btn-outline-dark btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="https://www.instagram.com/artesaosdecaxias_ma" target="_blank">
                             <i class="fab fa-instagram"></i> Instagram
                         </a>
-                        <a class="btn btn-outline-dark btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="tel:+5599999999999">
-                            <i class="fas fa-phone"></i> Telefone
-                        </a>
                         <a class="btn btn-outline-dark btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="mailto:artesaosdecaxiasma@gmail.com">
                             <i class="fas fa-envelope"></i> E-mail
                         </a>
-                        <a class="btn btn-success btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="https://wa.me/5599999999999" target="_blank">
+                        <a class="btn btn-success btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="https://wa.me/5599981597539" target="_blank">
                             <i class="fab fa-whatsapp"></i> WhatsApp
                         </a>
                     </div>

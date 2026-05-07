@@ -92,6 +92,13 @@
                     }
                 });
             });
+            
+            // 3. Restaurar estado ao voltar usando botão "Voltar" do navegador (BFCache)
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted && mainContent) {
+                    mainContent.classList.add('page-loaded');
+                }
+            });
         });
     </script>
 </body>

@@ -26,26 +26,14 @@ class CategoriaSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'id_categoria' => 3,
-                'nome_categoria' => 'Artesanato em Cerâmica',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'id_categoria' => 4,
-                'nome_categoria' => 'Bijuterias',
+                'nome_categoria' => 'Bijuterias e Biojoias',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'id_categoria' => 5,
                 'nome_categoria' => 'Decoração',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id_categoria' => 6,
-                'nome_categoria' => 'Acessórios',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
