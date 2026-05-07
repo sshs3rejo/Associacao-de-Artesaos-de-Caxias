@@ -47,6 +47,16 @@
         </div>
     </div>
 
+    @if(auth()->check() && auth()->user()->isAdmin())
+    <div class="row mb-4 justify-content-center">
+        <div class="col-12 col-xxl-10 d-flex justify-content-end">
+            <a href="{{ route('eventos.create') }}" class="btn text-white fw-bold shadow-sm px-4" style="background-color: #7a2f1f; border-radius: 10px;">
+                <i class="fa fa-plus-circle me-1"></i> Adicionar Novo Evento
+            </a>
+        </div>
+    </div>
+    @endif
+
     <!-- Grid de Eventos -->
     <div class="row justify-content-center">
         <div class="col-12 col-xxl-10">
@@ -104,6 +114,21 @@
                                     <a href="{{route('eventos.show', $evento->id_evento)}}" class="btn btn-brown w-100 rounded-pill py-2 fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">
                                         Mais Detalhes
                                     </a>
+                                    
+                                    @if(auth()->check() && auth()->user()->isAdmin())
+                                    <div class="d-flex justify-content-between mt-2 gap-2">
+                                        <a href="{{ route('eventos.edit', $evento->id_evento) }}" class="btn btn-sm btn-outline-warning fw-bold flex-grow-1" style="font-size: 0.8rem; color: #d39e00; border-color: #d39e00;">
+                                            <i class="fa fa-edit"></i> Editar
+                                        </a>
+                                        <form action="{{ route('eventos.destroy', $evento->id_evento) }}" method="POST" class="d-inline flex-grow-1">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold w-100" style="font-size: 0.8rem;" onclick="confirmarExclusao(this)">
+                                                <i class="fa fa-trash"></i> Excluir
+                                            </button>
+                                        </form>
+                                    </div>
+                                    @endif
                                 </div>
 
                             </div>
@@ -114,4 +139,28 @@
         </div>
     </div>
 </div>
+
+@section('scripts')
+<script>
+    // Função de Exclusão usando SweetAlert2
+    function confirmarExclusao(button) {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: "Esta ação não poderá ser desfeita e o evento será excluído!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+            background: '#F9F7D3',
+            color: '#5C3A2C'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                button.closest('form').submit();
+            }
+        });
+    }
+</script>
+@endsection
 @endsection

@@ -8,6 +8,7 @@ use App\Models\Eventos;
 use App\Models\Instrutores;
 use App\Models\Produto;
 use App\Models\User;
+use App\Models\Vendas;
 
 class AdminDashboardController extends Controller
 {
@@ -21,8 +22,7 @@ class AdminDashboardController extends Controller
             'usuariosAtivos' => User::where('is_active', true)->count(),
         ];
 
-        $recentProdutos = Produto::latest('created_at')->limit(5)->get();
-        $recentEventos = Eventos::latest('data_inicio')->limit(5)->get();
+        $vendas = Vendas::with(['cliente'])->orderBy('data_venda', 'desc')->paginate(10);
 
         $categorias = CategoriasProdutos::orderBy('nome_categoria')->get();
         $instrutores = Instrutores::orderBy('nome')->get();
@@ -31,8 +31,7 @@ class AdminDashboardController extends Controller
 
         return view('admin.dashboard', [
             'stats' => $stats,
-            'recentProdutos' => $recentProdutos,
-            'recentEventos' => $recentEventos,
+            'vendas' => $vendas,
             'categorias' => $categorias,
             'instrutores' => $instrutores,
             'tiposEvento' => $tiposEvento,

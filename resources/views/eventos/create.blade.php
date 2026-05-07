@@ -114,54 +114,83 @@
 
         {{-- Nome --}}
         <div class="mb-3">
-            <label for="nome_evento" class="form-label">Nome do Evento</label>
-            <input type="text" class="form-control" id="nome_evento" name="nome_evento"
-                   placeholder="Digite o nome do evento" value="{{ old('nome_evento') }}" required>
+            <label for="nome" class="form-label">Nome do Evento</label>
+            <input type="text" class="form-control" id="nome" name="nome"
+                   placeholder="Digite o nome do evento" value="{{ old('nome') }}" required>
         </div>
 
         {{-- Descrição --}}
         <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
-            <textarea class="form-control" id="descricao" name="descricao" placeholder="Descreva o evento" rows="4">{{ old('descricao') }}</textarea>
+            <textarea class="form-control" id="descricao" name="descricao" placeholder="Descreva o evento" rows="4" required>{{ old('descricao') }}</textarea>
         </div>
 
-        {{-- Linha com Data / Horário / Vagas --}}
+        {{-- Linha 1: Tipo / Data Inicio / Data Fim --}}
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label for="data_evento" class="form-label">Data</label>
-                <input type="date" class="form-control" id="data_evento" name="data_evento"
-                       value="{{ old('data_evento') }}" required>
+                <label for="tipo_evento" class="form-label">Tipo do Evento</label>
+                <select class="form-select" id="tipo_evento" name="tipo_evento" required>
+                    <option value="">Selecione...</option>
+                    <option value="feira" {{ old('tipo_evento') == 'feira' ? 'selected' : '' }}>Feira</option>
+                    <option value="exposicao" {{ old('tipo_evento') == 'exposicao' ? 'selected' : '' }}>Exposição</option>
+                    <option value="workshop" {{ old('tipo_evento') == 'workshop' ? 'selected' : '' }}>Workshop</option>
+                    <option value="lancamento" {{ old('tipo_evento') == 'lancamento' ? 'selected' : '' }}>Lançamento</option>
+                    <option value="palestra" {{ old('tipo_evento') == 'palestra' ? 'selected' : '' }}>Palestra</option>
+                    <option value="outro" {{ old('tipo_evento') == 'outro' ? 'selected' : '' }}>Outro</option>
+                </select>
             </div>
             <div class="col-md-4 mb-3">
-                <label for="horario_evento" class="form-label">Horário</label>
-                <input type="time" class="form-control" id="horario_evento" name="horario_evento"
-                       value="{{ old('horario_evento') }}" required>
+                <label for="data_inicio" class="form-label">Data e Hora de Início</label>
+                <input type="datetime-local" class="form-control" id="data_inicio" name="data_inicio"
+                       value="{{ old('data_inicio') }}" required>
             </div>
             <div class="col-md-4 mb-3">
-                <label for="vagas_disponiveis" class="form-label">Vagas Disponíveis</label>
-                <input type="number" min="1" class="form-control" id="vagas_disponiveis" name="vagas_disponiveis"
-                       value="{{ old('vagas_disponiveis') }}" required>
+                <label for="data_fim" class="form-label">Data e Hora de Fim</label>
+                <input type="datetime-local" class="form-control" id="data_fim" name="data_fim"
+                       value="{{ old('data_fim') }}" required>
             </div>
         </div>
 
-        {{-- Local --}}
-        <div class="mb-3">
-            <label for="local_evento" class="form-label">Local</label>
-            <input type="text" class="form-control" id="local_evento" name="local_evento"
-                   placeholder="Ex: Auditório Central" value="{{ old('local_evento') }}" required>
+        {{-- Linha 2: Local / Capacidade / Valor / Status --}}
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="local" class="form-label">Local</label>
+                <input type="text" class="form-control" id="local" name="local"
+                       placeholder="Ex: Auditório Central" value="{{ old('local') }}" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="capacidade_maxima" class="form-label">Capacidade Máx.</label>
+                <input type="number" min="1" class="form-control" id="capacidade_maxima" name="capacidade_maxima"
+                       value="{{ old('capacidade_maxima') }}" required>
+            </div>
+            <div class="col-md-2 mb-3">
+                <label for="valor_inscricao" class="form-label">Valor (R$)</label>
+                <input type="number" step="0.01" min="0" class="form-control" id="valor_inscricao" name="valor_inscricao"
+                       value="{{ old('valor_inscricao', '0.00') }}" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status" required>
+                    <option value="planejado" {{ old('status') == 'planejado' ? 'selected' : '' }}>Planejado</option>
+                    <option value="confirmado" {{ old('status') == 'confirmado' ? 'selected' : '' }}>Confirmado</option>
+                    <option value="em_andamento" {{ old('status') == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
+                    <option value="concluido" {{ old('status') == 'concluido' ? 'selected' : '' }}>Concluído</option>
+                    <option value="cancelado" {{ old('status') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                </select>
+            </div>
         </div>
 
         {{-- Instrutor --}}
         <div class="mb-3">
-            <label for="id_instrutor" class="form-label">Instrutor Responsável</label>
-            <select class="form-select" id="id_instrutor" name="id_instrutor" required>
-                <option value="">Selecione um instrutor...</option>
+            <label for="nome_instrutor" class="form-label">Instrutor Responsável</label>
+            <input type="text" list="instrutores_list" class="form-control" id="nome_instrutor" name="nome_instrutor" 
+                   placeholder="Digite o nome ou selecione..." value="{{ old('nome_instrutor') }}">
+            <datalist id="instrutores_list">
                 @foreach ($instrutores as $instrutor)
-                    <option value="{{ $instrutor->id_instrutor }}" {{ old('id_instrutor') == $instrutor->id_instrutor ? 'selected' : '' }}>
-                        {{ $instrutor->nome_instrutor }}
-                    </option>
+                    <option value="{{ $instrutor->nome }}">
                 @endforeach
-            </select>
+            </datalist>
+            <small class="text-muted mt-1 d-block">Se o instrutor não existir, ele será criado automaticamente.</small>
         </div>
 
         {{-- Imagem --}}

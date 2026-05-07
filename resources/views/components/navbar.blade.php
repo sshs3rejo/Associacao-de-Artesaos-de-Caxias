@@ -108,11 +108,7 @@
                                         <i class="fas fa-tachometer-alt"></i> Dashboard Admin
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('admin.vendas.index') }}" style="color: #7a2f1f;">
-                                        <i class="fas fa-history"></i> Histórico de Vendas
-                                    </a>
-                                </li>
+
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('admin.settings') }}" style="color: #7a2f1f;">
                                         <i class="fas fa-tools"></i> Configurações do Sistema

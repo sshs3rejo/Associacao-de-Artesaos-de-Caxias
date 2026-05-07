@@ -10,6 +10,14 @@
             <!-- Grid de Produtos Ocupando a Tela Inteira -->
             <div class="col-12">
                 <!-- Barra de busca, Filtro e Resumo -->
+                @if(auth()->check() && auth()->user()->isAdmin())
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 fw-bold mb-0" style="color: #5C3A2C;">Administração de Produtos</h2>
+                    <a href="{{ route('produtos.create') }}" class="btn text-white fw-bold shadow-sm" style="background-color: #7a2f1f; border-radius: 10px;">
+                        <i class="fa fa-plus-circle me-1"></i> Adicionar Produto
+                    </a>
+                </div>
+                @endif
                 <div class="row g-3 mb-2 align-items-center position-relative" style="z-index: 1050;">
                     <!-- Aumentado para dar mais espaço à barra -->
                     <div class="col-lg-9 col-xl-10">
@@ -103,8 +111,22 @@
                                         <button class="btn btn-sm btn-brown p-1 d-flex align-items-center justify-content-center text-white" onclick="adicionarRapido(this)" style="width: 28px; height: 28px; background-color: #7a2f1f;" title="Adicionar">
                                             <i class="fa fa-shopping-cart" style="font-size: 0.8rem;"></i>
                                         </button>
+
+                                        @if(auth()->check() && auth()->user()->isAdmin())
+                                        <a href="{{ route('produtos.edit', $produto->id_produto) }}" class="btn btn-sm btn-outline-warning p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; color: #d39e00; border-color: #d39e00;" title="Editar">
+                                            <i class="fa fa-edit" style="font-size: 0.8rem;"></i>
+                                        </a>
+                                        <form action="{{ route('produtos.destroy', $produto->id_produto) }}" method="POST" class="d-inline m-0 p-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-sm btn-outline-danger p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;" onclick="confirmarExclusao(this)" title="Excluir">
+                                                <i class="fa fa-trash" style="font-size: 0.8rem;"></i>
+                                            </button>
+                                        </form>
+                                        @endif
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>

@@ -57,9 +57,22 @@ class EventoController extends Controller
             'capacidade_maxima' => 'required|integer|min:0',
             'valor_inscricao' => 'required|numeric|min:0',
             'status' => 'required|in:planejado,confirmado,em_andamento,concluido,cancelado',
-            'id_instrutor' => 'nullable|exists:instrutores,id_instrutor',
+            'nome_instrutor' => 'nullable|string|max:255',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Processamento do instrutor
+        if (!empty($validated['nome_instrutor'])) {
+            $instrutor = Instrutores::firstOrCreate(
+                ['nome' => $validated['nome_instrutor']],
+                [
+                    'email' => 'pendente_' . uniqid() . '@associacao.com.br',
+                    'especialidade' => 'Não definida'
+                ]
+            );
+            $validated['id_instrutor'] = $instrutor->id_instrutor;
+        }
+        unset($validated['nome_instrutor']);
 
         // Define vagas disponíveis igual à capacidade máxima
         $validated['vagas_disponiveis'] = $validated['capacidade_maxima'];
@@ -102,9 +115,24 @@ class EventoController extends Controller
             'capacidade_maxima' => 'required|integer|min:0',
             'valor_inscricao' => 'required|numeric|min:0',
             'status' => 'required|in:planejado,confirmado,em_andamento,concluido,cancelado',
-            'id_instrutor' => 'nullable|exists:instrutores,id_instrutor',
+            'nome_instrutor' => 'nullable|string|max:255',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Processamento do instrutor
+        if (!empty($validated['nome_instrutor'])) {
+            $instrutor = Instrutores::firstOrCreate(
+                ['nome' => $validated['nome_instrutor']],
+                [
+                    'email' => 'pendente_' . uniqid() . '@associacao.com.br',
+                    'especialidade' => 'Não definida'
+                ]
+            );
+            $validated['id_instrutor'] = $instrutor->id_instrutor;
+        } else {
+            $validated['id_instrutor'] = null;
+        }
+        unset($validated['nome_instrutor']);
 
         // Atualiza vagas disponíveis se a capacidade máxima mudou
         if ($validated['capacidade_maxima'] != $evento->capacidade_maxima) {

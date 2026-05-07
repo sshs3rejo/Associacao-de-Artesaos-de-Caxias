@@ -20,6 +20,9 @@
 
     <!-- Estilos adicionais por página -->
     @yield('style')
+    
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body id="top" class="@yield('body_class')">
 

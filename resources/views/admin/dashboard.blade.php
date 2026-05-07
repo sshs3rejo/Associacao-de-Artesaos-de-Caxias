@@ -199,42 +199,7 @@
         </div>
     @endif
 
-    {{-- Gerenciamento rápido --}}
-    <div class="row g-4 mb-5">
-        {{-- Produtos --}}
-        <div class="col-12 col-lg-6">
-            <div class="data-table">
-                <h2 class="h5 mb-2">Gerenciar produtos</h2>
-                <p class="text-muted mb-4">Crie, edite ou visualize produtos cadastrados no sistema.</p>
-                <div class="d-flex gap-2 flex-wrap justify-content-center">
-                    <a href="{{ route('produtos.create') }}" class="btn btn-dashboard-primary">
-                    <i class="bi bi-plus-circle"></i> Adicionar novo produto
-                </a>
-                <a href="{{ route('produtos') }}" class="btn btn-dashboard-outline">
-                    <i class="bi bi-box-seam"></i> Ver todos os produtos
-                </a>
-
-                </div>
-            </div>
-        </div>
-
-        {{-- Eventos --}}
-        <div class="col-12 col-lg-6">
-            <div class="data-table">
-                <h2 class="h5 mb-2">Gerenciar eventos</h2>
-                <p class="text-muted mb-4">Cadastre, edite ou visualize eventos da associação.</p>
-                <div class="d-flex gap-2 flex-wrap justify-content-center">
-                    <a href="{{ route('eventos.create') }}" class="btn btn-dashboard-primary">
-                    <i class="bi bi-calendar-plus"></i> Adicionar novo evento
-                </a>
-                <a href="{{ route('eventos.store') }}" class="btn btn-dashboard-outline">
-                    <i class="bi bi-calendar-event"></i> Ver todos os eventos
-                </a>
-
-                </div>
-            </div>
-        </div>
-    </div>
+    {{-- Gerenciamento rápido removido daqui para páginas próprias --}}
 
     {{-- Estatísticas principais --}}
     <section class="dashboard-grid mb-5">
@@ -260,102 +225,49 @@
         </article>
     </section>
 
-    {{-- Últimos cadastros --}}
+    {{-- Histórico de Vendas --}}
     <div class="row g-4">
-        <div class="col-12 col-lg-6">
-            <div class="data-table">
-                <h2 class="h5 mb-3 border-bottom pb-2">Últimos produtos cadastrados</h2>
+        <div class="col-12">
+            <div class="data-table p-0">
+                <div class="p-4 border-bottom">
+                    <h2 class="h5 mb-0 fw-bold" style="color: #7a2f1f;">Histórico de Vendas</h2>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead>
+                        <thead style="background-color: #f8f9fa;">
                             <tr>
-                                <th>Nome</th>
-                                <th>Categoria</th>
-                                <th>Criado em</th>
+                                <th class="px-4 py-3">ID</th>
+                                <th class="px-4 py-3">Cliente</th>
+                                <th class="px-4 py-3">Data</th>
+                                <th class="px-4 py-3">Total</th>
+                                <th class="px-4 py-3 text-end">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($recentProdutos as $produto)
-                                <tr>
-                                    <td>{{ $produto->nome }}</td>
-                                    <td>{{ optional($produto->categoria)->nome_categoria ?? '—' }}</td>
-                                    <td>{{ optional($produto->created_at)->format('d/m/Y H:i') ?? '—' }}</td>
-                                    <td class="text-end">
-                                        <div class="action-buttons">
-                                    <a href="{{ route('produtos.edit', $produto->id_produto) }}" class="btn btn-sm btn-action-edit">
-                                         Editar
-                                    </a>
-
-                                    <form action="{{ route('produtos.destroy', $produto->id_produto) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-action-delete"
-                                            onclick="return confirm('Tem certeza que deseja excluir este produto?')">
-                                            <i class="bi bi-trash me-1"></i> Excluir
-                                        </button>
-                                    </form>
-                                </div>
+                            @forelse($vendas as $venda)
+                            <tr>
+                                <td class="px-4 py-3">{{ $venda->id_venda }}</td>
+                                <td class="px-4 py-3">{{ $venda->cliente->nome ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ \Carbon\Carbon::parse($venda->data_venda)->format('d/m/Y') }}</td>
+                                <td class="px-4 py-3">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-end">
+                                    <button class="btn btn-sm btn-info text-white" title="Ver Itens">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </td>
-
-                                </tr>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">Nenhum produto cadastrado ainda.</td>
-                                </tr>
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">Nenhuma venda encontrada.</td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-
-        <div class="col-12 col-lg-6">
-            <div class="data-table">
-                <h2 class="h5 mb-3 border-bottom pb-2">Próximos eventos</h2>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Início</th>
-                                <th>Status</th>
-                                <th class="text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($recentEventos as $evento)
-                                <tr>
-                                    <td>{{ $evento->nome }}</td>
-                                    <td>{{ optional($evento->data_inicio)->format('d/m/Y H:i') ?? '—' }}</td>
-                                    <td>
-                                        <span class="badge bg-secondary text-uppercase">{{ $evento->status }}</span>
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="action-buttons">
-                                        <a href="{{ route('eventos.edit', $evento->id_evento) }}" class="btn btn-sm btn-action-edit">
-                                            <i class="bi bi-pencil-square me-1"></i>
-                                            Editar
-                                        </a>
-                                        <form action="{{ route('eventos.destroy', $evento->id_evento) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-action-delete"
-                                                onclick="return confirm('Tem certeza que deseja excluir este evento?')">
-                                                <i class="bi bi-trash me-1"></i>
-                                                Excluir
-                                            </button>
-                                        </form>
-                                    </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">Nenhum evento cadastrado ainda.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+            
+            <div class="mt-4">
+                {{ $vendas->links() }}
             </div>
         </div>
     </div>

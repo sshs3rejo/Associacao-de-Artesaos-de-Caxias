@@ -6,7 +6,6 @@ use App\Http\Controllers\EventoController;
 use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ContatoController;
-use App\Http\Controllers\Admin\VendaController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas de Autenticação
@@ -49,7 +48,6 @@ Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
 // Rotas Administrativas (Protegidas)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/vendas', [VendaController::class, 'index'])->name('admin.vendas.index');
     Route::get('/admin/settings', function() {
         return view('admin.settings');
     })->name('admin.settings');
