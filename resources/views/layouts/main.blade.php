@@ -72,23 +72,16 @@
         document.addEventListener("DOMContentLoaded", () => {
             const mainContent = document.querySelector('.layout-main');
             
-            // 1. A página terminou de carregar, adicionamos a classe para o Fade In
             if(mainContent) mainContent.classList.add('page-loaded');
 
-            // 2. Interceptamos os cliques nos links
             const links = document.querySelectorAll('a[href]:not([target="_blank"]):not([href^="#"]):not([href^="javascript:"])');
             
             links.forEach(link => {
                 link.addEventListener('click', function (e) {
-                    // Verifica se é um link do mesmo domínio e não é o link da página atual
                     if (this.hostname === window.location.hostname && this.href !== window.location.href) {
-                        e.preventDefault(); // Impede o redirecionamento imediato
+                        e.preventDefault();
                         const destination = this.href;
-
-                        // Remove a classe para iniciar o Fade Out
                         if(mainContent) mainContent.classList.remove('page-loaded');
-
-                        // Aguarda 150ms (tempo da transição CSS) antes de redirecionar
                         setTimeout(() => {
                             window.location.href = destination;
                         }, 150);
@@ -96,13 +89,35 @@
                 });
             });
             
-            // 3. Restaurar estado ao voltar usando botão "Voltar" do navegador (BFCache)
             window.addEventListener('pageshow', function (event) {
                 if (event.persisted && mainContent) {
                     mainContent.classList.add('page-loaded');
                 }
             });
         });
+
+        // Popup de confirmação de exclusão
+        let formToDelete = null;
+        function confirmarExclusao(button) {
+            formToDelete = button.closest('form');
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: 'Esta ação não poderá ser desfeita!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar',
+                background: '#F9F7D3',
+                color: '#5C3A2C',
+                borderRadius: '1rem'
+            }).then((result) => {
+                if (result.isConfirmed && formToDelete) {
+                    formToDelete.submit();
+                }
+            });
+        }
     </script>
 </body>
 </html>

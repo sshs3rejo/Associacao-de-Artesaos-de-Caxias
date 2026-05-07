@@ -12,7 +12,7 @@ class Estoques extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['quantidade'];
+    protected $fillable = ['id_produto', 'quantidade'];
 
     public function produto()
     {

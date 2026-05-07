@@ -29,10 +29,6 @@
 </style>
 @endsection
 
-@section('scripts')
-<script src="{{asset('js/script-eventos.js')}}"></script>
-@endsection
-
 @section('content')
 <div class="container-fluid px-4 px-lg-5 py-5">
     
@@ -140,27 +136,4 @@
     </div>
 </div>
 
-@section('scripts')
-<script>
-    // Função de Exclusão usando SweetAlert2
-    function confirmarExclusao(button) {
-        Swal.fire({
-            title: 'Tem certeza?',
-            text: "Esta ação não poderá ser desfeita e o evento será excluído!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sim, excluir!',
-            cancelButtonText: 'Cancelar',
-            background: '#F9F7D3',
-            color: '#5C3A2C'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                button.closest('form').submit();
-            }
-        });
-    }
-</script>
-@endsection
 @endsection

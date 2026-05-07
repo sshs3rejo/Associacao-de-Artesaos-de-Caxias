@@ -138,10 +138,11 @@ class ProdutoController extends Controller
     {
         $produto = Produto::findOrFail($id);
 
-        // Deleta a imagem se existir
         if ($produto->imagem) {
             Storage::disk('public')->delete($produto->imagem);
         }
+
+        $produto->estoque()->delete();
 
         $produto->delete();
 
