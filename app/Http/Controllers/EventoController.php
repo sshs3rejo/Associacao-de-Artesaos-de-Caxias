@@ -161,10 +161,11 @@ class EventoController extends Controller
     {
         $evento = Eventos::findOrFail($id);
 
-        // Deleta a imagem se existir
         if ($evento->imagem) {
             Storage::disk('public')->delete($evento->imagem);
         }
+
+        $evento->inscricoes()->delete();
 
         $evento->delete();
 

@@ -17,7 +17,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rotas de Login Social
 Route::get('/auth/{provider}/redirect', [AuthController::class, 'redirectToProvider'])->name('social.login');
-Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
+Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderCallback'])->name('social.callback');
 
 // Rota Padrão (Home agora é a raiz)
 Route::get('/', [PaginaController::class, 'home'])->name('home');
