@@ -57,7 +57,12 @@ Route::middleware(['auth'])->group(function () {
 // Dashboard do Artesão
 Route::middleware(['auth', 'artisan'])->prefix('artesan')->name('artesan.')->group(function () {
     Route::get('/dashboard', [ArtisanController::class, 'dashboard'])->name('dashboard');
+    
+    // Proposta de Produtos pelo Artesão
     Route::get('/produtos', [ArtisanController::class, 'produtos'])->name('produtos');
+    Route::get('/produtos/criar', [ArtisanController::class, 'criarProduto'])->name('produtos.criar');
+    Route::post('/produtos', [ArtisanController::class, 'salvarProduto'])->name('produtos.salvar');
+    
     Route::get('/eventos', [ArtisanController::class, 'eventos'])->name('eventos');
     Route::get('/perfil', [ArtisanController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [ArtisanController::class, 'atualizarPerfil'])->name('perfil.atualizar');
@@ -85,6 +90,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     // Gestão de Vendas (Confirmar Pagamento do WhatsApp/Pix)
     Route::post('/admin/vendas/{venda}/aprovar', [AdminDashboardController::class, 'aprovarVenda'])->name('admin.vendas.aprovar');
+    
+    // Gestão de Produtos (Aprovar Proposta do Artesão)
+    Route::post('/admin/produtos/{produto}/aprovar', [AdminDashboardController::class, 'aprovarProduto'])->name('admin.produtos.aprovar');
 
     // ✅ Rotas específicas devem vir antes das com {id}
     Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');

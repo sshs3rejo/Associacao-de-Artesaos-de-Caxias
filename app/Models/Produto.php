@@ -10,7 +10,12 @@ class Produto extends Model
 
     protected $primaryKey = 'id_produto';
 
-    protected $fillable = ['nome', 'descricao', 'preco', 'id_categoria', 'imagem', 'id_artesan'];
+    protected $fillable = ['nome', 'descricao', 'preco', 'id_categoria', 'imagem', 'id_artesan', 'is_approved'];
+
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
+    }
 
     public function categoria()
     {

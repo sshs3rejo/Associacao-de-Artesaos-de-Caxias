@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArtisanProfile;
+use App\Models\CategoriasProdutos;
 use App\Models\Cliente;
 use App\Models\Eventos;
 use App\Models\InscricoesEvento;
@@ -160,5 +161,42 @@ class ArtisanController extends Controller
 
         $produtos = Produto::where('id_artesan', $user->id)->with('categoria')->get();
         return view('artesan.publico', compact('user', 'perfil', 'produtos'));
+    }
+
+    public function criarProduto()
+    {
+        $categorias = CategoriasProdutos::all();
+        return view('artesan.produtos-create', compact('categorias'));
+    }
+
+    public function salvarProduto(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'preco' => 'required|numeric|min:0',
+            'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'quantidade' => 'required|integer|min:0',
+        ]);
+
+        $validated['id_artesan'] = $user->id;
+        $validated['is_approved'] = false; // Aguardando aprovação!
+
+        if ($request->hasFile('imagem')) {
+            $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
+        }
+
+        $produto = Produto::create($validated);
+
+        // Cria o registro no estoque
+        $produto->estoque()->create([
+            'id_produto' => $produto->id_produto,
+            'quantidade' => $request->quantidade,
+        ]);
+
+        return redirect()->route('artesan.produtos')->with('success', 'Produto proposto com sucesso! Aguarde a aprovação do administrador.');
     }
 }

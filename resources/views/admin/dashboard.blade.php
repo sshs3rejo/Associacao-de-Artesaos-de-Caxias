@@ -305,5 +305,58 @@
             </div>
         </div>
     </div>
+
+    <!-- Propostas de Produtos Pendentes -->
+    <div class="row g-4 mt-5">
+        <div class="col-12">
+            <div class="data-table p-0">
+                <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+                    <h2 class="h5 mb-0 fw-bold" style="color: #7a2f1f;"><i class="bi bi-boxes me-2"></i> Propostas de Produtos Pendentes</h2>
+                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3">{{ $produtosPendentes->count() }} aguardando</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th class="px-4 py-3">Miniatura</th>
+                                <th class="px-4 py-3">Nome</th>
+                                <th class="px-4 py-3">Artesão</th>
+                                <th class="px-4 py-3">Categoria</th>
+                                <th class="px-4 py-3">Preço</th>
+                                <th class="px-4 py-3">Estoque</th>
+                                <th class="px-4 py-3 text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($produtosPendentes as $prodPendente)
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <img src="{{ $prodPendente->imagem ? asset('storage/' . $prodPendente->imagem) : config('association.placeholder') }}" alt="{{ $prodPendente->nome }}" class="rounded shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
+                                </td>
+                                <td class="px-4 py-3 fw-bold" style="color: #8b5a3c;">{{ $prodPendente->nome }}</td>
+                                <td class="px-4 py-3">{{ $prodPendente->artisan->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $prodPendente->categoria->nome_categoria ?? 'Sem Categoria' }}</td>
+                                <td class="px-4 py-3 fw-bold text-success">R$ {{ number_format($prodPendente->preco, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3">{{ $prodPendente->estoque->quantidade ?? 0 }} unid.</td>
+                                <td class="px-4 py-3 text-end">
+                                    <form action="{{ route('admin.produtos.aprovar', $prodPendente->id_produto) }}" method="POST" class="d-inline m-0 p-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1 ms-auto" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
+                                            <i class="fas fa-check"></i> Aprovar e Publicar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">Nenhum produto pendente de aprovação.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
