@@ -10,7 +10,12 @@ class Cliente extends Model
 
     protected $primaryKey = 'id_cliente';
 
-    protected $fillable = ['nome', 'email', 'telefone', 'endereco'];
+    protected $fillable = ['user_id', 'nome', 'email', 'telefone', 'endereco'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function vendas()
     {

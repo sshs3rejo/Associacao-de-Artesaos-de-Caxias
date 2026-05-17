@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('titulo', 'Eventos da Associação')
+@section('titulo', 'Eventos - ' . config('association.name_short'))
 
 @section('style')
 <style>
@@ -71,7 +71,7 @@
                                 <!-- Imagem do Evento -->
                                 <div class="position-relative" style="height: 200px; background-color: #f5f1ed;">
                                     @if($evento->imagem)
-                                        <img src="{{$evento->imagem}}" alt="{{$evento->nome}}" class="w-100 h-100" style="object-fit: cover;">
+                                        <img src="{{ asset('storage/' . $evento->imagem) }}" alt="{{$evento->nome}}" class="w-100 h-100" style="object-fit: cover;">
                                     @else
                                         <!-- Placeholder se não houver imagem -->
                                         <div class="w-100 h-100 d-flex align-items-center justify-content-center">

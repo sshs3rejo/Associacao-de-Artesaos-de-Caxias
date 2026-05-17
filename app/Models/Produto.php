@@ -10,7 +10,7 @@ class Produto extends Model
 
     protected $primaryKey = 'id_produto';
 
-    protected $fillable = ['nome', 'descricao', 'preco', 'id_categoria', 'imagem'];
+    protected $fillable = ['nome', 'descricao', 'preco', 'id_categoria', 'imagem', 'id_artesan'];
 
     public function categoria()
     {
@@ -25,5 +25,10 @@ class Produto extends Model
     public function estoque()
     {
         return $this->hasOne(Estoques::class, 'id_produto');
+    }
+
+    public function artisan()
+    {
+        return $this->belongsTo(User::class, 'id_artesan');
     }
 }

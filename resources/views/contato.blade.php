@@ -46,13 +46,13 @@
                 <div class="contact-card text-center h-100">
                     <h2 class="h4 fw-bold mb-4" style="color: #7a2f1f;">Contato Imediato</h2>
                     <div class="d-flex flex-column gap-3">
-                        <a class="btn btn-outline-dark btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="https://www.instagram.com/artesaosdecaxias_ma" target="_blank">
+                        <a class="btn btn-outline-dark btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="{{ config('association.instagram') }}" target="_blank">
                             <i class="fab fa-instagram"></i> Instagram
                         </a>
-                        <a class="btn btn-outline-dark btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="mailto:artesaosdecaxiasma@gmail.com">
+                        <a class="btn btn-outline-dark btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="mailto:{{ config('association.email_alt') }}">
                             <i class="fas fa-envelope"></i> E-mail
                         </a>
-                        <a class="btn btn-success btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="https://wa.me/5599981597539" target="_blank">
+                        <a class="btn btn-success btn-lg animacao d-flex align-items-center justify-content-center gap-2" href="https://wa.me/{{ config('association.whatsapp') }}" target="_blank">
                             <i class="fab fa-whatsapp"></i> WhatsApp
                         </a>
                     </div>

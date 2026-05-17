@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_cliente');
             $table->unsignedBigInteger('id_evento');
             $table->dateTime('data_inscricao');
-            $table->enum('status_pagamento', ['pendente', 'pago', 'cancelado'])->default('pendente');
+            $table->string('status_pagamento', 20)->default('pendente');
             $table->timestamps();
 
             // Foreign keys

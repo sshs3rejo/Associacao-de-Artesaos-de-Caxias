@@ -8,7 +8,7 @@ class Oficina extends Model
 {
     protected $table = '_oficina';
 
-    protected $primaryKey = 'id_oficina';
+    protected $primaryKey = 'id';
 
     protected $fillable = ['nome', 'descricao', 'data_inicio', 'data_fim', 'id_instrutor'];
 

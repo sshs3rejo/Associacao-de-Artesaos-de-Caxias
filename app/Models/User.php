@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -23,6 +24,9 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'google_id',
+        'apple_id',
+        'microsoft_id',
     ];
 
     /**
@@ -66,10 +70,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Verifica se o usuário é artesão
+     */
+    public function isArtisan(): bool
+    {
+        return $this->role === 'artisan';
+    }
+
+    /**
      * Verifica se o usuário está ativo
      */
     public function isActive(): bool
     {
         return $this->is_active;
+    }
+
+    /**
+     * Perfil do artesão
+     */
+    public function artisanProfile(): HasOne
+    {
+        return $this->hasOne(ArtisanProfile::class);
     }
 }

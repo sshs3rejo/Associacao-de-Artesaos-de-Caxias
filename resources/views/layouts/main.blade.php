@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="format-detection" content="telephone=no">
-    <title>@yield('titulo', 'Associação dos Artesãos de Caxias')</title>
+    <title>@yield('titulo', config('association.name'))</title>
     
     <!-- Favicon (Logo na guia do navegador) -->
-    <link rel="icon" type="image/png" href="{{ asset('imagens/artesanato_alunos/logo-artesaos.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset(config('association.logo')) }}">
     <!-- CSS principal -->
     <link rel="stylesheet" href="{{ asset('css/style-layout.css') }}">
     

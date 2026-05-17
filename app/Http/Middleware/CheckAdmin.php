@@ -23,7 +23,7 @@ class CheckAdmin
 
         // Verifica se o usuário é admin
         if (! Auth::user()->isAdmin()) {
-            return redirect()->route('paginainicial')->with('error', 'Você não tem permissão para acessar esta página.');
+            return redirect()->route('home')->with('error', 'Você não tem permissão para acessar esta página.');
         }
 
         // Verifica se o usuário está ativo

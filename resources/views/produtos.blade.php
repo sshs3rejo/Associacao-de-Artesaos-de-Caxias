@@ -64,10 +64,14 @@
                             </form>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-xl-2 text-lg-end text-center mt-3 mt-lg-0">
+                    <div class="col-lg-3 col-xl-2 d-flex justify-content-end gap-2 mt-3 mt-lg-0">
                         <span class="small text-muted fw-bold bg-white px-3 py-2 rounded-pill shadow-sm text-nowrap">
                             <i class="bi bi-box-seam me-1"></i> {{ $produtos->count() }} itens
                         </span>
+                        <button class="btn text-white fw-bold rounded-pill px-3 shadow-sm position-relative" style="background-color: #7a2f1f;" onclick="abrirCarrinho()" title="Carrinho">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span id="badge-carrinho" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; display: none;">0</span>
+                        </button>
                     </div>
                 </div>
 
@@ -194,6 +198,39 @@
             </div>
         </div>
     </div>
+
+    <!-- Guest Checkout Modal -->
+    <div class="modal fade" id="modal-guest-checkout" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" style="color: #7a2f1f;">Finalizar Compra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-3">Informe seus dados para finalizar o pedido:</p>
+                    <div class="mb-3">
+                        <label for="guest_name" class="form-label fw-semibold">Nome Completo</label>
+                        <input type="text" class="form-control" id="guest_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="guest_email" class="form-label fw-semibold">E-mail</label>
+                        <input type="email" class="form-control" id="guest_email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="guest_phone" class="form-label fw-semibold">Telefone (opcional)</label>
+                        <input type="text" class="form-control" id="guest_phone" placeholder="(99) 99999-9999">
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn flex-fill text-white fw-bold" style="background-color: #7a2f1f;" onclick="enviarCheckoutGuest()">
+                            <i class="fa fa-check-circle me-1"></i> Confirmar Pedido
+                        </button>
+                        <button class="btn flex-fill btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -202,27 +239,13 @@
     <script src="{{asset('js/script-produtos.js')}}"></script>
 
     {{-- Esse é o novo JS que vai "corrigir" o script antigo --}}
+    {{-- Override das funções do script-produtos.js --}}
     <script>
-        // ========================================
-        // DADOS DOS PRODUTOS
-        // ========================================
-        // O array 'const produtos' que estava em script-produtos.js NÃO É MAIS USADO.
-        // Os dados agora são lidos do HTML.
-
-        // Apagamos as funções que não são mais necessárias
         window.renderizarProdutos = function() {};
         window.filtrarCategoria = function() {};
 
-        // Sobrescrevemos as funções que precisam ler do HTML
-        
-        /**
-         * Abre o modal com detalhes do produto
-         * @param {HTMLElement} botao O botão "Ver" que foi clicado.
-         */
         window.abrirDetalhes = function(botao) {
             const card = botao.closest(".produto-card");
-
-            // Lê os dados direto do HTML (data-attributes)
             window.produtoAtual = {
                 id: card.dataset.id,
                 nome: card.dataset.nome,
@@ -232,7 +255,6 @@
                 estoque: parseInt(card.dataset.estoque) || 0,
             };
 
-            // Preencher dados do modal (o resto da função original funciona)
             document.getElementById("modal-nome").textContent = window.produtoAtual.nome;
             document.getElementById("modal-preco").textContent = formatarPreco(window.produtoAtual.preco);
             document.getElementById("modal-descricao").textContent = window.produtoAtual.descricao;
@@ -241,54 +263,146 @@
             document.getElementById("modal-quantidade").max = window.produtoAtual.estoque;
 
             const estoqueDiv = document.getElementById("modal-estoque");
-            if (window.produtoAtual.estoque > 0) {
-                estoqueDiv.innerHTML = `<span class="em-estoque">Em estoque (${window.produtoAtual.estoque} disponível)</span>`;
-            } else {
-                estoqueDiv.innerHTML = `<span class="fora-estoque">Fora de estoque</span>`;
-            }
+            estoqueDiv.innerHTML = window.produtoAtual.estoque > 0
+                ? `<span class="em-estoque">Em estoque (${window.produtoAtual.estoque} disponível)</span>`
+                : `<span class="fora-estoque">Fora de estoque</span>`;
 
-            // Abrir o modal corretamente usando o Bootstrap 5 (sem duplicar o fundo escuro)
-            const modalElement = document.getElementById("modal-detalhes");
-            const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modalElement);
-            modalBootstrap.show();
-        }
+            bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-detalhes")).show();
+        };
 
-        /**
-         * Adiciona produto ao carrinho (botão rápido)
-         * @param {HTMLElement} botao O botão "Carrinho" que foi clicado.
-         */
         window.adicionarRapido = function(botao) {
             const card = botao.closest(".produto-card");
-
+            const estoque = parseInt(card.dataset.estoque) || 0;
+            if (estoque <= 0) return;
             const produto = {
                 id: card.dataset.id,
                 nome: card.dataset.nome,
                 preco: parseFloat(card.dataset.preco),
                 imagem: card.dataset.imagem,
             };
-
-            const itemExistente = window.carrinho.find((item) => item.id === produto.id);
-
-            if (itemExistente) {
-                itemExistente.quantidade += 1;
+            const item = window.carrinho.find(i => i.id === produto.id);
+            if (item) {
+                if (item.quantidade >= estoque) return;
+                item.quantidade += 1;
             } else {
-                window.carrinho.push({
-                    id: produto.id,
-                    nome: produto.nome,
-                    preco: produto.preco,
-                    quantidade: 1,
-                    imagem: produto.imagem,
-                });
+                window.carrinho.push({ ...produto, quantidade: 1 });
             }
-
             window.atualizarBadge();
-        }
+        };
 
-        // Remove o 'DOMContentLoaded' antigo que chamava renderizarProdutos()
-        document.addEventListener("DOMContentLoaded", function () {
-            // O 'renderizarProdutos()' não é mais necessário aqui.
-            // O Blade/PHP já fez isso.
+        window.atualizarBadge = function() {
+            const badge = document.getElementById("badge-carrinho");
+            const total = window.carrinho.reduce((s, i) => s + i.quantidade, 0);
+            badge.textContent = total;
+            badge.style.display = total > 0 ? "inline" : "none";
+        };
+
+        window.abrirCarrinho = function() {
+            const conteudo = document.getElementById("carrinho-conteudo");
+            if (window.carrinho.length === 0) {
+                conteudo.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-cart-x fs-1 d-block mb-2"></i>Seu carrinho está vazio</div>';
+            } else {
+                let html = '<div class="carrinho-itens">';
+                let total = 0;
+                window.carrinho.forEach(item => {
+                    const subtotal = item.preco * item.quantidade;
+                    total += subtotal;
+                    html += `
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <div>
+                                <div class="fw-bold" style="color: #8b5a3c;">${item.nome}</div>
+                                <div style="color: #c85a3a;">${formatarPreco(item.preco)}</div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="alterarQtd('${item.id}', -1)">-</button>
+                                <span class="fw-bold">${item.quantidade}</span>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="alterarQtd('${item.id}', 1)">+</button>
+                                <span class="fw-bold ms-3" style="color: #c85a3a;">${formatarPreco(subtotal)}</span>
+                                <button class="btn btn-sm btn-outline-danger ms-2" onclick="removerItem('${item.id}')"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                html += `
+                    <div class="bg-light p-3 rounded mt-3">
+                        <div class="d-flex justify-content-between"><span>Subtotal:</span><span>${formatarPreco(total)}</span></div>
+                        <div class="d-flex justify-content-between"><span>Frete:</span><span>Grátis</span></div>
+                        <div class="d-flex justify-content-between fw-bold fs-5 mt-2 pt-2 border-top" style="color: #8b5a3c;">Total: <span>${formatarPreco(total)}</span></div>
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn flex-fill text-white fw-bold" style="background-color: #7a2f1f;" onclick="finalizarCompra()">
+                            <i class="fa fa-check-circle me-1"></i> Finalizar Compra
+                        </button>
+                        <button class="btn flex-fill btn-outline-secondary" data-bs-dismiss="modal">Continuar Comprando</button>
+                    </div>
+                `;
+            }
+            bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-carrinho")).show();
+        };
+
+        window.alterarQtd = function(id, delta) {
+            const item = window.carrinho.find(i => i.id === id);
+            if (!item) return;
+            item.quantidade += delta;
+            if (item.quantidade <= 0) {
+                window.carrinho = window.carrinho.filter(i => i.id !== id);
+            }
+            window.atualizarBadge();
+            window.abrirCarrinho();
+        };
+
+        window.removerItem = function(id) {
+            window.carrinho = window.carrinho.filter(i => i.id !== id);
+            window.atualizarBadge();
+            window.abrirCarrinho();
+        };
+
+        window.fecharCarrinho = function() {
+            bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-carrinho")).hide();
+        };
+
+        window.finalizarCompra = function() {
+            if (window.carrinho.length === 0) return;
+            @auth
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("checkout.store") }}';
+                form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                window.carrinho.forEach((item, index) => {
+                    form.innerHTML += `<input type="hidden" name="itens[${index}][id_produto]" value="${item.id}">`;
+                    form.innerHTML += `<input type="hidden" name="itens[${index}][quantidade]" value="${item.quantidade}">`;
+                });
+                document.body.appendChild(form);
+                form.submit();
+            @else
+                bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-guest-checkout")).show();
+            @endauth
+        };
+
+        window.enviarCheckoutGuest = function() {
+            const name = document.getElementById('guest_name').value.trim();
+            const email = document.getElementById('guest_email').value.trim();
+            if (!name || !email) return;
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("checkout.store") }}';
+            form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+            form.innerHTML += `<input type="hidden" name="guest_name" value="${name}">`;
+            form.innerHTML += `<input type="hidden" name="guest_email" value="${email}">`;
+            form.innerHTML += `<input type="hidden" name="guest_phone" value="${document.getElementById('guest_phone').value}">`;
+            window.carrinho.forEach((item, index) => {
+                form.innerHTML += `<input type="hidden" name="itens[${index}][id_produto]" value="${item.id}">`;
+                form.innerHTML += `<input type="hidden" name="itens[${index}][quantidade]" value="${item.quantidade}">`;
+            });
+            document.body.appendChild(form);
+            form.submit();
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof window.carrinho === 'undefined') window.carrinho = [];
+            window.atualizarBadge();
         });
-
     </script>
 @endsection

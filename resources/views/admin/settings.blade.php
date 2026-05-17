@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <h5 class="fw-bold mb-3"><i class="fas fa-cog me-2"></i> Geral</h5>
                     <p class="text-muted small">Configurações básicas do site e informações da associação.</p>
-                    <button class="btn btn-sm btn-primary w-100" disabled>Editar</button>
+                    <button class="btn btn-sm btn-secondary w-100" disabled title="Em desenvolvimento">Em breve</button>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
                 <div class="card-body">
                     <h5 class="fw-bold mb-3"><i class="fas fa-users-cog me-2"></i> Usuários</h5>
                     <p class="text-muted small">Gerenciar administradores e permissões de acesso.</p>
-                    <button class="btn btn-sm btn-primary w-100" disabled>Gerenciar</button>
+                    <a href="{{ route('admin.usuarios') }}" class="btn btn-sm btn-primary w-100">Gerenciar</a>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <div class="card-body">
                     <h5 class="fw-bold mb-3"><i class="fas fa-database me-2"></i> Backup</h5>
                     <p class="text-muted small">Realizar backup da base de dados e arquivos do sistema.</p>
-                    <button class="btn btn-sm btn-primary w-100" disabled>Executar</button>
+                    <button class="btn btn-sm btn-secondary w-100" disabled title="Em desenvolvimento">Em breve</button>
                 </div>
             </div>
         </div>

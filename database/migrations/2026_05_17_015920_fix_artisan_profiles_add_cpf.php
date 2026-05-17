@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('produto', function (Blueprint $table) {
-            $table->string('imagem')->nullable();
+        Schema::table('artisan_profiles', function (Blueprint $table) {
+            $table->string('cpf', 14)->unique()->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('produto', function (Blueprint $table) {
-            $table->dropColumn('imagem');
+        Schema::table('artisan_profiles', function (Blueprint $table) {
+            $table->dropColumn('cpf');
         });
     }
 };

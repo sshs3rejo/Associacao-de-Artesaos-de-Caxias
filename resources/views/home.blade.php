@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Artesãos de Caxias - Home')
+@section('titulo', config('association.name_short') . ' - Home')
 
 @section('content')
     <!-- HERO SECTION -->

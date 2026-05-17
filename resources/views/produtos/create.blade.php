@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Cadastrar Produto')
+@section('titulo', 'Cadastrar Produto')
 
 @section('content')
 <style>
@@ -101,22 +101,24 @@
         {{-- Nome --}}
         <div class="mb-3">
             <label for="nome" class="form-label">Nome do Produto</label>
-            <input type="text" class="form-control" id="nome" name="nome"
+            <input type="text" class="form-control @error('nome') is-invalid @enderror" id="nome" name="nome"
                    placeholder="Ex: Camisa Bege Casual" value="{{ old('nome') }}" required>
+            @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         {{-- Descrição --}}
         <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
-            <textarea class="form-control" id="descricao" name="descricao"
+            <textarea class="form-control @error('descricao') is-invalid @enderror" id="descricao" name="descricao"
                       placeholder="Descreva brevemente o produto" rows="4">{{ old('descricao') }}</textarea>
+            @error('descricao') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         {{-- Categoria / Preço / Quantidade --}}
         <div class="row">
             <div class="col-md-4 mb-3">
                 <label for="id_categoria" class="form-label">Categoria</label>
-                <select class="form-select" id="id_categoria" name="id_categoria" required>
+                <select class="form-select @error('id_categoria') is-invalid @enderror" id="id_categoria" name="id_categoria" required>
                     <option value="">Selecione...</option>
                     @foreach($categorias as $categoria)
                         <option value="{{ $categoria->id_categoria }}" {{ old('id_categoria') == $categoria->id_categoria ? 'selected' : '' }}>
@@ -127,20 +129,23 @@
             </div>
             <div class="col-md-4 mb-3">
                 <label for="preco" class="form-label">Preço (R$)</label>
-                <input type="number" step="0.01" class="form-control" id="preco" name="preco"
+                <input type="number" step="0.01" class="form-control @error('preco') is-invalid @enderror" id="preco" name="preco"
                        placeholder="0,00" value="{{ old('preco') }}" required>
+                @error('preco') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-4 mb-3">
                 <label for="quantidade" class="form-label">Quantidade em Estoque</label>
-                <input type="number" class="form-control" id="quantidade" name="quantidade"
+                <input type="number" class="form-control @error('quantidade') is-invalid @enderror" id="quantidade" name="quantidade"
                        placeholder="0" value="{{ old('quantidade') }}" required>
+                @error('quantidade') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
         </div>
 
         {{-- Imagem --}}
         <div class="mb-4">
             <label for="imagem" class="form-label">Imagem do Produto</label>
-            <input class="form-control" type="file" id="imagem" name="imagem" accept="image/*">
+            <input class="form-control @error('imagem') is-invalid @enderror" type="file" id="imagem" name="imagem" accept="image/*">
+            @error('imagem') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         {{-- Botões --}}

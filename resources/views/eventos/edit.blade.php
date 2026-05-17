@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Editar Evento')
+@section('titulo', 'Editar Evento')
 
 @section('content')
 <style>
@@ -124,21 +124,23 @@
         {{-- Nome --}}
         <div class="mb-3">
             <label for="nome" class="form-label">Nome do Evento</label>
-            <input type="text" class="form-control" id="nome" name="nome"
+            <input type="text" class="form-control @error('nome') is-invalid @enderror" id="nome" name="nome"
                    value="{{ old('nome', $evento->nome) }}" required>
+            @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         {{-- Descrição --}}
         <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
-            <textarea class="form-control" id="descricao" name="descricao" rows="4" required>{{ old('descricao', $evento->descricao) }}</textarea>
+            <textarea class="form-control @error('descricao') is-invalid @enderror" id="descricao" name="descricao" rows="4" required>{{ old('descricao', $evento->descricao) }}</textarea>
+            @error('descricao') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         {{-- Linha 1: Tipo / Data Inicio / Data Fim --}}
         <div class="row">
             <div class="col-md-4 mb-3">
                 <label for="tipo_evento" class="form-label">Tipo do Evento</label>
-                <select class="form-select" id="tipo_evento" name="tipo_evento" required>
+                <select class="form-select @error('tipo_evento') is-invalid @enderror" id="tipo_evento" name="tipo_evento" required>
                     <option value="">Selecione...</option>
                     <option value="feira" {{ old('tipo_evento', $evento->tipo_evento) == 'feira' ? 'selected' : '' }}>Feira</option>
                     <option value="exposicao" {{ old('tipo_evento', $evento->tipo_evento) == 'exposicao' ? 'selected' : '' }}>Exposição</option>
@@ -150,13 +152,15 @@
             </div>
             <div class="col-md-4 mb-3">
                 <label for="data_inicio" class="form-label">Data e Hora de Início</label>
-                <input type="datetime-local" class="form-control" id="data_inicio" name="data_inicio"
+                <input type="datetime-local" class="form-control @error('data_inicio') is-invalid @enderror" id="data_inicio" name="data_inicio"
                        value="{{ old('data_inicio', optional($evento->data_inicio)->format('Y-m-d\TH:i')) }}" required>
+                @error('data_inicio') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-4 mb-3">
                 <label for="data_fim" class="form-label">Data e Hora de Fim</label>
-                <input type="datetime-local" class="form-control" id="data_fim" name="data_fim"
+                <input type="datetime-local" class="form-control @error('data_fim') is-invalid @enderror" id="data_fim" name="data_fim"
                        value="{{ old('data_fim', optional($evento->data_fim)->format('Y-m-d\TH:i')) }}" required>
+                @error('data_fim') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
         </div>
 
@@ -164,22 +168,25 @@
         <div class="row">
             <div class="col-md-4 mb-3">
                 <label for="local" class="form-label">Local</label>
-                <input type="text" class="form-control" id="local" name="local"
+                <input type="text" class="form-control @error('local') is-invalid @enderror" id="local" name="local"
                        value="{{ old('local', $evento->local) }}" required>
+                @error('local') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-3 mb-3">
                 <label for="capacidade_maxima" class="form-label">Capacidade Máx.</label>
-                <input type="number" min="1" class="form-control" id="capacidade_maxima" name="capacidade_maxima"
+                <input type="number" min="1" class="form-control @error('capacidade_maxima') is-invalid @enderror" id="capacidade_maxima" name="capacidade_maxima"
                        value="{{ old('capacidade_maxima', $evento->capacidade_maxima) }}" required>
+                @error('capacidade_maxima') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-2 mb-3">
                 <label for="valor_inscricao" class="form-label">Valor (R$)</label>
-                <input type="number" step="0.01" min="0" class="form-control" id="valor_inscricao" name="valor_inscricao"
+                <input type="number" step="0.01" min="0" class="form-control @error('valor_inscricao') is-invalid @enderror" id="valor_inscricao" name="valor_inscricao"
                        value="{{ old('valor_inscricao', $evento->valor_inscricao) }}" required>
+                @error('valor_inscricao') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-3 mb-3">
                 <label for="status" class="form-label">Status</label>
-                <select class="form-select" id="status" name="status" required>
+                <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
                     <option value="planejado" {{ old('status', $evento->status) == 'planejado' ? 'selected' : '' }}>Planejado</option>
                     <option value="confirmado" {{ old('status', $evento->status) == 'confirmado' ? 'selected' : '' }}>Confirmado</option>
                     <option value="em_andamento" {{ old('status', $evento->status) == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
@@ -194,6 +201,7 @@
             <label for="nome_instrutor" class="form-label">Instrutor Responsável</label>
             <input type="text" list="instrutores_list" class="form-control" id="nome_instrutor" name="nome_instrutor" 
                    placeholder="Digite o nome ou selecione..." value="{{ old('nome_instrutor', optional($evento->instrutor)->nome) }}">
+            @error('nome_instrutor') <div class="invalid-feedback">{{ $message }}</div> @enderror
             <datalist id="instrutores_list">
                 @foreach ($instrutores as $instrutor)
                     <option value="{{ $instrutor->nome }}">
@@ -205,7 +213,8 @@
         {{-- Imagem --}}
         <div class="mb-4">
             <label for="imagem" class="form-label">Imagem do Evento</label>
-            <input class="form-control" type="file" id="imagem" name="imagem" accept="image/*">
+            <input class="form-control @error('imagem') is-invalid @enderror" type="file" id="imagem" name="imagem" accept="image/*">
+            @error('imagem') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
             @if ($evento->imagem)
                 <small class="text-muted d-block mt-2">Imagem atual:</small>

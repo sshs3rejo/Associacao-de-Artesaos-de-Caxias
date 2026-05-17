@@ -10,7 +10,7 @@
     <div class="row justify-content-center">
         <!-- Imagem -->
         <div class="col-12 col-md-5 text-center mb-4">
-            <img class="img-fluid border rounded shadow-sm produto-img" src="{{ $evento->imagem }}" alt="{{ $evento->nome }}">
+            <img class="img-fluid border rounded shadow-sm produto-img" src="{{ $evento->imagem ? asset('storage/' . $evento->imagem) : config('association.placeholder') }}" alt="{{ $evento->nome }}">
         </div>
 
         <!-- Informações -->
@@ -33,7 +33,7 @@
                 <p>Vagas disponíveis: <span class="badge bg-success spanhover">{{$evento->vagas_disponiveis}}</span></p> 
             </div>
             <div>
-                <p>Instrutor: {{$evento->instrutor->nome}}</p> 
+                <p>Instrutor: {{ $evento->instrutor?->nome ?? 'Não informado' }}</p> 
             </div>
             <div >
                 @if($evento->isGratuito())
@@ -47,12 +47,32 @@
 
             <p class="texto-descricao">{{ $evento->descricao }}</p>
 
-            <form action="" method="post">
-                @csrf
-                <button class="btn btn-success w-100 py-2 mt-2 fw-bold ">
-                    Inscrever-se
-                </button>
-            </form>
+            @auth
+                @if($jaInscrito ?? false)
+                    <form action="{{ route('eventos.cancelar-inscricao', $evento->id_evento) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger w-100 py-2 mt-2 fw-bold">
+                            <i class="bi bi-x-circle me-1"></i> Cancelar Inscrição
+                        </button>
+                    </form>
+                @elseif($evento->isLotado())
+                    <button class="btn btn-secondary w-100 py-2 mt-2 fw-bold" disabled>
+                        <i class="bi bi-exclamation-circle me-1"></i> Evento Lotado
+                    </button>
+                @else
+                    <form action="{{ route('eventos.inscrever', $evento->id_evento) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-success w-100 py-2 mt-2 fw-bold">
+                            <i class="bi bi-check-circle me-1"></i> Inscrever-se
+                        </button>
+                    </form>
+                @endif
+            @else
+                <a href="{{ route('login.form') }}" class="btn btn-success w-100 py-2 mt-2 fw-bold">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Faça login para se inscrever
+                </a>
+            @endauth
         </div>
     </div>
 </div>

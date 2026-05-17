@@ -79,12 +79,49 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
     }
 
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
     .dashboard-card {
         background: #fff !important;
         border-radius: 12px !important;
         padding: 1.5rem !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
         border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+
+    .dashboard-card h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-card strong {
+        display: block;
+        font-size: 1.8rem;
+        color: #5C3A2C;
+        font-weight: 700;
+    }
+
+    .dashboard-card a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .dashboard-card a:hover strong {
+        color: #8C5E47;
+    }
+
+    .dashboard-card a:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
     }
 
     /* BOTÕES PRINCIPAIS DO DASHBOARD */
@@ -140,35 +177,6 @@
             padding: 1rem !important;
         }
     }
-    .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.dashboard-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid rgba(0,0,0,0.05);
-}
-
-.dashboard-card h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #444;
-    margin-bottom: 0.5rem;
-}
-
-.dashboard-card strong {
-    display: block;
-    font-size: 1.8rem;
-    color: #5C3A2C;
-    font-weight: 700;
-}
 </style>
 @endsection
 
@@ -204,24 +212,32 @@
     {{-- Estatísticas principais --}}
     <section class="dashboard-grid mb-5">
         <article class="dashboard-card">
-            <h3>Produtos cadastrados</h3>
-            <strong>{{ $stats['produtos'] }}</strong>
+            <a href="{{ route('produtos') }}">
+                <h3>Produtos cadastrados</h3>
+                <strong>{{ $stats['produtos'] }}</strong>
+            </a>
         </article>
         <article class="dashboard-card">
-            <h3>Eventos ativos</h3>
-            <strong>{{ $stats['eventos'] }}</strong>
+            <a href="{{ route('evento') }}">
+                <h3>Eventos ativos</h3>
+                <strong>{{ $stats['eventos'] }}</strong>
+            </a>
         </article>
         <article class="dashboard-card">
             <h3>Categorias de produtos</h3>
             <strong>{{ $stats['categorias'] }}</strong>
         </article>
         <article class="dashboard-card">
-            <h3>Administradores</h3>
-            <strong>{{ $stats['usuariosAdmin'] }}</strong>
+            <a href="{{ route('admin.usuarios') }}">
+                <h3>Administradores</h3>
+                <strong>{{ $stats['usuariosAdmin'] }}</strong>
+            </a>
         </article>
         <article class="dashboard-card">
-            <h3>Usuários ativos</h3>
-            <strong>{{ $stats['usuariosAtivos'] }}</strong>
+            <a href="{{ route('admin.usuarios') }}">
+                <h3>Usuários ativos</h3>
+                <strong>{{ $stats['usuariosAtivos'] }}</strong>
+            </a>
         </article>
     </section>
 
@@ -251,9 +267,7 @@
                                 <td class="px-4 py-3">{{ \Carbon\Carbon::parse($venda->data_venda)->format('d/m/Y') }}</td>
                                 <td class="px-4 py-3">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
                                 <td class="px-4 py-3 text-end">
-                                    <button class="btn btn-sm btn-info text-white" title="Ver Itens">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                                    <span class="text-info" title="Ver Itens"><i class="fas fa-eye"></i></span>
                                 </td>
                             </tr>
                             @empty

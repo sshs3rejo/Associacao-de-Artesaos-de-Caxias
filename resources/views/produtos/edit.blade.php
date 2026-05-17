@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Editar Produto')
+@section('titulo', 'Editar Produto')
 
 @section('content')
 <style>
@@ -97,21 +97,23 @@
         {{-- Nome --}}
         <div class="mb-3">
             <label for="nome" class="form-label">Nome do Produto</label>
-            <input type="text" class="form-control" id="nome" name="nome"
+            <input type="text" class="form-control @error('nome') is-invalid @enderror" id="nome" name="nome"
                    value="{{ old('nome', $produto->nome) }}" required>
+            @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         {{-- Descrição --}}
         <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
-            <textarea class="form-control" id="descricao" name="descricao" rows="4" required>{{ old('descricao', $produto->descricao) }}</textarea>
+            <textarea class="form-control @error('descricao') is-invalid @enderror" id="descricao" name="descricao" rows="4" required>{{ old('descricao', $produto->descricao) }}</textarea>
+            @error('descricao') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         {{-- Categoria / Preço / Quantidade --}}
         <div class="row">
             <div class="col-md-4 mb-3">
                 <label for="id_categoria" class="form-label">Categoria</label>
-                <select class="form-select" id="id_categoria" name="id_categoria" required>
+                <select class="form-select @error('id_categoria') is-invalid @enderror" id="id_categoria" name="id_categoria" required>
                     <option value="">Selecione...</option>
                     @foreach($categorias as $categoria)
                         <option value="{{ $categoria->id_categoria }}" {{ old('id_categoria', $produto->id_categoria) == $categoria->id_categoria ? 'selected' : '' }}>
@@ -119,23 +121,27 @@
                         </option>
                     @endforeach
                 </select>
+                @error('id_categoria') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-4 mb-3">
                 <label for="preco" class="form-label">Preço (R$)</label>
-                <input type="number" step="0.01" class="form-control" id="preco" name="preco"
+                <input type="number" step="0.01" class="form-control @error('preco') is-invalid @enderror" id="preco" name="preco"
                        value="{{ old('preco', $produto->preco) }}" required>
+                @error('preco') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-4 mb-3">
                 <label for="quantidade" class="form-label">Quantidade em Estoque</label>
-                <input type="number" class="form-control" id="quantidade" name="quantidade"
+                <input type="number" class="form-control @error('quantidade') is-invalid @enderror" id="quantidade" name="quantidade"
                        value="{{ old('quantidade', $produto->estoque->quantidade ?? 0) }}" required>
+                @error('quantidade') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
         </div>
 
         {{-- Imagem --}}
         <div class="mb-4">
             <label for="imagem" class="form-label">Imagem do Produto</label>
-            <input class="form-control" type="file" id="imagem" name="imagem" accept="image/*">
+            <input class="form-control @error('imagem') is-invalid @enderror" type="file" id="imagem" name="imagem" accept="image/*">
+            @error('imagem') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
             @if ($produto->imagem)
                 <div id="container-imagem-atual" class="mt-3">

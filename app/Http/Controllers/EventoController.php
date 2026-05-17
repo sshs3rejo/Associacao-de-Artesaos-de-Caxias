@@ -29,7 +29,14 @@ class EventoController extends Controller
     {
         $evento = Eventos::with('instrutor')->find($id);
 
-        return view('eventodetalhes', compact('evento'));
+        $jaInscrito = false;
+        if (auth()->check()) {
+            $jaInscrito = \App\Models\InscricoesEvento::where('id_cliente', auth()->id())
+                ->where('id_evento', $evento->id_evento)
+                ->exists();
+        }
+
+        return view('eventodetalhes', compact('evento', 'jaInscrito'));
     }
 
     /**

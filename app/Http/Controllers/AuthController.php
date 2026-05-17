@@ -2,26 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ArtisanProfile;
+use App\Models\Cliente;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    /**
-     * Exibe o formulário de login
-     */
     public function index()
     {
-        return view('index');
+        return view('auth.login');
     }
 
-    /**
-     * Processa o login do usuário
-     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -31,25 +26,20 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            $user = Auth::user();
 
-            // Verifica se o usuário é admin (Restrição solicitada)
-            if (! Auth::user()->isAdmin()) {
+            if (! $user->isActive()) {
                 Auth::logout();
-                return back()->withErrors([
-                    'email' => 'Acesso restrito apenas para administradores.',
-                ]);
-            }
-
-            // Verifica se o usuário está ativo
-            if (! Auth::user()->isActive()) {
-                Auth::logout();
-
                 return back()->withErrors([
                     'email' => 'Sua conta está inativa. Entre em contato com o administrador.',
                 ]);
             }
 
-            return redirect()->intended(route('admin.dashboard'));
+            if ($user->isAdmin()) {
+                return redirect()->intended(route('admin.dashboard'));
+            }
+
+            return redirect()->intended(route('home'));
         }
 
         return back()->withErrors([
@@ -57,17 +47,11 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    /**
-     * Redireciona para o provedor social
-     */
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->redirect();
     }
 
-    /**
-     * Callback do provedor social
-     */
     public function handleProviderCallback($provider)
     {
         try {
@@ -81,35 +65,30 @@ class AuthController extends Controller
                     ->first();
 
         if ($user) {
-            // Atualiza o ID social se necessário
-            if (!$user->{$provider . '_id'}) {
+            if (! $user->{$provider . '_id'}) {
                 $user->update([$provider . '_id' => $socialUser->getId()]);
             }
         } else {
-            // Se o usuário não existe, poderíamos criar, mas a regra é "apenas admin"
-            // Então, se não for admin já cadastrado, bloqueamos
-            return redirect()->route('login.form')->withErrors(['email' => 'Esta conta social não está vinculada a um administrador.']);
+            return redirect()->route('login.form')->withErrors(['email' => 'Conta não encontrada.']);
         }
 
-        if (!$user->isAdmin()) {
-            return redirect()->route('login.form')->withErrors(['email' => 'Acesso restrito apenas para administradores.']);
+        if (! $user->isActive()) {
+            return redirect()->route('login.form')->withErrors(['email' => 'Sua conta está inativa.']);
         }
 
         Auth::login($user);
-        return redirect()->route('admin.dashboard');
+
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->isArtisan()) {
+            return redirect()->route('artesan.dashboard');
+        }
+
+        return redirect()->route('home');
     }
 
-    /**
-     * Exibe o formulário de registro
-     */
-    public function register()
-    {
-        return view('register');
-    }
-
-    /**
-     * Processa o registro de novo usuário
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -122,25 +101,29 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'user', // Usuários registrados são sempre 'user' por padrão
+            'role' => 'user',
             'is_active' => true,
+        ]);
+
+        Cliente::create([
+            'user_id' => $user->id,
+            'nome' => $validated['name'],
+            'email' => $validated['email'],
+            'telefone' => '',
+            'endereco' => '',
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Conta criada com sucesso!');
+        return redirect()->route('home')
+            ->with('success', 'Cadastro realizado com sucesso!');
     }
 
-    /**
-     * Faz logout do usuário
-     */
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect()->route('home')->with('success', 'Logout realizado com sucesso!');
     }
 }

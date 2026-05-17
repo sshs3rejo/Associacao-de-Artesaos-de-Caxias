@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CategoriasProdutos;
 use App\Models\Eventos;
+use App\Models\InscricoesEvento;
 use App\Models\Instrutores;
 use App\Models\Produto;
 use App\Models\User;
@@ -37,5 +38,14 @@ class AdminDashboardController extends Controller
             'tiposEvento' => $tiposEvento,
             'statusEvento' => $statusEvento,
         ]);
+    }
+
+    public function inscricoes()
+    {
+        $inscricoes = InscricoesEvento::with(['evento', 'cliente'])
+            ->orderBy('data_inscricao', 'desc')
+            ->paginate(20);
+
+        return view('admin.inscricoes', compact('inscricoes'));
     }
 }

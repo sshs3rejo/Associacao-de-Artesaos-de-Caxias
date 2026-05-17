@@ -8,7 +8,7 @@ class InscricoesOficina extends Model
 {
     protected $table = '_inscricoes_oficina';
 
-    protected $primaryKey = 'id_inscricao';
+    protected $primaryKey = 'id';
 
     protected $fillable = ['id_cliente', 'id_oficina', 'data_inscricao'];
 

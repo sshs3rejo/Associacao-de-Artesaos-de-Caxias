@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->command->info('✅ Todos os dados foram inseridos com sucesso!');
         $this->command->info('');
         $this->command->info('📊 Resumo:');
-        $this->command->info('   - 2 usuários (1 admin + 1 normal)');
+        $this->command->info('   - 4 usuários (1 admin, 1 comprador, 2 artesãos aprovados)');
+        $this->command->info('   - 2 perfis de artesão (aprovados)');
         $this->command->info('   - 6 categorias de produtos');
         $this->command->info('   - 18 produtos artesanais');
         $this->command->info('   - 3 instrutores');
