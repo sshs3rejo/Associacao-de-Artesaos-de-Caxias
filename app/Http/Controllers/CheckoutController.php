@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\Estoques;
 use App\Models\Vendas;
+use App\Models\Produto;
+use App\Services\MercadoPagoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
+    public function __construct(
+        protected MercadoPagoService $mercadoPago
+    ) {}
+
     public function store(Request $request)
     {
         $rules = [
@@ -28,60 +34,92 @@ class CheckoutController extends Controller
 
         $validated = $request->validate($rules);
 
-        return DB::transaction(function () use ($validated, $user, $request) {
-            if ($user) {
-                $cliente = Cliente::firstOrCreate(
-                    ['email' => $user->email],
-                    [
-                        'nome' => $user->name,
-                        'telefone' => $user->artisanProfile?->phone ?? null,
-                    ]
-                );
-            } else {
-                $cliente = Cliente::firstOrCreate(
-                    ['email' => $validated['guest_email']],
-                    [
-                        'nome' => $validated['guest_name'],
-                        'telefone' => $validated['guest_phone'] ?? null,
-                    ]
-                );
-            }
-
-            $valorTotal = 0;
-            $itensData = [];
-
-            foreach ($validated['itens'] as $item) {
-                $produto = \App\Models\Produto::findOrFail($item['id_produto']);
-
-                $estoque = Estoques::where('id_produto', $item['id_produto'])->first();
-                if (!$estoque || $estoque->quantidade < $item['quantidade']) {
-                    throw new \Exception("Estoque insuficiente para {$produto->nome}");
+        try {
+            return DB::transaction(function () use ($validated, $user, $request) {
+                if ($user) {
+                    $cliente = Cliente::firstOrCreate(
+                        ['email' => $user->email],
+                        [
+                            'nome' => $user->name,
+                            'telefone' => $user->artisanProfile?->phone ?? null,
+                        ]
+                    );
+                } else {
+                    $cliente = Cliente::firstOrCreate(
+                        ['email' => $validated['guest_email']],
+                        [
+                            'nome' => $validated['guest_name'],
+                            'telefone' => $validated['guest_phone'] ?? null,
+                        ]
+                    );
                 }
 
-                $subtotal = $produto->preco * $item['quantidade'];
-                $valorTotal += $subtotal;
+                $valorTotal = 0;
+                $itensData = [];
+                $mpItens = [];
 
-                $itensData[] = [
-                    'id_produto' => $produto->id_produto,
-                    'quantidade' => $item['quantidade'],
-                    'preco_unitario' => $produto->preco,
-                ];
+                foreach ($validated['itens'] as $item) {
+                    $produto = Produto::findOrFail($item['id_produto']);
 
-                $estoque->decrement('quantidade', $item['quantidade']);
-            }
+                    $estoque = Estoques::where('id_produto', $item['id_produto'])->lockForUpdate()->first();
+                    if (!$estoque || $estoque->quantidade < $item['quantidade']) {
+                        throw new \Exception("Estoque insuficiente para {$produto->nome}");
+                    }
 
-            $venda = Vendas::create([
-                'id_cliente' => $cliente->id_cliente,
-                'data_venda' => now(),
-                'valor_total' => $valorTotal,
-            ]);
+                    $subtotal = $produto->preco * $item['quantidade'];
+                    $valorTotal += $subtotal;
 
-            foreach ($itensData as $item) {
-                $venda->itens()->create($item);
-            }
+                    $itensData[] = [
+                        'id_produto' => $produto->id_produto,
+                        'quantidade' => $item['quantidade'],
+                        'preco_unitario' => $produto->preco,
+                    ];
 
-            return redirect()->route('home')
-                ->with('success', "Pedido #{$venda->id_venda} realizado com sucesso! Total: R$ " . number_format($valorTotal, 2, ',', '.'));
-        });
+                    $mpItens[] = [
+                        'id' => $produto->id_produto,
+                        'nome' => $produto->nome,
+                        'quantidade' => $item['quantidade'],
+                        'preco' => $produto->preco,
+                    ];
+                }
+
+                $venda = Vendas::create([
+                    'id_cliente' => $cliente->id_cliente,
+                    'data_venda' => now(),
+                    'valor_total' => $valorTotal,
+                    'mp_status' => 'pending', // We keep this as pending until WhatsApp confirmation
+                ]);
+
+                foreach ($itensData as $item) {
+                    $venda->itens()->create($item);
+                    
+                    // Baixa de estoque automática (Simulado/WhatsApp)
+                    Estoques::where('id_produto', $item['id_produto'])
+                        ->decrement('quantidade', $item['quantidade']);
+                }
+
+                // Em vez de chamar o Mercado Pago, retornamos sucesso imediato
+                return response()->json([
+                    'success' => true,
+                    'venda_id' => $venda->id_venda,
+                    'valor_total' => $valorTotal,
+                    'redirect_url' => route('checkout.success', $venda->id_venda),
+                ]);
+            });
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+    }
+
+    public function success(Vendas $venda)
+    {
+        $venda->load('itens.produto', 'cliente');
+        return view('checkout.success', compact('venda'));
+    }
+
+    public function cancel(Vendas $venda)
+    {
+        $venda->load('itens.produto', 'cliente');
+        return view('checkout.cancel', compact('venda'));
     }
 }

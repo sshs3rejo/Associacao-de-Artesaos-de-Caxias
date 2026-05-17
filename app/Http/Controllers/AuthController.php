@@ -39,6 +39,14 @@ class AuthController extends Controller
                 return redirect()->intended(route('admin.dashboard'));
             }
 
+            if ($user->isArtisan()) {
+                $profile = $user->artisanProfile;
+                if ($profile && $profile->isApproved()) {
+                    return redirect()->intended(route('artesan.dashboard'));
+                }
+                return redirect()->intended(route('user.perfil'));
+            }
+
             return redirect()->intended(route('home'));
         }
 
@@ -105,13 +113,15 @@ class AuthController extends Controller
             'is_active' => true,
         ]);
 
-        Cliente::create([
-            'user_id' => $user->id,
-            'nome' => $validated['name'],
-            'email' => $validated['email'],
-            'telefone' => '',
-            'endereco' => '',
-        ]);
+        Cliente::updateOrCreate(
+            ['email' => $validated['email']],
+            [
+                'user_id' => $user->id,
+                'nome' => $validated['name'],
+                'telefone' => '',
+                'endereco' => '',
+            ]
+        );
 
         Auth::login($user);
 

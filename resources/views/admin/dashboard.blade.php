@@ -256,18 +256,38 @@
                                 <th class="px-4 py-3">Cliente</th>
                                 <th class="px-4 py-3">Data</th>
                                 <th class="px-4 py-3">Total</th>
+                                <th class="px-4 py-3">Status</th>
                                 <th class="px-4 py-3 text-end">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($vendas as $venda)
                             <tr>
-                                <td class="px-4 py-3">{{ $venda->id_venda }}</td>
+                                <td class="px-4 py-3">#{{ $venda->id_venda }}</td>
                                 <td class="px-4 py-3">{{ $venda->cliente->nome ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ \Carbon\Carbon::parse($venda->data_venda)->format('d/m/Y') }}</td>
                                 <td class="px-4 py-3">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3">
+                                    @if($venda->mp_status === 'approved')
+                                        <span class="badge bg-success">Pago</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Pendente</span>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 text-end">
-                                    <span class="text-info" title="Ver Itens"><i class="fas fa-eye"></i></span>
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        @if($venda->mp_status !== 'approved')
+                                        <form action="{{ route('admin.vendas.aprovar', $venda->id_venda) }}" method="POST" class="d-inline m-0 p-0">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
+                                                <i class="fas fa-check"></i> Aprovar Pix
+                                            </button>
+                                        </form>
+                                        @endif
+                                        <button class="btn btn-outline-secondary p-0 d-flex align-items-center justify-content-center" title="Itens do Pedido: @foreach($venda->itens as $item) {{ $item->produto->nome }} x{{ $item->quantidade }}; @endforeach" style="width: 28px; height: 28px; border-radius: 6px;">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             @empty

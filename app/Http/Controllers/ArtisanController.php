@@ -6,6 +6,7 @@ use App\Models\ArtisanProfile;
 use App\Models\Cliente;
 use App\Models\Eventos;
 use App\Models\InscricoesEvento;
+use App\Models\ItensVenda;
 use App\Models\Produto;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,7 +21,12 @@ class ArtisanController extends Controller
         $eventosInscritos = InscricoesEvento::where('id_cliente', $user->id)->count();
         $perfil = $user->artisanProfile;
 
-        return view('artesan.dashboard', compact('user', 'totalProdutos', 'eventosInscritos', 'perfil'));
+        // Vendas específicas dos produtos deste artesão
+        $minhasVendas = ItensVenda::whereHas('produto', function ($query) use ($user) {
+            $query->where('id_artesan', $user->id);
+        })->with(['venda.cliente', 'produto'])->orderBy('id_item', 'desc')->paginate(10);
+
+        return view('artesan.dashboard', compact('user', 'totalProdutos', 'eventosInscritos', 'perfil', 'minhasVendas'));
     }
 
     public function produtos()

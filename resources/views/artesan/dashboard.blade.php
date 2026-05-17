@@ -97,5 +97,71 @@
             </a>
         </div>
     </div>
+
+    <!-- Histórico de Vendas Próprias -->
+    <div class="row g-4 mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header border-0 bg-white py-3 border-bottom">
+                    <h5 class="fw-bold mb-0" style="color: #7a2f1f;"><i class="bi bi-receipt me-2"></i> Registro de Vendas dos Meus Produtos</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th class="px-4 py-3">Pedido</th>
+                                <th class="px-4 py-3">Produto</th>
+                                <th class="px-4 py-3">Qtd</th>
+                                <th class="px-4 py-3">Preço Unitário</th>
+                                <th class="px-4 py-3">Total</th>
+                                <th class="px-4 py-3">Comprador</th>
+                                <th class="px-4 py-3">Contato</th>
+                                <th class="px-4 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($minhasVendas as $itemVenda)
+                            @if($itemVenda->venda)
+                            <tr>
+                                <td class="px-4 py-3">#{{ $itemVenda->venda->id_venda }}</td>
+                                <td class="px-4 py-3 fw-bold" style="color: #8b5a3c;">{{ $itemVenda->produto->nome ?? 'Produto Excluído' }}</td>
+                                <td class="px-4 py-3">{{ $itemVenda->quantidade }}</td>
+                                <td class="px-4 py-3">R$ {{ number_format($itemVenda->preco_unitario, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3 fw-bold" style="color: #c85a3a;">R$ {{ number_format($itemVenda->preco_unitario * $itemVenda->quantidade, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3">{{ $itemVenda->venda->cliente->nome ?? 'Visitante' }}</td>
+                                <td class="px-4 py-3">
+                                    @if($itemVenda->venda->cliente && $itemVenda->venda->cliente->telefone)
+                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $itemVenda->venda->cliente->telefone) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-2 py-0" style="font-size: 0.8rem;">
+                                            <i class="bi bi-whatsapp"></i> WhatsApp
+                                        </a>
+                                    @else
+                                        <span class="text-muted small">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if($itemVenda->venda->mp_status === 'approved')
+                                        <span class="badge bg-success">Pago</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Aguardando</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endif
+                            @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-muted">Você ainda não registrou nenhuma venda de seus produtos.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                @if($minhasVendas->hasPages())
+                <div class="card-footer bg-white border-0 py-3">
+                    {{ $minhasVendas->links() }}
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

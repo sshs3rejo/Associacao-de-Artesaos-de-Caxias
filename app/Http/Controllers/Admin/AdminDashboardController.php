@@ -48,4 +48,33 @@ class AdminDashboardController extends Controller
 
         return view('admin.inscricoes', compact('inscricoes'));
     }
+
+    public function aprovarVenda(Vendas $venda)
+    {
+        $venda->update(['mp_status' => 'approved']);
+        return redirect()->back()->with('success', 'Pagamento do pedido #' . $venda->id_venda . ' confirmado com sucesso!');
+    }
+
+    public function settings()
+    {
+        return view('admin.settings');
+    }
+
+    public function updateSettings(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'name_short' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'whatsapp' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'instagram' => ['nullable', 'url', 'max:255'],
+            'facebook' => ['nullable', 'url', 'max:255'],
+            'description' => ['required', 'string', 'max:1000'],
+        ]);
+
+        file_put_contents(storage_path('app/settings.json'), json_encode($validated, JSON_PRETTY_PRINT));
+
+        return redirect()->back()->with('success', 'Configurações da Associação atualizadas com sucesso!');
+    }
 }

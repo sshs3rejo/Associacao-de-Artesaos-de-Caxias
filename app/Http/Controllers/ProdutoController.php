@@ -16,7 +16,7 @@ class ProdutoController extends Controller
     {
         $categorias = CategoriasProdutos::all();
 
-        $query = Produto::query();
+        $query = Produto::with(['categoria', 'estoque', 'artisan.artisanProfile']);
 
         if ($request->has('categoria') && $request->categoria != '') {
             $query->where('id_categoria', $request->categoria);

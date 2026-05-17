@@ -10,7 +10,7 @@ class Vendas extends Model
 
     protected $primaryKey = 'id_venda';
 
-    protected $fillable = ['id_cliente', 'data_venda', 'valor_total'];
+    protected $fillable = ['id_cliente', 'data_venda', 'valor_total', 'mp_preference_id', 'mp_payment_id', 'mp_status'];
 
     public function cliente()
     {
@@ -20,5 +20,10 @@ class Vendas extends Model
     public function itensVenda()
     {
         return $this->hasMany(ItensVenda::class, 'id_venda');
+    }
+
+    public function itens()
+    {
+        return $this->itensVenda();
     }
 }

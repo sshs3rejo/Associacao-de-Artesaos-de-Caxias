@@ -92,10 +92,10 @@
                              data-preco="{{ $produto->preco }}"
                              data-descricao="{{ $produto->descricao }}"
                              data-estoque="{{ $produto->estoque ? $produto->estoque->quantidade : 0 }}"
-                             data-imagem="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
+                             data-imagem="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
                             
                             <div class="position-relative overflow-hidden" style="height: 210px; background-color: #f8f9fa;">
-                                <img src="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}" 
+                                <img src="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}" 
                                      class="card-img-top w-100 h-100" alt="{{ $produto->nome }}" style="object-fit: cover; transition: transform 0.3s ease;">
                                 @if($produto->estoque && $produto->estoque->quantidade <= 0)
                                     <div class="position-absolute top-0 end-0 m-2">
@@ -106,6 +106,22 @@
 
                             <div class="card-body d-flex flex-column p-3">
                                 <h3 class="h6 fw-bold mb-1 text-truncate" title="{{ $produto->nome }}" style="color: #7a2f1f;">{{ $produto->nome }}</h3>
+                                
+                                @if($produto->artisan)
+                                    <div class="mb-2 d-flex align-items-center gap-2">
+                                        @if($produto->artisan->artisanProfile && $produto->artisan->artisanProfile->profile_photo)
+                                            <img src="{{ asset('storage/' . $produto->artisan->artisanProfile->profile_photo) }}" alt="Foto de {{ $produto->artisan->name }}" class="rounded-circle" style="width: 20px; height: 20px; object-fit: cover; border: 1px solid #7a2f1f;">
+                                        @else
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 20px; height: 20px; font-size: 0.65rem; background-color: #7a2f1f; font-weight: bold;">
+                                                {{ substr($produto->artisan->name, 0, 1) }}
+                                            </div>
+                                        @endif
+                                        <a href="{{ route('artesao.publico', $produto->artisan->id) }}" class="text-decoration-none small text-muted hover-brown" style="font-size: 0.8rem;" title="Ver portfólio de {{ $produto->artisan->name }}">
+                                            Feito por <span class="fw-bold" style="color: #8b5a3c;">{{ $produto->artisan->name }}</span>
+                                        </a>
+                                    </div>
+                                @endif
+
                                 <div class="d-flex justify-content-between align-items-center mt-auto">
                                     <span class="fw-bold mb-0" style="color: #c85a3a;">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
                                     <div class="d-flex gap-1">
@@ -235,221 +251,12 @@
 
 
 @section('scripts')
-    {{-- O script-produtos.js ainda é necessário, mas vamos modificá-lo --}}
-    <script src="{{asset('js/script-produtos.js')}}"></script>
-
-    {{-- Esse é o novo JS que vai "corrigir" o script antigo --}}
-    {{-- Override das funções do script-produtos.js --}}
     <script>
-        window.renderizarProdutos = function() {};
-        window.filtrarCategoria = function() {};
-
-        window.abrirDetalhes = function(botao) {
-            const card = botao.closest(".produto-card");
-            window.produtoAtual = {
-                id: card.dataset.id,
-                nome: card.dataset.nome,
-                preco: parseFloat(card.dataset.preco),
-                descricao: card.dataset.descricao,
-                imagem: card.dataset.imagem,
-                estoque: parseInt(card.dataset.estoque) || 0,
-            };
-
-            document.getElementById("modal-nome").textContent = window.produtoAtual.nome;
-            document.getElementById("modal-preco").textContent = formatarPreco(window.produtoAtual.preco);
-            document.getElementById("modal-descricao").textContent = window.produtoAtual.descricao;
-            document.getElementById("modal-img").src = window.produtoAtual.imagem;
-            document.getElementById("modal-quantidade").value = 1;
-            document.getElementById("modal-quantidade").max = window.produtoAtual.estoque;
-
-            const estoqueDiv = document.getElementById("modal-estoque");
-            estoqueDiv.innerHTML = window.produtoAtual.estoque > 0
-                ? `<span class="em-estoque">Em estoque (${window.produtoAtual.estoque} disponível)</span>`
-                : `<span class="fora-estoque">Fora de estoque</span>`;
-
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-detalhes")).show();
+        window.Laravel = {
+            auth: {{ auth()->check() ? 'true' : 'false' }},
+            checkoutUrl: '{{ route("checkout.store") }}',
+            csrfToken: '{{ csrf_token() }}'
         };
-
-        // Sobrescreve adicionarAoCarrinho (função antiga) para usar window.produtoAtual e window.carrinho
-        window.adicionarAoCarrinho = function() {
-            const qtd = parseInt(document.getElementById("modal-quantidade").value);
-            const item = window.carrinho.find(i => i.id === window.produtoAtual.id);
-            if (item) {
-                item.quantidade += qtd;
-            } else {
-                window.carrinho.push({
-                    id: window.produtoAtual.id,
-                    nome: window.produtoAtual.nome,
-                    preco: window.produtoAtual.preco,
-                    quantidade: qtd,
-                    imagem: window.produtoAtual.imagem,
-                });
-            }
-            window.atualizarBadge();
-            const bs = bootstrap.Modal.getInstance(document.getElementById("modal-detalhes"));
-            if (bs) bs.hide();
-        };
-
-        window.fecharModal = function() {
-            const modal = document.getElementById("modal-detalhes");
-            const bs = bootstrap.Modal.getInstance(modal);
-            if (bs) { bs.hide(); return; }
-            modal.style.display = "none";
-            document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
-            document.body.classList.remove("modal-open");
-        };
-
-        window.fecharCarrinho = function() {
-            const modal = document.getElementById("modal-carrinho");
-            const bs = bootstrap.Modal.getInstance(modal);
-            if (bs) { bs.hide(); return; }
-            modal.style.display = "none";
-            document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
-            document.body.classList.remove("modal-open");
-        };
-
-        window.onclick = function(event) {
-            const modal = document.getElementById("modal-detalhes");
-            const modalCarrinho = document.getElementById("modal-carrinho");
-            if (event.target === modal) {
-                const bs = bootstrap.Modal.getInstance(modal);
-                if (bs) bs.hide();
-            }
-            if (event.target === modalCarrinho) {
-                const bs = bootstrap.Modal.getInstance(modalCarrinho);
-                if (bs) bs.hide();
-            }
-        };
-
-        window.adicionarRapido = function(botao) {
-            const card = botao.closest(".produto-card");
-            const estoque = parseInt(card.dataset.estoque) || 0;
-            if (estoque <= 0) return;
-            const produto = {
-                id: card.dataset.id,
-                nome: card.dataset.nome,
-                preco: parseFloat(card.dataset.preco),
-                imagem: card.dataset.imagem,
-            };
-            const item = window.carrinho.find(i => i.id === produto.id);
-            if (item) {
-                if (item.quantidade >= estoque) return;
-                item.quantidade += 1;
-            } else {
-                window.carrinho.push({ ...produto, quantidade: 1 });
-            }
-            window.atualizarBadge();
-        };
-
-        window.atualizarBadge = function() {
-            const badge = document.getElementById("badge-carrinho");
-            const total = window.carrinho.reduce((s, i) => s + i.quantidade, 0);
-            badge.textContent = total;
-            badge.style.display = total > 0 ? "inline" : "none";
-        };
-
-        window.abrirCarrinho = function() {
-            const conteudo = document.getElementById("carrinho-conteudo");
-            if (window.carrinho.length === 0) {
-                conteudo.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-cart-x fs-1 d-block mb-2"></i>Seu carrinho está vazio</div>';
-            } else {
-                let html = '<div class="carrinho-itens">';
-                let total = 0;
-                window.carrinho.forEach(item => {
-                    const subtotal = item.preco * item.quantidade;
-                    total += subtotal;
-                    html += `
-                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                            <div>
-                                <div class="fw-bold" style="color: #8b5a3c;">${item.nome}</div>
-                                <div style="color: #c85a3a;">${formatarPreco(item.preco)}</div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="alterarQtd('${item.id}', -1)">-</button>
-                                <span class="fw-bold">${item.quantidade}</span>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="alterarQtd('${item.id}', 1)">+</button>
-                                <span class="fw-bold ms-3" style="color: #c85a3a;">${formatarPreco(subtotal)}</span>
-                                <button class="btn btn-sm btn-outline-danger ms-2" onclick="removerItem('${item.id}')"><i class="fa fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                html += `
-                    <div class="bg-light p-3 rounded mt-3">
-                        <div class="d-flex justify-content-between"><span>Subtotal:</span><span>${formatarPreco(total)}</span></div>
-                        <div class="d-flex justify-content-between"><span>Frete:</span><span>Grátis</span></div>
-                        <div class="d-flex justify-content-between fw-bold fs-5 mt-2 pt-2 border-top" style="color: #8b5a3c;">Total: <span>${formatarPreco(total)}</span></div>
-                    </div>
-                    <div class="d-flex gap-2 mt-3">
-                        <button class="btn flex-fill text-white fw-bold" style="background-color: #7a2f1f;" onclick="finalizarCompra()">
-                            <i class="fa fa-check-circle me-1"></i> Finalizar Compra
-                        </button>
-                        <button class="btn flex-fill btn-outline-secondary" data-bs-dismiss="modal">Continuar Comprando</button>
-                    </div>
-                `;
-            }
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-carrinho")).show();
-        };
-
-        window.alterarQtd = function(id, delta) {
-            const item = window.carrinho.find(i => i.id === id);
-            if (!item) return;
-            item.quantidade += delta;
-            if (item.quantidade <= 0) {
-                window.carrinho = window.carrinho.filter(i => i.id !== id);
-            }
-            window.atualizarBadge();
-            window.abrirCarrinho();
-        };
-
-        window.removerItem = function(id) {
-            window.carrinho = window.carrinho.filter(i => i.id !== id);
-            window.atualizarBadge();
-            window.abrirCarrinho();
-        };
-
-        window.finalizarCompra = function() {
-            if (window.carrinho.length === 0) return;
-            @auth
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '{{ route("checkout.store") }}';
-                form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-                window.carrinho.forEach((item, index) => {
-                    form.innerHTML += `<input type="hidden" name="itens[${index}][id_produto]" value="${item.id}">`;
-                    form.innerHTML += `<input type="hidden" name="itens[${index}][quantidade]" value="${item.quantidade}">`;
-                });
-                document.body.appendChild(form);
-                form.submit();
-            @else
-                bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-guest-checkout")).show();
-            @endauth
-        };
-
-        window.enviarCheckoutGuest = function() {
-            const name = document.getElementById('guest_name').value.trim();
-            const email = document.getElementById('guest_email').value.trim();
-            if (!name || !email) return;
-
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ route("checkout.store") }}';
-            form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-            form.innerHTML += `<input type="hidden" name="guest_name" value="${name}">`;
-            form.innerHTML += `<input type="hidden" name="guest_email" value="${email}">`;
-            form.innerHTML += `<input type="hidden" name="guest_phone" value="${document.getElementById('guest_phone').value}">`;
-            window.carrinho.forEach((item, index) => {
-                form.innerHTML += `<input type="hidden" name="itens[${index}][id_produto]" value="${item.id}">`;
-                form.innerHTML += `<input type="hidden" name="itens[${index}][quantidade]" value="${item.quantidade}">`;
-            });
-            document.body.appendChild(form);
-            form.submit();
-        };
-
-        document.addEventListener("DOMContentLoaded", function() {
-            if (typeof window.carrinho === 'undefined') window.carrinho = [];
-            window.atualizarBadge();
-        });
     </script>
+    <script src="{{ asset('js/cart.js') }}"></script>
 @endsection

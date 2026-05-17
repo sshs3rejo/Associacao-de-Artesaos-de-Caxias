@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\InscricaoController;
+use App\Http\Controllers\MercadoPagoWebhookController;
 use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ContatoController;
@@ -42,8 +43,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/eventos/{evento}/cancelar-inscricao', [InscricaoController::class, 'destroy'])->name('eventos.cancelar-inscricao');
 });
 
-// Checkout (aceita visitantes)
+// Checkout com Mercado Pago
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/{venda}/success', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::get('/checkout/{venda}/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 
 // Tornar-se artesão via perfil
 Route::middleware(['auth'])->group(function () {
@@ -66,7 +69,8 @@ Route::get('/artesao/{user}', [ArtisanController::class, 'publico'])->name('arte
 // Rotas Administrativas
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/settings', fn () => view('admin.settings'))->name('admin.settings');
+    Route::get('/admin/settings', [AdminDashboardController::class, 'settings'])->name('admin.settings');
+    Route::post('/admin/settings', [AdminDashboardController::class, 'updateSettings'])->name('admin.settings.update');
     
     // Gestão de Artesãos
     Route::get('/admin/artesao', [AdminArtisanController::class, 'index'])->name('admin.artesao');
@@ -78,6 +82,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Gestão de Inscrições
     Route::get('/admin/inscricoes', [AdminDashboardController::class, 'inscricoes'])->name('admin.inscricoes');
+    
+    // Gestão de Vendas (Confirmar Pagamento do WhatsApp/Pix)
+    Route::post('/admin/vendas/{venda}/aprovar', [AdminDashboardController::class, 'aprovarVenda'])->name('admin.vendas.aprovar');
 
     // ✅ Rotas específicas devem vir antes das com {id}
     Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');
@@ -96,3 +103,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // ⚠️ Importante: rota de show deve ficar DEPOIS da “create”
 Route::get('/eventos/{id}', [EventoController::class, 'show'])->name('eventos.show');
+
+// Webhook Mercado Pago (sem CSRF)
+Route::post('/webhooks/mercadopago', [MercadoPagoWebhookController::class, 'handle'])
+    ->name('webhooks.mercadopago')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
