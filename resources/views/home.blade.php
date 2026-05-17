@@ -73,19 +73,16 @@
         </div>
     </section>
 
-    <!-- MODAL DA GALERIA (Bootstrap Modal) -->
-    <div class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content" style="background-color: #F9F7D3;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" id="galleryModalLabel" style="color: #7a2f1f;">Título</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center p-4">
-                    <img id="modalImage" src="" alt="Imagem do Artesanato" class="img-fluid rounded shadow-sm mb-4" style="max-height: 500px;">
-                    <p id="modalDescription" class="fs-5 text-muted">Descrição</p>
-                </div>
-            </div>
+    <!-- MODAL DA GALERIA (Custom, sem Bootstrap Modal) -->
+    <div id="galleryOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9998;"></div>
+    <div id="galleryModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9999; width:90%; max-width:800px; max-height:90vh; background:#F9F7D3; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,0.3); overflow-y:auto;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 24px 0;">
+            <h5 id="galleryModalLabel" style="margin:0; font-weight:700; color:#7a2f1f;">Título</h5>
+            <button id="galleryCloseBtn" style="background:none; border:none; font-size:28px; cursor:pointer; color:#7a2f1f; line-height:1;">&times;</button>
+        </div>
+        <div style="text-align:center; padding:20px 24px 24px;">
+            <img id="modalImage" src="" alt="" style="max-width:100%; max-height:500px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:16px;">
+            <p id="modalDescription" style="font-size:1.1rem; color:#6c757d; margin:0;">Descrição</p>
         </div>
     </div>
 @endsection
@@ -120,24 +117,25 @@
                 }
             ];
 
+            function abrirGaleria(item) {
+                document.getElementById('modalImage').src = item.src;
+                document.getElementById('galleryModalLabel').textContent = item.title;
+                document.getElementById('modalDescription').textContent = item.description;
+                document.getElementById('galleryOverlay').style.display = 'block';
+                document.getElementById('galleryModal').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function fecharGaleria() {
+                document.getElementById('galleryOverlay').style.display = 'none';
+                document.getElementById('galleryModal').style.display = 'none';
+                document.body.style.overflow = '';
+            }
+
+            document.getElementById('galleryCloseBtn').addEventListener('click', fecharGaleria);
+            document.getElementById('galleryOverlay').addEventListener('click', fecharGaleria);
+
             const galleryContainer = document.getElementById('artesanatos-gallery');
-            const modalEl = document.getElementById('galleryModal');
-            const galleryModal = new bootstrap.Modal(modalEl);
-            const modalImg = document.getElementById('modalImage');
-            const modalTitle = document.getElementById('galleryModalLabel');
-            const modalDescription = document.getElementById('modalDescription');
-
-            // Fecha modal explicitamente no botão X
-            modalEl.querySelector('.btn-close').addEventListener('click', function(e) {
-                e.preventDefault();
-                galleryModal.hide();
-            });
-
-            // Garante que qualquer backdrop residual seja removido
-            modalEl.addEventListener('hidden.bs.modal', function() {
-                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-                document.body.classList.remove('modal-open');
-            });
 
             if (galleryContainer) {
                 galleryItems.forEach((item) => {
@@ -150,12 +148,7 @@
                         </div>
                     `;
                     
-                    col.querySelector('.card').addEventListener('click', () => {
-                        modalImg.src = item.src;
-                        modalTitle.textContent = item.title;
-                        modalDescription.textContent = item.description;
-                        galleryModal.show();
-                    });
+                    col.querySelector('.card').addEventListener('click', () => abrirGaleria(item));
                     
                     // Efeito hover simples
                     col.querySelector('.card').addEventListener('mouseenter', function() { this.style.transform = 'translateY(-5px)'; });

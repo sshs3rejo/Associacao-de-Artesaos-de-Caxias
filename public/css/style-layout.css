@@ -263,7 +263,7 @@ footer a:hover {
 }
 
 .modal-backdrop {
-    z-index: 2040 !important;
+    z-index: -1 !important;
 }
 
 /* Garante que nada no layout-main "prenda" o modal */
