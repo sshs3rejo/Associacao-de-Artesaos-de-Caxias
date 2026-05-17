@@ -24,3 +24,5 @@ Homestead.yaml
 Thumbs.db
 /docker-compose.yml
 /docker/
+cookies.txt
+cookies_*.txt
