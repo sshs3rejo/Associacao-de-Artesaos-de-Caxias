@@ -16,7 +16,7 @@ class InscricaoController extends Controller
             return back()->withErrors(['msg' => 'Este evento está lotado.']);
         }
 
-        if ($evento->status !== 'ativo' && $evento->status !== 'confirmado') {
+        if (!$evento->isAtivo()) {
             return back()->withErrors(['msg' => 'Este evento não está disponível para inscrição.']);
         }
 
