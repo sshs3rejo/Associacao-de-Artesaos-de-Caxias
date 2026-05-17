@@ -42,4 +42,15 @@ class AdminArtisanController extends Controller
 
         return back()->with('success', "Artesão {$user->name} foi desativado.");
     }
+
+    public function ativar(User $user)
+    {
+        if ($user->role !== 'artisan') {
+            return back()->withErrors(['msg' => 'Usuário não é artesão.']);
+        }
+
+        $user->update(['is_active' => true]);
+
+        return back()->with('success', "Artesão {$user->name} foi reativado com sucesso!");
+    }
 }

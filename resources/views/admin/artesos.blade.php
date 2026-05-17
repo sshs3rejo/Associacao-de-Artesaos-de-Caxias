@@ -62,6 +62,13 @@
                                                 <i class="bi bi-x-lg"></i> Desativar
                                             </button>
                                         </form>
+                                    @else
+                                        <form action="{{ route('admin.artesao.ativar', $artesao) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Reativar este artesão?')">
+                                                <i class="bi bi-check-lg"></i> Ativar
+                                            </button>
+                                        </form>
                                     @endif
                                 </div>
                             </td>
@@ -72,4 +79,12 @@
         </div>
     @endif
 </div>
+
+<script>
+    function confirmarExclusao(button) {
+        if (confirm('Tem certeza de que deseja desativar este artesão? Os produtos dele continuarão salvos mas marcados como inativos.')) {
+            button.closest('form').submit();
+        }
+    }
+</script>
 @endsection

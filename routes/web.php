@@ -83,9 +83,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/artesao', [AdminArtisanController::class, 'index'])->name('admin.artesao');
     Route::post('/admin/artesao/{user}/aprovar', [AdminArtisanController::class, 'aprovar'])->name('admin.artesao.aprovar');
     Route::post('/admin/artesao/{user}/rejeitar', [AdminArtisanController::class, 'rejeitar'])->name('admin.artesao.rejeitar');
+    Route::post('/admin/artesao/{user}/ativar', [AdminArtisanController::class, 'ativar'])->name('admin.artesao.ativar');
 
     // Gestão de Usuários
     Route::get('/admin/usuarios', [AdminUserController::class, 'index'])->name('admin.usuarios');
+    Route::post('/admin/usuarios/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('admin.usuarios.toggle-status');
+    Route::post('/admin/usuarios/{user}/change-role', [AdminUserController::class, 'changeRole'])->name('admin.usuarios.change-role');
+    Route::delete('/admin/usuarios/{user}', [AdminUserController::class, 'destroy'])->name('admin.usuarios.destroy');
 
     // Gestão de Inscrições
     Route::get('/admin/inscricoes', [AdminDashboardController::class, 'inscricoes'])->name('admin.inscricoes');
