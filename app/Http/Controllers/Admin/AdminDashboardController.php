@@ -33,6 +33,9 @@ class AdminDashboardController extends Controller
         // Produtos aguardando aprovação
         $produtosPendentes = Produto::where('is_approved', false)->with('artisan')->get();
 
+        // Eventos aguardando aprovação
+        $eventosPendentes = Eventos::where('is_approved', false)->with('artisan')->get();
+
         return view('admin.dashboard', [
             'stats' => $stats,
             'vendas' => $vendas,
@@ -41,6 +44,7 @@ class AdminDashboardController extends Controller
             'tiposEvento' => $tiposEvento,
             'statusEvento' => $statusEvento,
             'produtosPendentes' => $produtosPendentes,
+            'eventosPendentes' => $eventosPendentes,
         ]);
     }
 
@@ -63,6 +67,12 @@ class AdminDashboardController extends Controller
     {
         $produto->update(['is_approved' => true]);
         return redirect()->back()->with('success', 'Produto "' . $produto->nome . '" aprovado com sucesso e publicado na vitrine!');
+    }
+
+    public function aprovarEvento(Eventos $evento)
+    {
+        $evento->update(['is_approved' => true]);
+        return redirect()->back()->with('success', 'Evento "' . $evento->nome . '" aprovado com sucesso e publicado na agenda!');
     }
 
     public function settings()

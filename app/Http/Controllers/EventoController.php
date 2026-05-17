@@ -14,7 +14,7 @@ class EventoController extends Controller
      */
     public function index()
     {
-        $eventos = Eventos::where('status', '!=', 'cancelado')
+        $eventos = Eventos::approved()->where('status', '!=', 'cancelado')
             ->where('data_inicio', '>=', now())
             ->orderBy('data_inicio', 'asc')
             ->get();

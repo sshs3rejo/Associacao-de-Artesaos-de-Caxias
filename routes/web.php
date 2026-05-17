@@ -64,6 +64,8 @@ Route::middleware(['auth', 'artisan'])->prefix('artesan')->name('artesan.')->gro
     Route::post('/produtos', [ArtisanController::class, 'salvarProduto'])->name('produtos.salvar');
     
     Route::get('/eventos', [ArtisanController::class, 'eventos'])->name('eventos');
+    Route::get('/eventos/criar', [ArtisanController::class, 'criarEvento'])->name('eventos.criar');
+    Route::post('/eventos', [ArtisanController::class, 'salvarEvento'])->name('eventos.salvar');
     Route::get('/perfil', [ArtisanController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [ArtisanController::class, 'atualizarPerfil'])->name('perfil.atualizar');
 });
@@ -93,6 +95,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     // Gestão de Produtos (Aprovar Proposta do Artesão)
     Route::post('/admin/produtos/{produto}/aprovar', [AdminDashboardController::class, 'aprovarProduto'])->name('admin.produtos.aprovar');
+    
+    // Gestão de Eventos (Aprovar Proposta do Artesão)
+    Route::post('/admin/eventos/{evento}/aprovar', [AdminDashboardController::class, 'aprovarEvento'])->name('admin.eventos.aprovar');
 
     // ✅ Rotas específicas devem vir antes das com {id}
     Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');

@@ -23,7 +23,19 @@ class Eventos extends Model
         'status',
         'id_instrutor',
         'imagem',
+        'is_approved',
+        'id_artesan',
     ];
+
+    public function artisan()
+    {
+        return $this->belongsTo(User::class, 'id_artesan');
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
+    }
 
     protected $casts = [
         'data_inicio' => 'datetime',

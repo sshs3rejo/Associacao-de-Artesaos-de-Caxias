@@ -41,7 +41,8 @@ class ArtisanController extends Controller
     {
         $user = auth()->user();
         $inscricoes = InscricoesEvento::where('id_cliente', $user->id)->with('evento')->get();
-        return view('artesan.eventos', compact('inscricoes'));
+        $eventosPropostos = Eventos::where('id_artesan', $user->id)->orderBy('id_evento', 'desc')->get();
+        return view('artesan.eventos', compact('inscricoes', 'eventosPropostos'));
     }
 
     public function perfil()
@@ -198,5 +199,40 @@ class ArtisanController extends Controller
         ]);
 
         return redirect()->route('artesan.produtos')->with('success', 'Produto proposto com sucesso! Aguarde a aprovação do administrador.');
+    }
+
+    public function criarEvento()
+    {
+        return view('artesan.eventos-create');
+    }
+
+    public function salvarEvento(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'tipo_evento' => 'required|in:feira,exposicao,workshop,lancamento,palestra,outro',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'required|date|after_or_equal:data_inicio',
+            'local' => 'required|string|max:255',
+            'capacidade_maxima' => 'required|integer|min:1',
+            'valor_inscricao' => 'required|numeric|min:0',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $validated['id_artesan'] = $user->id;
+        $validated['is_approved'] = false; // Aguardando aprovação!
+        $validated['status'] = 'planejado';
+        $validated['vagas_disponiveis'] = $validated['capacidade_maxima'];
+
+        if ($request->hasFile('imagem')) {
+            $validated['imagem'] = $request->file('imagem')->store('eventos', 'public');
+        }
+
+        Eventos::create($validated);
+
+        return redirect()->route('artesan.eventos')->with('success', 'Proposta de evento enviada com sucesso! Aguarde a aprovação do administrador.');
     }
 }

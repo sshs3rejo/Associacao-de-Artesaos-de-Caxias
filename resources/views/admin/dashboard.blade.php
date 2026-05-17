@@ -358,5 +358,60 @@
             </div>
         </div>
     </div>
+
+    <!-- Propostas de Eventos Pendentes -->
+    <div class="row g-4 mt-5">
+        <div class="col-12">
+            <div class="data-table p-0">
+                <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+                    <h2 class="h5 mb-0 fw-bold" style="color: #7a2f1f;"><i class="bi bi-calendar-event me-2"></i> Propostas de Eventos Pendentes</h2>
+                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3">{{ $eventosPendentes->count() }} aguardando</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th class="px-4 py-3">Capa</th>
+                                <th class="px-4 py-3">Nome</th>
+                                <th class="px-4 py-3">Proponente</th>
+                                <th class="px-4 py-3">Tipo</th>
+                                <th class="px-4 py-3">Data Início</th>
+                                <th class="px-4 py-3">Local</th>
+                                <th class="px-4 py-3">Preço</th>
+                                <th class="px-4 py-3 text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($eventosPendentes as $evPendente)
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <img src="{{ $evPendente->imagem ? asset('storage/' . $evPendente->imagem) : config('association.placeholder') }}" alt="{{ $evPendente->nome }}" class="rounded shadow-sm" style="width: 55px; height: 40px; object-fit: cover;">
+                                </td>
+                                <td class="px-4 py-3 fw-bold" style="color: #8b5a3c;">{{ $evPendente->nome }}</td>
+                                <td class="px-4 py-3">{{ $evPendente->artisan->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3"><span class="badge bg-secondary">{{ ucfirst($evPendente->tipo_evento) }}</span></td>
+                                <td class="px-4 py-3">{{ $evPendente->data_inicio?->format('d/m/Y H:i') ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $evPendente->local }}</td>
+                                <td class="px-4 py-3 fw-bold text-success">{{ $evPendente->isGratuito() ? 'Gratuito' : 'R$ ' . number_format($evPendente->valor_inscricao, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-end">
+                                    <form action="{{ route('admin.eventos.aprovar', $evPendente->id_evento) }}" method="POST" class="d-inline m-0 p-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1 ms-auto" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
+                                            <i class="fas fa-check"></i> Aprovar e Publicar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-muted">Nenhum evento pendente de aprovação.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
