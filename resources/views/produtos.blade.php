@@ -270,16 +270,42 @@
             bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-detalhes")).show();
         };
 
+        // Sobrescreve adicionarAoCarrinho (função antiga) para usar window.produtoAtual e window.carrinho
+        window.adicionarAoCarrinho = function() {
+            const qtd = parseInt(document.getElementById("modal-quantidade").value);
+            const item = window.carrinho.find(i => i.id === window.produtoAtual.id);
+            if (item) {
+                item.quantidade += qtd;
+            } else {
+                window.carrinho.push({
+                    id: window.produtoAtual.id,
+                    nome: window.produtoAtual.nome,
+                    preco: window.produtoAtual.preco,
+                    quantidade: qtd,
+                    imagem: window.produtoAtual.imagem,
+                });
+            }
+            window.atualizarBadge();
+            const bs = bootstrap.Modal.getInstance(document.getElementById("modal-detalhes"));
+            if (bs) bs.hide();
+        };
+
         window.fecharModal = function() {
             const modal = document.getElementById("modal-detalhes");
             const bs = bootstrap.Modal.getInstance(modal);
-            if (bs) bs.hide();
+            if (bs) { bs.hide(); return; }
+            modal.style.display = "none";
+            document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+            document.body.classList.remove("modal-open");
         };
 
         window.fecharCarrinho = function() {
             const modal = document.getElementById("modal-carrinho");
             const bs = bootstrap.Modal.getInstance(modal);
-            if (bs) bs.hide();
+            if (bs) { bs.hide(); return; }
+            modal.style.display = "none";
+            document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+            document.body.classList.remove("modal-open");
         };
 
         window.onclick = function(event) {
@@ -381,10 +407,6 @@
             window.carrinho = window.carrinho.filter(i => i.id !== id);
             window.atualizarBadge();
             window.abrirCarrinho();
-        };
-
-        window.fecharCarrinho = function() {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-carrinho")).hide();
         };
 
         window.finalizarCompra = function() {
