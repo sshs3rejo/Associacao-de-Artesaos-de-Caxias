@@ -270,6 +270,31 @@
             bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-detalhes")).show();
         };
 
+        window.fecharModal = function() {
+            const modal = document.getElementById("modal-detalhes");
+            const bs = bootstrap.Modal.getInstance(modal);
+            if (bs) bs.hide();
+        };
+
+        window.fecharCarrinho = function() {
+            const modal = document.getElementById("modal-carrinho");
+            const bs = bootstrap.Modal.getInstance(modal);
+            if (bs) bs.hide();
+        };
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("modal-detalhes");
+            const modalCarrinho = document.getElementById("modal-carrinho");
+            if (event.target === modal) {
+                const bs = bootstrap.Modal.getInstance(modal);
+                if (bs) bs.hide();
+            }
+            if (event.target === modalCarrinho) {
+                const bs = bootstrap.Modal.getInstance(modalCarrinho);
+                if (bs) bs.hide();
+            }
+        };
+
         window.adicionarRapido = function(botao) {
             const card = botao.closest(".produto-card");
             const estoque = parseInt(card.dataset.estoque) || 0;
