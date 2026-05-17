@@ -9,7 +9,7 @@ class PaginaController extends Controller
     public function home()
     {
         // Buscar próximos eventos (não cancelados e futuros)
-        $eventos = Eventos::where('status', '!=', 'cancelado')
+        $eventos = Eventos::approved()->where('status', '!=', 'cancelado')
             ->where('data_inicio', '>=', now())
             ->orderBy('data_inicio', 'asc')
             ->limit(6)
