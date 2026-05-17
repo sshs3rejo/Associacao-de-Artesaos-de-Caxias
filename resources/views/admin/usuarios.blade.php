@@ -40,7 +40,7 @@
                                 <form action="{{ route('admin.usuarios.change-role', $u->id) }}" method="POST" class="d-flex align-items-center gap-1 m-0">
                                     @csrf
                                     <select name="role" class="form-select form-select-sm rounded-pill" style="max-width: 130px; font-size: 0.85rem;" onchange="this.form.submit()">
-                                        <option value="client" {{ $u->role === 'client' ? 'selected' : '' }}>Comprador</option>
+                                        <option value="user" {{ $u->role === 'user' ? 'selected' : '' }}>Comprador</option>
                                         <option value="artisan" {{ $u->role === 'artisan' ? 'selected' : '' }}>Artesão</option>
                                         <option value="admin" {{ $u->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                     </select>

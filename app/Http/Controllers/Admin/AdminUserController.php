@@ -32,7 +32,7 @@ class AdminUserController extends Controller
     public function changeRole(Request $request, User $user)
     {
         $request->validate([
-            'role' => 'required|in:admin,artisan,client'
+            'role' => 'required|in:admin,artisan,user'
         ]);
 
         $user->update([
