@@ -109,9 +109,7 @@
                 cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Sim, excluir!',
                 cancelButtonText: 'Cancelar',
-                background: '#F9F7D3',
-                color: '#5C3A2C',
-                borderRadius: '1rem'
+                borderRadius: '3rem'
             }).then((result) => {
                 if (result.isConfirmed && formToDelete) {
                     formToDelete.submit();

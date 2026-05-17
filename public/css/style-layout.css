@@ -4,7 +4,8 @@
 */
 
 /* Reset e Base */
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -23,7 +24,7 @@ body {
 .layout-main {
     flex: 1 0 auto;
     width: 100%;
-    
+
     /* Configuração da Transição (Apenas Conteúdo) */
     opacity: 0;
     transition: opacity 0.15s ease-in-out;
@@ -66,18 +67,20 @@ footer {
 }
 
 /* Transições Suaves Globais */
-.btn, .card, .nav-link {
+.btn,
+.card,
+.nav-link {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Rodapé Padronizado */
@@ -104,14 +107,17 @@ footer a:hover {
         padding: 20px;
         border-radius: 0 0 15px 15px;
         margin-top: 10px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
+
     .navbar-nav {
         text-align: center;
     }
+
     .nav-item {
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
+
     .nav-item:last-child {
         border-bottom: none;
     }
@@ -155,6 +161,7 @@ footer a:hover {
     .navbar-brand span {
         font-size: 1rem !important;
     }
+
     .navbar-brand img {
         height: 35px !important;
     }
@@ -166,18 +173,27 @@ footer a:hover {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
 /* Ajustes de Paginação Responsiva */
 @media (max-width: 768px) {
+
     /* Esconde o texto "Showing X to Y of Z results" no mobile */
     nav .flex-1.d-none.d-sm-flex {
         display: none !important;
     }
-    
+
     /* Centraliza os botões de página no mobile */
-    nav .relative.z-0.inline-flex, 
+    nav .relative.z-0.inline-flex,
     nav .pagination {
         margin: 0 auto;
     }
@@ -186,7 +202,7 @@ footer a:hover {
     nav p.small.text-muted {
         display: none !important;
     }
-    
+
     nav .justify-content-between {
         justify-content: center !important;
     }
@@ -211,7 +227,8 @@ footer a:hover {
 }
 
 .pagination-wrapper .page-link {
-    border-radius: 50% !important; /* Deixa os números circulares */
+    border-radius: 50% !important;
+    /* Deixa os números circulares */
     color: #7a2f1f;
     border: 1px solid rgba(122, 47, 31, 0.1);
     width: 36px;
@@ -236,7 +253,8 @@ footer a:hover {
 
 /* Garante que o conteúdo principal ocupe o espaço necessário para empurrar o footer */
 .layout-main {
-    min-height: calc(100vh - 200px); /* Ajuste baseado na altura aproximada da navbar+footer */
+    min-height: calc(100vh - 200px);
+    /* Ajuste baseado na altura aproximada da navbar+footer */
 }
 
 /* RESOLUÇÃO DEFINITIVA DO BUG DE TELA ESCURA (Z-INDEX BATTLE) */
@@ -252,4 +270,9 @@ footer a:hover {
 .layout-main {
     position: relative;
     z-index: 1;
+}
+
+/* SweetAlert2 com cantos arredondados iguais ao projeto */
+.swal2-popup {
+    border-radius: 1rem !important;
 }
