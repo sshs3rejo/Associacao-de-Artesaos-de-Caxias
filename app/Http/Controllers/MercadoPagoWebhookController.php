@@ -52,12 +52,8 @@ class MercadoPagoWebhookController extends Controller
                 'mp_status' => $this->mapMpStatus($payment->status),
             ]);
 
-            if ($payment->status === 'approved') {
-                foreach ($venda->itens as $item) {
-                    Estoques::where('id_produto', $item->id_produto)
-                        ->decrement('quantidade', $item->quantidade);
-                }
-            }
+            // O estoque já foi pré-reservado/decrementado de forma segura no CheckoutController
+            // para evitar concorrência. Aqui apenas atualizamos o status do pagamento.
 
             return response()->json(['ok' => true]);
         } catch (\Exception $e) {
