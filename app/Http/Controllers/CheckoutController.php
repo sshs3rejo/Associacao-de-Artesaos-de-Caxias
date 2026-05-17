@@ -6,15 +6,14 @@ use App\Models\Cliente;
 use App\Models\Estoques;
 use App\Models\Vendas;
 use App\Models\Produto;
-use App\Services\MercadoPagoService;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
-    public function __construct(
-        protected MercadoPagoService $mercadoPago
-    ) {}
+    // Construtor vazio ou removido, já que não temos mais dependências a injetar.
+    public function __construct() {}
 
     public function store(Request $request)
     {

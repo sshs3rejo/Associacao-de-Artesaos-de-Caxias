@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\InscricaoController;
-use App\Http\Controllers\MercadoPagoWebhookController;
+
 use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ContatoController;
@@ -20,9 +20,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'store'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Rotas de Login Social
-Route::get('/auth/{provider}/redirect', [AuthController::class, 'redirectToProvider'])->name('social.login');
-Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderCallback'])->name('social.callback');
+
 
 // Rota Padrão
 Route::get('/', [PaginaController::class, 'home'])->name('home');
@@ -121,7 +119,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // ⚠️ Importante: rota de show deve ficar DEPOIS da “create”
 Route::get('/eventos/{id}', [EventoController::class, 'show'])->name('eventos.show');
 
-// Webhook Mercado Pago (sem CSRF)
-Route::post('/webhooks/mercadopago', [MercadoPagoWebhookController::class, 'handle'])
-    ->name('webhooks.mercadopago')
-    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+

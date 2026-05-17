@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Socialite\Facades\Socialite;
+
 
 class AuthController extends Controller
 {
@@ -55,47 +55,7 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function redirectToProvider($provider)
-    {
-        return Socialite::driver($provider)->redirect();
-    }
 
-    public function handleProviderCallback($provider)
-    {
-        try {
-            $socialUser = Socialite::driver($provider)->user();
-        } catch (\Exception $e) {
-            return redirect()->route('login.form')->withErrors(['email' => 'Erro na autenticação social.']);
-        }
-
-        $user = User::where($provider . '_id', $socialUser->getId())
-                    ->orWhere('email', $socialUser->getEmail())
-                    ->first();
-
-        if ($user) {
-            if (! $user->{$provider . '_id'}) {
-                $user->update([$provider . '_id' => $socialUser->getId()]);
-            }
-        } else {
-            return redirect()->route('login.form')->withErrors(['email' => 'Conta não encontrada.']);
-        }
-
-        if (! $user->isActive()) {
-            return redirect()->route('login.form')->withErrors(['email' => 'Sua conta está inativa.']);
-        }
-
-        Auth::login($user);
-
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        if ($user->isArtisan()) {
-            return redirect()->route('artesan.dashboard');
-        }
-
-        return redirect()->route('home');
-    }
 
     public function store(Request $request)
     {

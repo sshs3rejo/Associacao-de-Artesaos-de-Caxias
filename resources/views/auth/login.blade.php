@@ -171,54 +171,7 @@
             transform: scale(0.97);
         }
 
-        .social-login-container {
-            margin-top: 25px;
-            width: 100%;
-        }
 
-        .social-login-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #aaa;
-            font-size: 0.8rem;
-            margin-bottom: 15px;
-        }
-
-        .social-login-title::before, .social-login-title::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #ddd;
-        }
-
-        .social-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .btn-social {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: white;
-            transition: transform 0.3s ease;
-            text-decoration: none;
-        }
-
-        .btn-social:hover {
-            transform: translateY(-4px);
-            opacity: 0.9;
-        }
-
-        .btn-google { background: #fff; color: #db4437; border: 1px solid #ddd; }
-        .btn-apple { background: #000; }
-        .btn-microsoft { background: #00a4ef; }
 
         .toggle-link {
             text-align: center;
@@ -314,14 +267,7 @@
                     </div>
                 </form>
 
-                <div class="social-login-container">
-                    <p class="social-login-title">Ou continue com</p>
-                    <div class="social-buttons">
-                        <a href="{{ route('social.login', 'google') }}" class="btn-social btn-google"><i class="fab fa-google"></i></a>
-                        <a href="{{ route('social.login', 'apple') }}" class="btn-social btn-apple"><i class="fab fa-apple"></i></a>
-                        <a href="{{ route('social.login', 'microsoft') }}" class="btn-social btn-microsoft"><i class="fab fa-microsoft"></i></a>
-                    </div>
-                </div>
+
 
                 <p class="toggle-link" id="LoginBtn">Criar nova conta</p>
             </div>
