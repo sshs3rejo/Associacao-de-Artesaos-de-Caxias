@@ -121,10 +121,23 @@
             ];
 
             const galleryContainer = document.getElementById('artesanatos-gallery');
-            const galleryModal = new bootstrap.Modal(document.getElementById('galleryModal'));
+            const modalEl = document.getElementById('galleryModal');
+            const galleryModal = new bootstrap.Modal(modalEl);
             const modalImg = document.getElementById('modalImage');
             const modalTitle = document.getElementById('galleryModalLabel');
             const modalDescription = document.getElementById('modalDescription');
+
+            // Fecha modal explicitamente no botão X
+            modalEl.querySelector('.btn-close').addEventListener('click', function(e) {
+                e.preventDefault();
+                galleryModal.hide();
+            });
+
+            // Garante que qualquer backdrop residual seja removido
+            modalEl.addEventListener('hidden.bs.modal', function() {
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+            });
 
             if (galleryContainer) {
                 galleryItems.forEach((item) => {
