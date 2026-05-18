@@ -43,6 +43,7 @@ class Eventos extends Model
         'valor_inscricao' => 'decimal:2',
         'capacidade_maxima' => 'integer',
         'vagas_disponiveis' => 'integer',
+        'is_approved' => 'boolean',
     ];
 
     // Relacionamento com Instrutor (opcional)

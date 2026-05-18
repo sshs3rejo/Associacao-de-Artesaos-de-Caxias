@@ -12,6 +12,10 @@ class Produto extends Model
 
     protected $fillable = ['nome', 'descricao', 'preco', 'id_categoria', 'imagem', 'id_artesan', 'is_approved'];
 
+    protected $casts = [
+        'is_approved' => 'boolean',
+    ];
+
     public function scopeApproved($query)
     {
         return $query->where('is_approved', true);
