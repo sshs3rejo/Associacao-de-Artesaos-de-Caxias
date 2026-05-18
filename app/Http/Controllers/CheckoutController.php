@@ -96,7 +96,7 @@ class CheckoutController extends Controller
                     'valor_total' => $valorTotal,
                     'redirect_url' => route('checkout.success', $venda->id_venda),
                 ]);
-            });
+            }, 3);
         } catch (\Exception $e) {
             Log::error('Checkout failed', [
                 'error' => $e->getMessage(),
