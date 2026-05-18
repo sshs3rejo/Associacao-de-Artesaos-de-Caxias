@@ -9,6 +9,7 @@ use App\Models\Produto;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
@@ -34,28 +35,28 @@ class CheckoutController extends Controller
         $validated = $request->validate($rules);
 
         try {
-            return DB::transaction(function () use ($validated, $user, $request) {
-                if ($user) {
-                    $cliente = Cliente::firstOrCreate(
-                        ['email' => $user->email],
-                        [
-                            'nome' => $user->name,
-                            'telefone' => $user->artisanProfile?->phone ?? null,
-                        ]
-                    );
-                } else {
-                    $cliente = Cliente::firstOrCreate(
-                        ['email' => $validated['guest_email']],
-                        [
-                            'nome' => $validated['guest_name'],
-                            'telefone' => $validated['guest_phone'] ?? null,
-                        ]
-                    );
-                }
+            $cliente = $user
+                ? Cliente::firstOrCreate(
+                    ['email' => $user->email],
+                    [
+                        'user_id' => $user->id,
+                        'nome' => $user->name,
+                        'telefone' => $user->artisanProfile?->phone ?? '',
+                        'endereco' => '',
+                    ]
+                )
+                : Cliente::firstOrCreate(
+                    ['email' => $validated['guest_email']],
+                    [
+                        'nome' => $validated['guest_name'],
+                        'telefone' => $validated['guest_phone'] ?? '',
+                        'endereco' => '',
+                    ]
+                );
 
+            return DB::transaction(function () use ($validated, $cliente) {
                 $valorTotal = 0;
                 $itensData = [];
-                $mpItens = [];
 
                 foreach ($validated['itens'] as $item) {
                     $produto = Produto::findOrFail($item['id_produto']);
@@ -73,31 +74,22 @@ class CheckoutController extends Controller
                         'quantidade' => $item['quantidade'],
                         'preco_unitario' => $produto->preco,
                     ];
-
-                    $mpItens[] = [
-                        'id' => $produto->id_produto,
-                        'nome' => $produto->nome,
-                        'quantidade' => $item['quantidade'],
-                        'preco' => $produto->preco,
-                    ];
                 }
 
                 $venda = Vendas::create([
                     'id_cliente' => $cliente->id_cliente,
                     'data_venda' => now(),
                     'valor_total' => $valorTotal,
-                    'mp_status' => 'pending', // We keep this as pending until WhatsApp confirmation
+                    'mp_status' => 'pending',
                 ]);
 
                 foreach ($itensData as $item) {
                     $venda->itens()->create($item);
-                    
-                    // Baixa de estoque automática (Simulado/WhatsApp)
+
                     Estoques::where('id_produto', $item['id_produto'])
                         ->decrement('quantidade', $item['quantidade']);
                 }
 
-                // Em vez de chamar o Mercado Pago, retornamos sucesso imediato
                 return response()->json([
                     'success' => true,
                     'venda_id' => $venda->id_venda,
@@ -106,6 +98,12 @@ class CheckoutController extends Controller
                 ]);
             });
         } catch (\Exception $e) {
+            Log::error('Checkout failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $user?->id,
+                'guest_email' => $validated['guest_email'] ?? null,
+            ]);
+
             return response()->json(['error' => $e->getMessage()], 422);
         }
     }
