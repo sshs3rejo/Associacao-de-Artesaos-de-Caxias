@@ -151,7 +151,7 @@ graph TD
 | **RNF01** | Integridade dos Dados | Garantir a persistência e consistência de dados em um banco de alta fidelidade industrial. | Motor de banco relacional **PostgreSQL 16** com chaves primárias e estrangeiras indexadas. |
 | **RNF02** | Responsividade | Todo o design do sistema deve se adaptar automaticamente a telas de smartphones, tablets e desktops. | Layout mobile-first estruturado em **Bootstrap 5.3** e CSS nativo. |
 | **RNF03** | Desempenho SPA | A navegação nas páginas não deve forçar recarregamento inteiro da página (full reload) para reduzir latência. | Interceptação de links com Fetch API JavaScript e transições dinâmicas de CSS. |
-| **RNF04** | Transação e Concorrência | Evitar race-conditions (vendas simultâneas acima do estoque físico real do banco). | Uso do método `lockForUpdate()` no registro do estoque antes do decremento da venda. |
+| **RNF04** | Transação e Concorrência | Evitar race-conditions (vendas simultâneas acima do estoque físico real do banco). | `lockForUpdate()` no registro do estoque + `DB::transaction(callback, 3)` para retry automático em deadlocks. Criação do cliente fora da transação para evitar `25P02`. |
 | **RNF05** | Segurança de Sessão | Proteger o sistema de ataques de interceptação de sessão ou injeções de formulários. | Middleware padrão do Laravel utilizando tokens **CSRF** e senhas hash **BCrypt**. |
 
 ---
@@ -320,6 +320,8 @@ O portal foi desenvolvido sob rígidos princípios de segurança para evitar os 
 
 ### Banco de Dados & Armazenamento
 - **PostgreSQL 16 (Neon Serverless)**: Banco de dados relacional de alta confiabilidade hospedado na nuvem serverless do Neon. Garante integridade referencial por meio de restrições rígidas (Foreign Keys), suporte nativo a isolamento de transações e escalabilidade automatizada de computação e armazenamento.
+- **Conexão direta (non-pooled)**: O sistema utiliza o endpoint direto do Neon (sem o `-pooler` do PgBouncer) para evitar erros de transação (`25P02`) causados pelo modo transaction pooling do PgBouncer.
+- **SSL obrigatório (`sslmode=require`)**: Todas as conexões são criptografadas via TLS, com suporte a certificados Let's Encrypt.
 
 ---
 
@@ -329,6 +331,47 @@ A plataforma conta com infraestrutura de **Integração Contínua e Deploy Cont�
 
 - **Hospedagem de Containers (Railway):** O Railway detecta automaticamente a estrutura do Laravel 12, compila os arquivos do frontend via NPM, gera o container Docker e executa o servidor web com certificado SSL automático.
 - **Banco de Dados Serverless (Neon):** PostgreSQL hospedado no Neon, operando de forma desacoplada da aplicação. Oferece autoscaling automático de processamento e armazenamento, backups diários automatizados e alta disponibilidade.
+
+### Configuração de Conexão (Neon)
+
+O Neon oferece dois tipos de endpoint de conexão:
+
+| Tipo | Hostname | Uso |
+|------|----------|-----|
+| **Pooled** (PgBouncer) | `ep-<projeto>-pooler.c<id>.<região>.aws.neon.tech` | Múltiplas conexões simultâneas, mas sujeito a erro `25P02` em transações com falha |
+| **Direta** (non-pooled) | `ep-<projeto>.c<id>.<região>.aws.neon.tech` | Recomendada para Laravel. Evita `25P02` e mantém compatibilidade com booleanos nativos |
+
+**Recomendação:** Utilize sempre o endpoint **direto** (sem `-pooler`) no ambiente de produção.
+
+### Variáveis de Ambiente (Produção)
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=ep-<projeto>.c<id>.<região>.aws.neon.tech
+DB_PORT=5432
+DB_DATABASE=neondb
+DB_SSLMODE=require
+```
+
+### Migrations
+
+As migrations devem ser executadas automaticamente a cada deploy:
+
+```bash
+php artisan migrate --force
+```
+
+Isso garante que mudanças estruturais (como colunas nullable, novos índices, casts) estejam sempre sincronizadas com o código em produção.
+
+### Tratamento de Transações
+
+Problemas conhecidos e soluções aplicadas no código:
+
+| Problema | Sintoma | Causa | Solução |
+|----------|---------|-------|---------|
+| `25P02` — transação abortada | `select ... for update` falha após erro anterior | PgBouncer em modo transaction + query falha dentro da mesma transação | Criar registros auxiliares (ex: `Cliente`) **fora** do `DB::transaction()` |
+| `42883` — boolean = integer | `where "is_approved" = 1` | PDO com `ATTR_EMULATE_PREPARES` converte `true` para `"1"` | Remover emulated prepares e adicionar `'is_approved' => 'boolean'` nos `$casts` dos models |
+| Deadlock em `lockForUpdate()` | Timeout em vendas simultâneas | Duas transações tentam travar linhas em ordem diferente | Usar `DB::transaction(callback, 3)` para retry automático |
 
 Acesse o sistema online:  
 [https://associacao-de-artesaos-de-caxias-production.up.railway.app/](https://associacao-de-artesaos-de-caxias-production.up.railway.app/)
