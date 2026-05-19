@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 // Rotas de Autenticação
 Route::get('/login', [AuthController::class, 'index'])->name('login.form');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/register', [AuthController::class, 'store'])->name('register');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login');
+Route::post('/register', [AuthController::class, 'store'])->middleware('throttle:3,10')->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
@@ -56,14 +56,17 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'artisan'])->prefix('artesan')->name('artesan.')->group(function () {
     Route::get('/dashboard', [ArtisanController::class, 'dashboard'])->name('dashboard');
     
-    // Proposta de Produtos pelo Artesão
-    Route::get('/produtos', [ArtisanController::class, 'produtos'])->name('produtos');
     Route::get('/produtos/criar', [ArtisanController::class, 'criarProduto'])->name('produtos.criar');
     Route::post('/produtos', [ArtisanController::class, 'salvarProduto'])->name('produtos.salvar');
+    Route::get('/produtos/{produto}/editar', [ArtisanController::class, 'editarProduto'])->name('produtos.editar');
+    Route::put('/produtos/{produto}', [ArtisanController::class, 'atualizarProduto'])->name('produtos.atualizar');
+    Route::delete('/produtos/{produto}', [ArtisanController::class, 'deletarProduto'])->name('produtos.deletar');
     
-    Route::get('/eventos', [ArtisanController::class, 'eventos'])->name('eventos');
     Route::get('/eventos/criar', [ArtisanController::class, 'criarEvento'])->name('eventos.criar');
     Route::post('/eventos', [ArtisanController::class, 'salvarEvento'])->name('eventos.salvar');
+    Route::get('/eventos/{evento}/editar', [ArtisanController::class, 'editarEvento'])->name('eventos.editar');
+    Route::put('/eventos/{evento}', [ArtisanController::class, 'atualizarEvento'])->name('eventos.atualizar');
+    Route::delete('/eventos/{evento}', [ArtisanController::class, 'deletarEvento'])->name('eventos.deletar');
     Route::get('/perfil', [ArtisanController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [ArtisanController::class, 'atualizarPerfil'])->name('perfil.atualizar');
 });
@@ -95,11 +98,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Gestão de Vendas (Confirmar Pagamento do WhatsApp/Pix)
     Route::post('/admin/vendas/{venda}/aprovar', [AdminDashboardController::class, 'aprovarVenda'])->name('admin.vendas.aprovar');
     
-    // Gestão de Produtos (Aprovar Proposta do Artesão)
+    // Gestão de Produtos (Aprovar/Rejeitar Proposta do Artesão)
     Route::post('/admin/produtos/{produto}/aprovar', [AdminDashboardController::class, 'aprovarProduto'])->name('admin.produtos.aprovar');
+    Route::post('/admin/produtos/{produto}/rejeitar', [AdminDashboardController::class, 'rejeitarProduto'])->name('admin.produtos.rejeitar');
     
-    // Gestão de Eventos (Aprovar Proposta do Artesão)
+    // Gestão de Eventos (Aprovar/Rejeitar Proposta do Artesão)
     Route::post('/admin/eventos/{evento}/aprovar', [AdminDashboardController::class, 'aprovarEvento'])->name('admin.eventos.aprovar');
+    Route::post('/admin/eventos/{evento}/rejeitar', [AdminDashboardController::class, 'rejeitarEvento'])->name('admin.eventos.rejeitar');
 
     // ✅ Rotas específicas devem vir antes das com {id}
     Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');

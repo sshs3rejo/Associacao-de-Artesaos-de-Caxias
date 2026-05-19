@@ -52,7 +52,7 @@
 
     <div class="row g-4">
         <div class="col-md-4">
-            <a href="{{ route('artesan.produtos') }}" class="text-decoration-none">
+            <a href="{{ route('produtos') }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 h-100" style="transition: 0.2s;">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center gap-3">
@@ -67,7 +67,7 @@
             </a>
         </div>
         <div class="col-md-4">
-            <a href="{{ route('artesan.eventos') }}" class="text-decoration-none">
+            <a href="{{ route('evento') }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 h-100">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center gap-3">

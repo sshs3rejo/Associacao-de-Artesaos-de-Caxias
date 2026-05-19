@@ -29,6 +29,8 @@ class AdminArtisanController extends Controller
             $profile->update(['approved_at' => now()]);
         }
 
+        $user->update(['is_active' => true]);
+
         return back()->with('success', "Artesão {$user->name} aprovado com sucesso!");
     }
 
@@ -38,9 +40,12 @@ class AdminArtisanController extends Controller
             return back()->withErrors(['msg' => 'Usuário não é artesão.']);
         }
 
-        $user->update(['is_active' => false]);
+        $profile = $user->artisanProfile;
+        if ($profile) {
+            $profile->update(['approved_at' => null]);
+        }
 
-        return back()->with('success', "Artesão {$user->name} foi desativado.");
+        return back()->with('success', "Perfil de artesão {$user->name} foi rejeitado.");
     }
 
     public function ativar(User $user)

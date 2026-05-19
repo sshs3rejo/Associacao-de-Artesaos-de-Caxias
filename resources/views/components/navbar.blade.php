@@ -110,6 +110,16 @@
                                         </a>
                                     </li>
                                     <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('produtos') }}" style="color: #7a2f1f;">
+                                            <i class="fas fa-box"></i> Produtos
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('evento') }}" style="color: #7a2f1f;">
+                                            <i class="fas fa-calendar-alt"></i> Eventos
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('admin.artesao') }}" style="color: #7a2f1f;">
                                             <i class="fas fa-users"></i> Gerir Artesãos
                                         </a>
@@ -160,12 +170,12 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('artesan.produtos') }}" style="color: #7a2f1f;">
+                                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('produtos') }}" style="color: #7a2f1f;">
                                                 <i class="fas fa-box-open"></i> Meus Produtos
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('artesan.eventos') }}" style="color: #7a2f1f;">
+                                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('evento') }}" style="color: #7a2f1f;">
                                                 <i class="fas fa-calendar-alt"></i> Meus Eventos
                                             </a>
                                         </li>

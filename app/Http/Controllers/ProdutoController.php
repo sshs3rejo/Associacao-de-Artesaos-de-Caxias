@@ -9,11 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
-    /**
-     * Exibe a lista de produtos (público)
-     */
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            $produtos = Produto::with(['categoria', 'estoque', 'artisan'])
+                ->orderBy('id_produto', 'desc')->paginate(15);
+            return view('produtos', compact('produtos'));
+        }
+
+        if (auth()->check() && auth()->user()->isArtisan()) {
+            $produtos = Produto::where('id_artesan', auth()->id())
+                ->with('categoria', 'estoque')->get();
+            return view('produtos', compact('produtos'));
+        }
+
         $categorias = CategoriasProdutos::all();
 
         $query = Produto::approved()->with(['categoria', 'estoque', 'artisan.artisanProfile']);
@@ -38,9 +47,6 @@ class ProdutoController extends Controller
         ]);
     }
 
-    /**
-     * Exibe o formulário de criação de produto (admin)
-     */
     public function create()
     {
         $categorias = CategoriasProdutos::all();
@@ -48,9 +54,6 @@ class ProdutoController extends Controller
         return view('produtos.create', compact('categorias'));
     }
 
-    /**
-     * Salva um novo produto (admin)
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -62,25 +65,22 @@ class ProdutoController extends Controller
             'quantidade' => 'required|integer|min:0',
         ]);
 
-        // Upload da imagem se fornecida
         if ($request->hasFile('imagem')) {
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
         }
 
+        $validated['is_approved'] = true;
+
         $produto = Produto::create($validated);
 
-        // Cria o registro no estoque
         $produto->estoque()->create([
             'id_produto' => $produto->id_produto,
             'quantidade' => $request->quantidade,
         ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Produto criado com sucesso!');
+        return redirect()->route('produtos')->with('success', 'Produto criado com sucesso!');
     }
 
-    /**
-     * Exibe o formulário de edição de produto (admin)
-     */
     public function edit($id)
     {
         $produto = Produto::findOrFail($id);
@@ -89,9 +89,6 @@ class ProdutoController extends Controller
         return view('produtos.edit', compact('produto', 'categorias'));
     }
 
-    /**
-     * Atualiza um produto existente (admin)
-     */
     public function update(Request $request, $id)
     {
         $produto = Produto::findOrFail($id);
@@ -105,15 +102,12 @@ class ProdutoController extends Controller
             'quantidade' => 'required|integer|min:0',
         ]);
 
-        // Lógica de remoção/substituição de imagem
         if ($request->hasFile('imagem')) {
-            // Se enviou uma nova imagem, deleta a antiga e salva a nova
             if ($produto->imagem) {
                 Storage::disk('public')->delete($produto->imagem);
             }
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
         } elseif ($request->boolean('remover_imagem')) {
-            // Se marcou para remover e não enviou uma nova
             if ($produto->imagem) {
                 Storage::disk('public')->delete($produto->imagem);
             }
@@ -122,18 +116,14 @@ class ProdutoController extends Controller
 
         $produto->update($validated);
 
-        // Atualiza a quantidade no estoque
         $produto->estoque()->updateOrCreate(
             ['id_produto' => $produto->id_produto],
             ['quantidade' => $request->quantidade]
         );
 
-        return redirect()->route('admin.dashboard')->with('success', 'Produto atualizado com sucesso!');
+        return redirect()->route('produtos')->with('success', 'Produto atualizado com sucesso!');
     }
 
-    /**
-     * Remove um produto (admin)
-     */
     public function destroy($id)
     {
         $produto = Produto::findOrFail($id);
@@ -146,6 +136,6 @@ class ProdutoController extends Controller
 
         $produto->delete();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Produto removido com sucesso!');
+        return redirect()->route('produtos')->with('success', 'Produto removido com sucesso!');
     }
 }

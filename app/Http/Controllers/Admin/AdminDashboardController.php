@@ -30,11 +30,8 @@ class AdminDashboardController extends Controller
         $tiposEvento = ['feira', 'exposicao', 'workshop', 'lancamento', 'palestra', 'outro'];
         $statusEvento = ['planejado', 'confirmado', 'em_andamento', 'concluido', 'cancelado'];
 
-        // Produtos aguardando aprovação
-        $produtosPendentes = Produto::where('is_approved', false)->with('artisan')->get();
-
-        // Eventos aguardando aprovação
-        $eventosPendentes = Eventos::where('is_approved', false)->with('artisan')->get();
+        $produtosPendentes = Produto::where('is_approved', false)->with('artisan')->paginate(10);
+        $eventosPendentes = Eventos::where('is_approved', false)->with('artisan')->paginate(10);
 
         return view('admin.dashboard', [
             'stats' => $stats,
@@ -69,10 +66,22 @@ class AdminDashboardController extends Controller
         return redirect()->back()->with('success', 'Produto "' . $produto->nome . '" aprovado com sucesso e publicado na vitrine!');
     }
 
+    public function rejeitarProduto(Produto $produto)
+    {
+        $produto->update(['is_approved' => false]);
+        return redirect()->back()->with('success', 'Produto "' . $produto->nome . '" foi rejeitado.');
+    }
+
     public function aprovarEvento(Eventos $evento)
     {
         $evento->update(['is_approved' => true]);
         return redirect()->back()->with('success', 'Evento "' . $evento->nome . '" aprovado com sucesso e publicado na agenda!');
+    }
+
+    public function rejeitarEvento(Eventos $evento)
+    {
+        $evento->update(['is_approved' => false]);
+        return redirect()->back()->with('success', 'Evento "' . $evento->nome . '" foi rejeitado.');
     }
 
     public function settings()

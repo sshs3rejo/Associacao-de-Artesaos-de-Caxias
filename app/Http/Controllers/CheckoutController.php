@@ -110,12 +110,18 @@ class CheckoutController extends Controller
 
     public function success(Vendas $venda)
     {
+        if ($venda->id_cliente !== auth()->id() && !auth()->user()?->isAdmin()) {
+            abort(403);
+        }
         $venda->load('itens.produto', 'cliente');
         return view('checkout.success', compact('venda'));
     }
 
     public function cancel(Vendas $venda)
     {
+        if ($venda->id_cliente !== auth()->id() && !auth()->user()?->isAdmin()) {
+            abort(403);
+        }
         $venda->load('itens.produto', 'cliente');
         return view('checkout.cancel', compact('venda'));
     }

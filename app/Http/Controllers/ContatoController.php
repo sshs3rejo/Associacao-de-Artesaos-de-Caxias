@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contato;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ContatoController extends Controller
 {
-    /**
-     * Processa o formulário de contato
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -18,9 +15,7 @@ class ContatoController extends Controller
             'mensagem' => 'required|string',
         ]);
 
-        // Aqui você enviaria um e-mail ou salvaria no banco
-        // Por enquanto, vamos apenas logar e simular sucesso
-        Log::info('Contato recebido:', $validated);
+        Contato::create($validated);
 
         return back()->with('success', 'Sua mensagem foi enviada com sucesso! Entraremos em contato em breve.');
     }

@@ -44,7 +44,10 @@ class AdminUserController extends Controller
 
     public function destroy(User $user)
     {
-        // Deletar o perfil do artesão se houver
+        if ($user->id === auth()->id()) {
+            return back()->withErrors(['msg' => 'Você não pode excluir a si mesmo.']);
+        }
+
         if ($user->artisanProfile) {
             $user->artisanProfile->delete();
         }

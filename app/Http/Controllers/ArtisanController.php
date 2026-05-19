@@ -30,21 +30,6 @@ class ArtisanController extends Controller
         return view('artesan.dashboard', compact('user', 'totalProdutos', 'eventosInscritos', 'perfil', 'minhasVendas'));
     }
 
-    public function produtos()
-    {
-        $user = auth()->user();
-        $produtos = Produto::where('id_artesan', $user->id)->with('categoria', 'estoque')->get();
-        return view('artesan.produtos', compact('produtos'));
-    }
-
-    public function eventos()
-    {
-        $user = auth()->user();
-        $inscricoes = InscricoesEvento::where('id_cliente', $user->id)->with('evento')->get();
-        $eventosPropostos = Eventos::where('id_artesan', $user->id)->orderBy('id_evento', 'desc')->get();
-        return view('artesan.eventos', compact('inscricoes', 'eventosPropostos'));
-    }
-
     public function perfil()
     {
         $user = auth()->user();
@@ -164,6 +149,68 @@ class ArtisanController extends Controller
         return view('artesan.publico', compact('user', 'perfil', 'produtos'));
     }
 
+    public function editarProduto(Produto $produto)
+    {
+        if ($produto->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+        $categorias = CategoriasProdutos::all();
+        return view('artesan.produtos-edit', compact('produto', 'categorias'));
+    }
+
+    public function atualizarProduto(Request $request, Produto $produto)
+    {
+        if ($produto->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'preco' => 'required|numeric|min:0',
+            'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'quantidade' => 'required|integer|min:0',
+        ]);
+
+        if ($request->hasFile('imagem')) {
+            if ($produto->imagem) {
+                Storage::disk('public')->delete($produto->imagem);
+            }
+            $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
+        } elseif ($request->boolean('remover_imagem')) {
+            if ($produto->imagem) {
+                Storage::disk('public')->delete($produto->imagem);
+            }
+            $validated['imagem'] = null;
+        }
+
+        $produto->update($validated);
+
+        $produto->estoque()->updateOrCreate(
+            ['id_produto' => $produto->id_produto],
+            ['quantidade' => $request->quantidade]
+        );
+
+        return redirect()->route('produtos')->with('success', 'Produto atualizado com sucesso!');
+    }
+
+    public function deletarProduto(Produto $produto)
+    {
+        if ($produto->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($produto->imagem) {
+            Storage::disk('public')->delete($produto->imagem);
+        }
+
+        $produto->estoque()->delete();
+        $produto->delete();
+
+        return redirect()->route('produtos')->with('success', 'Produto removido com sucesso!');
+    }
+
     public function criarProduto()
     {
         $categorias = CategoriasProdutos::all();
@@ -198,7 +245,7 @@ class ArtisanController extends Controller
             'quantidade' => $request->quantidade,
         ]);
 
-        return redirect()->route('artesan.produtos')->with('success', 'Produto proposto com sucesso! Aguarde a aprovação do administrador.');
+        return redirect()->route('produtos')->with('success', 'Produto proposto com sucesso! Aguarde a aprovação do administrador.');
     }
 
     public function criarEvento()
@@ -233,6 +280,65 @@ class ArtisanController extends Controller
 
         Eventos::create($validated);
 
-        return redirect()->route('artesan.eventos')->with('success', 'Proposta de evento enviada com sucesso! Aguarde a aprovação do administrador.');
+        return redirect()->route('evento')->with('success', 'Proposta de evento enviada com sucesso! Aguarde a aprovação do administrador.');
+    }
+
+    public function editarEvento(Eventos $evento)
+    {
+        if ($evento->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+        return view('artesan.eventos-edit', compact('evento'));
+    }
+
+    public function atualizarEvento(Request $request, Eventos $evento)
+    {
+        if ($evento->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'tipo_evento' => 'required|in:feira,exposicao,workshop,lancamento,palestra,outro',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'required|date|after_or_equal:data_inicio',
+            'local' => 'required|string|max:255',
+            'capacidade_maxima' => 'required|integer|min:1',
+            'valor_inscricao' => 'required|numeric|min:0',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('imagem')) {
+            if ($evento->imagem) {
+                Storage::disk('public')->delete($evento->imagem);
+            }
+            $validated['imagem'] = $request->file('imagem')->store('eventos', 'public');
+        }
+
+        if ($validated['capacidade_maxima'] != $evento->capacidade_maxima) {
+            $diferenca = $validated['capacidade_maxima'] - $evento->capacidade_maxima;
+            $validated['vagas_disponiveis'] = $evento->vagas_disponiveis + $diferenca;
+        }
+
+        $evento->update($validated);
+
+        return redirect()->route('evento')->with('success', 'Evento atualizado com sucesso!');
+    }
+
+    public function deletarEvento(Eventos $evento)
+    {
+        if ($evento->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($evento->imagem) {
+            Storage::disk('public')->delete($evento->imagem);
+        }
+
+        $evento->inscricoes()->delete();
+        $evento->delete();
+
+        return redirect()->route('evento')->with('success', 'Evento removido com sucesso!');
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Propor Produto - Artesão')
+@section('titulo', 'Editar Produto - Artesão')
 
 @section('content')
 <style>
@@ -65,27 +65,11 @@
         background-color: #999;
         transform: translateY(-2px);
     }
-
-    .alert-info {
-        border-radius: 10px;
-        padding: 15px 20px;
-        margin-bottom: 25px;
-        border: 0;
-        background-color: #e8f4fd;
-        color: #0b4f84;
-    }
 </style>
 
 <div class="container py-5">
     <div class="produto-container">
-        <h1>Propor Novo Produto</h1>
-
-        <div class="alert alert-info d-flex align-items-center gap-2">
-            <i class="bi bi-info-circle-fill fs-5"></i>
-            <div>
-                <strong>Nota de Aprovação:</strong> Ao salvar, seu produto será cadastrado como **"Aguardando Aprovação"**. O administrador da Associação revisará os dados e imagem antes de torná-lo público na vitrine.
-            </div>
-        </div>
+        <h1>Editar Produto</h1>
 
         @if ($errors->any())
             <div class="alert alert-danger rounded-3">
@@ -98,33 +82,31 @@
             </div>
         @endif
 
-        <form action="{{ route('artesan.produtos.salvar') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('artesan.produtos.atualizar', $produto->id_produto) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
 
-            {{-- Nome --}}
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Produto</label>
                 <input type="text" class="form-control @error('nome') is-invalid @enderror" id="nome" name="nome"
-                       placeholder="Ex: Escultura de Leão em Madeira de Lei" value="{{ old('nome') }}" required>
+                       placeholder="Ex: Escultura de Leão em Madeira de Lei" value="{{ old('nome', $produto->nome) }}" required>
                 @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
-            {{-- Descrição --}}
             <div class="mb-3">
                 <label for="descricao" class="form-label">Descrição da Peça e Processo Criativo</label>
                 <textarea class="form-control @error('descricao') is-invalid @enderror" id="descricao" name="descricao"
-                          placeholder="Fale um pouco sobre o material e a técnica artesanal utilizada" rows="4">{{ old('descricao') }}</textarea>
+                          placeholder="Fale um pouco sobre o material e a técnica artesanal utilizada" rows="4">{{ old('descricao', $produto->descricao) }}</textarea>
                 @error('descricao') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
-            {{-- Categoria / Preço / Quantidade --}}
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="id_categoria" class="form-label">Categoria</label>
                     <select class="form-select @error('id_categoria') is-invalid @enderror" id="id_categoria" name="id_categoria" required>
                         <option value="">Selecione...</option>
                         @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id_categoria }}" {{ old('id_categoria') == $categoria->id_categoria ? 'selected' : '' }}>
+                            <option value="{{ $categoria->id_categoria }}" {{ old('id_categoria', $produto->id_categoria) == $categoria->id_categoria ? 'selected' : '' }}>
                                 {{ $categoria->nome_categoria }}
                             </option>
                         @endforeach
@@ -133,28 +115,35 @@
                 <div class="col-md-4 mb-3">
                     <label for="preco" class="form-label">Preço Unitário (R$)</label>
                     <input type="number" step="0.01" class="form-control @error('preco') is-invalid @enderror" id="preco" name="preco"
-                           placeholder="0,00" value="{{ old('preco') }}" required>
+                           placeholder="0,00" value="{{ old('preco', $produto->preco) }}" required>
                     @error('preco') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="quantidade" class="form-label">Estoque Inicial</label>
+                    <label for="quantidade" class="form-label">Estoque</label>
                     <input type="number" class="form-control @error('quantidade') is-invalid @enderror" id="quantidade" name="quantidade"
-                           placeholder="1" value="{{ old('quantidade', 1) }}" required>
+                           placeholder="1" value="{{ old('quantidade', $produto->estoque?->quantidade ?? 0) }}" required>
                     @error('quantidade') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
             </div>
 
-            {{-- Imagem --}}
             <div class="mb-4">
-                <label for="imagem" class="form-label">Imagem do Produto (Bela e com boa iluminação)</label>
+                <label for="imagem" class="form-label">Imagem do Produto</label>
+                @if($produto->imagem)
+                    <div class="mb-2">
+                        <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem atual" class="rounded shadow-sm" style="max-height: 120px; object-fit: cover;">
+                        <div class="form-check mt-1">
+                            <input class="form-check-input" type="checkbox" id="remover_imagem" name="remover_imagem" value="1">
+                            <label class="form-check-label text-danger small" for="remover_imagem">Remover imagem atual</label>
+                        </div>
+                    </div>
+                @endif
                 <input class="form-control @error('imagem') is-invalid @enderror" type="file" id="imagem" name="imagem" accept="image/*">
                 @error('imagem') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
-            {{-- Botões --}}
             <div class="d-flex justify-content-between align-items-center">
-                <a href="{{ route('produtos') }}" class="btn btn-secondary">Voltar</a>
-                <button type="submit" class="btn btn-primary text-white">Propor Produto</button>
+                <a href="{{ route('produtos') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary text-white">Salvar Alterações</button>
             </div>
         </form>
     </div>
