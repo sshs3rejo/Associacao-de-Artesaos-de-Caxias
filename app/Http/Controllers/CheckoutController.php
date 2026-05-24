@@ -90,6 +90,8 @@ class CheckoutController extends Controller
                         ->decrement('quantidade', $item['quantidade']);
                 }
 
+                session()->put('checkout_venda_' . $venda->id_venda, true);
+
                 return response()->json([
                     'success' => true,
                     'venda_id' => $venda->id_venda,
@@ -110,19 +112,34 @@ class CheckoutController extends Controller
 
     public function success(Vendas $venda)
     {
-        if ($venda->id_cliente !== auth()->id() && !auth()->user()?->isAdmin()) {
-            abort(403);
-        }
+        $this->authorizeVenda($venda);
         $venda->load('itens.produto', 'cliente');
         return view('checkout.success', compact('venda'));
     }
 
     public function cancel(Vendas $venda)
     {
-        if ($venda->id_cliente !== auth()->id() && !auth()->user()?->isAdmin()) {
-            abort(403);
-        }
+        $this->authorizeVenda($venda);
         $venda->load('itens.produto', 'cliente');
         return view('checkout.cancel', compact('venda'));
+    }
+
+    private function authorizeVenda(Vendas $venda): void
+    {
+        if (auth()->user()?->isAdmin()) {
+            return;
+        }
+
+        if (session()->has('checkout_venda_' . $venda->id_venda)) {
+            return;
+        }
+
+        $clienteId = auth()->check()
+            ? Cliente::where('user_id', auth()->id())->value('id_cliente')
+            : null;
+
+        if ($venda->id_cliente !== $clienteId) {
+            abort(403);
+        }
     }
 }

@@ -23,12 +23,16 @@ class ProdutoController extends Controller
             return view('produtos', compact('produtos'));
         }
 
-        $categorias = CategoriasProdutos::all();
+        $categorias = CategoriasProdutos::getAllCached();
 
         $query = Produto::approved()->with(['categoria', 'estoque', 'artisan.artisanProfile']);
 
         if ($request->has('categoria') && $request->categoria != '') {
-            $query->where('id_categoria', $request->categoria);
+            $categoriaId = $request->categoria;
+            $subCategoryIds = CategoriasProdutos::where('parent_id', $categoriaId)->pluck('id_categoria')->toArray();
+            $categoryIds = array_merge([$categoriaId], $subCategoryIds);
+
+            $query->whereIn('id_categoria', $categoryIds);
         }
 
         if ($request->has('busca') && $request->busca != '') {
@@ -39,7 +43,7 @@ class ProdutoController extends Controller
             });
         }
 
-        $produtos = $query->get();
+        $produtos = $query->paginate(12)->withQueryString();
 
         return view('produtos', [
             'produtos' => $produtos,
@@ -49,7 +53,7 @@ class ProdutoController extends Controller
 
     public function create()
     {
-        $categorias = CategoriasProdutos::all();
+        $categorias = CategoriasProdutos::getAllCached();
 
         return view('produtos.create', compact('categorias'));
     }
@@ -83,8 +87,8 @@ class ProdutoController extends Controller
 
     public function edit($id)
     {
-        $produto = Produto::findOrFail($id);
-        $categorias = CategoriasProdutos::all();
+        $produto = Produto::with(['categoria', 'estoque'])->findOrFail($id);
+        $categorias = CategoriasProdutos::getAllCached();
 
         return view('produtos.edit', compact('produto', 'categorias'));
     }

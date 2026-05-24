@@ -2,71 +2,72 @@
 @section('titulo', 'Gerenciar Artesãos')
 
 @section('content')
-<div class="container-fluid px-4 py-5">
-    <h1 class="fw-bold mb-4" style="color: #7a2f1f;">Gerenciar Artesãos</h1>
+<div class="w-full px-4 py-5">
+    <x-breadcrumb :items="[['Home', route('home')], ['Painel', route('admin.dashboard')], ['Artesãos']]" />
+    <h1 class="font-bold mb-4 text-2xl text-brand">Gerenciar Artesãos</h1>
 
     @if($artesos->isEmpty())
         <div class="text-center py-5">
-            <i class="bi bi-people display-1 text-muted mb-3 d-block"></i>
-            <p class="text-muted fs-5">Nenhum artesão cadastrado ainda.</p>
+            <i class="fas fa-users text-5xl text-gray-500 mb-3 block"></i>
+            <p class="text-gray-500 text-lg">Nenhum artesão cadastrado ainda.</p>
         </div>
     @else
-        <div class="table-responsive">
-            <table class="table table-hover align-middle bg-white rounded-4 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 bg-white rounded-xl shadow-sm overflow-hidden">
                 <thead style="background-color: #7a2f1f; color: #F9F7D3;">
                     <tr>
-                        <th class="p-3">Nome</th>
-                        <th class="p-3">Email</th>
-                        <th class="p-3">Especialidade</th>
-                        <th class="p-3">Status</th>
-                        <th class="p-3">Perfil Público</th>
-                        <th class="p-3">Cadastro</th>
-                        <th class="p-3">Ações</th>
+                        <th class="p-3 text-left text-sm font-semibold">Nome</th>
+                        <th class="p-3 text-left text-sm font-semibold">Email</th>
+                        <th class="p-3 text-left text-sm font-semibold">Especialidade</th>
+                        <th class="p-3 text-left text-sm font-semibold">Status</th>
+                        <th class="p-3 text-left text-sm font-semibold">Perfil Público</th>
+                        <th class="p-3 text-left text-sm font-semibold">Cadastro</th>
+                        <th class="p-3 text-left text-sm font-semibold">Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @foreach($artesos as $artesao)
-                        <tr>
-                            <td class="fw-semibold p-3">{{ $artesao->name }}</td>
-                            <td class="p-3">{{ $artesao->email }}</td>
-                            <td class="p-3">{{ $artesao->artisanProfile?->specialty ?? '-' }}</td>
-                            <td class="p-3">
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="font-semibold p-3 text-sm">{{ $artesao->name }}</td>
+                            <td class="p-3 text-sm">{{ $artesao->email }}</td>
+                            <td class="p-3 text-sm">{{ $artesao->artisanProfile?->specialty ?? '-' }}</td>
+                            <td class="p-3 text-sm">
                                 @if($artesao->artisanProfile?->isApproved())
-                                    <span class="badge bg-success">Aprovado</span>
+                                    <x-badge type="success">Aprovado</x-badge>
                                 @else
-                                    <span class="badge bg-warning text-dark">Pendente</span>
+                                    <x-badge type="pending">Pendente</x-badge>
                                 @endif
                             </td>
-                            <td class="p-3">
+                            <td class="p-3 text-sm">
                                 @if($artesao->artisanProfile?->is_public)
-                                    <span class="badge bg-info text-dark">Público</span>
+                                    <x-badge type="info">Público</x-badge>
                                 @else
-                                    <span class="badge bg-secondary">Privado</span>
+                                    <x-badge type="inactive">Privado</x-badge>
                                 @endif
                             </td>
-                            <td class="p-3 small text-muted">{{ $artesao->created_at->format('d/m/Y') }}</td>
-                            <td class="p-3">
-                                <div class="d-flex gap-2">
+                            <td class="p-3 text-sm text-gray-500">{{ $artesao->created_at->format('d/m/Y') }}</td>
+                            <td class="p-3 text-sm">
+                                <div class="flex gap-2">
                                     @if(!$artesao->artisanProfile?->isApproved())
                                         <form action="{{ route('admin.artesao.aprovar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Aprovar {{ $artesao->name }}?')">
-                                                <i class="bi bi-check-lg"></i> Aprovar
+                                            <button type="submit" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="return confirm('Aprovar {{ $artesao->name }}?')">
+                                                <i class="fas fa-check"></i> Aprovar
                                             </button>
                                         </form>
                                     @endif
                                     @if($artesao->isActive())
                                         <form action="{{ route('admin.artesao.rejeitar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmarExclusao(this)">
-                                                <i class="bi bi-x-lg"></i> Desativar
+                                            <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="confirmarExclusao(this)">
+                                                <i class="fas fa-times"></i> Desativar
                                             </button>
                                         </form>
                                     @else
                                         <form action="{{ route('admin.artesao.ativar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Reativar este artesão?')">
-                                                <i class="bi bi-check-lg"></i> Ativar
+                                            <button type="submit" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="return confirm('Reativar este artesão?')">
+                                                <i class="fas fa-check"></i> Ativar
                                             </button>
                                         </form>
                                     @endif

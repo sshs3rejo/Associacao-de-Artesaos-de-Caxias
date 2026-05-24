@@ -25,7 +25,7 @@ class AdminDashboardController extends Controller
 
         $vendas = Vendas::with(['cliente'])->orderBy('data_venda', 'desc')->paginate(10);
 
-        $categorias = CategoriasProdutos::orderBy('nome_categoria')->get();
+        $categorias = CategoriasProdutos::getOrderedCached();
         $instrutores = Instrutores::orderBy('nome')->get();
         $tiposEvento = ['feira', 'exposicao', 'workshop', 'lancamento', 'palestra', 'outro'];
         $statusEvento = ['planejado', 'confirmado', 'em_andamento', 'concluido', 'cancelado'];
@@ -97,6 +97,8 @@ class AdminDashboardController extends Controller
             'email' => ['required', 'email', 'max:255'],
             'whatsapp' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
+            'latitude' => ['nullable', 'string', 'max:50'],
+            'longitude' => ['nullable', 'string', 'max:50'],
             'instagram' => ['nullable', 'url', 'max:255'],
             'facebook' => ['nullable', 'url', 'max:255'],
             'description' => ['required', 'string', 'max:1000'],

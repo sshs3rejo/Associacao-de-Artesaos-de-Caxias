@@ -10,7 +10,7 @@ class MateriasPrimas extends Model
 
     protected $primaryKey = 'id_materia';
 
-    protected $fillable = ['nome', 'descricao'];
+    protected $fillable = ['nome', 'descricao', 'unidade_medida'];
 
     public function fornecedores()
     {

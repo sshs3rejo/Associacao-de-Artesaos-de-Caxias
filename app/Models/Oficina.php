@@ -10,7 +10,7 @@ class Oficina extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['nome', 'descricao', 'data_inicio', 'data_fim', 'id_instrutor'];
+    protected $fillable = ['nome', 'descricao', 'carga_horaria', 'id_instrutor', 'data_inicio', 'data_fim', 'horario', 'local', 'vagas'];
 
     public function instrutor()
     {

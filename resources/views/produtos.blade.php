@@ -4,70 +4,71 @@
 @auth
     @if(auth()->user()->isAdmin())
         @section('content')
-        <div class="container-fluid px-4 py-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="fw-bold mb-0" style="color: #7a2f1f;">Gerenciar Produtos</h1>
-                <a href="{{ route('produtos.create') }}" class="btn text-white fw-bold px-4 py-2 rounded-pill shadow-sm" style="background-color: #7a2f1f;">
-                    <i class="bi bi-plus-lg me-2"></i> Novo Produto
+        <div class="w-full px-4 py-5">
+            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
+                <i class="fas fa-arrow-left text-xs"></i> Voltar ao Painel
+            </a>
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="font-bold mb-0 text-brand text-2xl">Gerenciar Produtos</h1>
+                <a href="{{ route('produtos.create') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
+                    <i class="fa fa-plus mr-2"></i> Novo Produto
                 </a>
             </div>
 
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4 border-0 shadow-sm" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+            <x-alert type="success" :message="session('success')" />
 
             @if($produtos->isEmpty())
                 <div class="text-center py-5">
-                    <i class="bi bi-box-seam display-1 text-muted mb-3 d-block"></i>
-                    <p class="text-muted fs-5">Nenhum produto cadastrado.</p>
+                    <i class="fa fa-box text-5xl text-gray-400 mb-3 block"></i>
+                    <p class="text-gray-500 text-xl">Nenhum produto cadastrado.</p>
                 </div>
             @else
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle bg-white rounded-4 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-xl shadow-sm overflow-hidden">
                         <thead style="background-color: #7a2f1f; color: #F9F7D3;">
                             <tr>
-                                <th class="p-3">Imagem</th>
-                                <th class="p-3">Nome</th>
-                                <th class="p-3">Artesão</th>
-                                <th class="p-3">Categoria</th>
-                                <th class="p-3">Preço</th>
-                                <th class="p-3">Estoque</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3 text-end">Ações</th>
+                                <th class="p-3 text-left">Imagem</th>
+                                <th class="p-3 text-left">Nome</th>
+                                <th class="p-3 text-left">Artesão</th>
+                                <th class="p-3 text-left">Categoria</th>
+                                <th class="p-3 text-left">Preço</th>
+                                <th class="p-3 text-left">Estoque</th>
+                                <th class="p-3 text-left">Status</th>
+                                <th class="p-3 text-right">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-100">
                             @foreach($produtos as $produto)
-                                <tr>
+                                <tr class="hover:bg-gray-50">
                                     <td class="p-3">
-                                        <img src="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : config('association.placeholder') }}"
-                                             alt="{{ $produto->nome }}" class="rounded shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
+                                        <x-image :src="$produto->imagem" alt="$produto->nome" class="rounded shadow-sm w-11 h-11 object-cover" />
                                     </td>
-                                    <td class="fw-semibold p-3" style="color: #8b5a3c;">{{ $produto->nome }}</td>
+                                    <td class="font-semibold p-3 text-brand-light">{{ $produto->nome }}</td>
                                     <td class="p-3">{{ $produto->artisan?->name ?? 'Admin' }}</td>
-                                    <td class="p-3">{{ $produto->categoria?->nome_categoria ?? '-' }}</td>
-                                    <td class="p-3 fw-bold text-success">R$ {{ number_format($produto->preco, 2, ',', '.') }}</td>
-                                    <td class="p-3">{{ $produto->estoque?->quantidade ?? 0 }}</td>
+                                    <td class="p-3">{{ $produto->categoria?->nome_categoria }}</td>
+                                    <td class="p-3 font-bold text-price">R$ {{ number_format($produto->preco, 2, ',', '.') }}</td>
+                                    <td class="p-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {{ ($produto->estoque?->quantidade ?? 0) > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                            {{ $produto->estoque?->quantidade ?? 0 }}
+                                        </span>
+                                    </td>
                                     <td class="p-3">
                                         @if($produto->is_approved)
-                                            <span class="badge bg-success">Aprovado</span>
+                                            <x-badge type="success">Ativo</x-badge>
                                         @else
-                                            <span class="badge bg-warning text-dark">Pendente</span>
+                                            <x-badge type="pending">Pendente</x-badge>
                                         @endif
                                     </td>
-                                    <td class="p-3 text-end">
-                                        <div class="d-flex justify-content-end gap-2">
-                                            <a href="{{ route('produtos.edit', $produto->id_produto) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                                <i class="bi bi-pencil"></i> Editar
+                                    <td class="p-3 text-right">
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('produtos.edit', $produto->id_produto) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-yellow-400 text-yellow-600 rounded-lg hover:bg-yellow-400 hover:text-white transition no-underline">
+                                                <i class="fa fa-pencil"></i> Editar
                                             </a>
-                                            <form action="{{ route('produtos.destroy', $produto->id_produto) }}" method="POST" class="m-0">
+                                            <form action="{{ route('produtos.destroy', $produto->id_produto) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('Remover produto {{ $produto->nome }} permanentemente?')">
-                                                    <i class="bi bi-trash"></i> Excluir
+                                                <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-red-400 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition" onclick="confirmarExclusao(this)">
+                                                    <i class="fa fa-trash"></i> Excluir
                                                 </button>
                                             </form>
                                         </div>
@@ -77,71 +78,56 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-3">
+                <div class="mt-4 flex justify-center">
                     {{ $produtos->links() }}
                 </div>
             @endif
         </div>
         @endsection
-
     @elseif(auth()->user()->isArtisan())
         @section('content')
-        <div class="container py-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="fw-bold mb-0" style="color: #7a2f1f;">Meus Produtos</h1>
-                <a href="{{ route('artesan.produtos.criar') }}" class="btn text-white fw-bold px-4 py-2 rounded-pill shadow-sm" style="background-color: #7a2f1f;">
-                    <i class="bi bi-plus-lg me-2"></i> Propor Novo Produto
+        <div class="max-w-7xl mx-auto px-4 py-5">
+            <a href="{{ route('artesan.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
+                <i class="fas fa-arrow-left text-xs"></i> Voltar ao Painel
+            </a>
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="font-bold mb-0 text-brand text-2xl">Meus Produtos</h1>
+                <a href="{{ route('artesan.produtos.criar') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
+                    <i class="fa fa-plus mr-2"></i> Propor Novo Produto
                 </a>
             </div>
 
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4 border-0 shadow-sm" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+            <x-alert type="success" :message="session('success')" />
 
             @if($produtos->isEmpty())
                 <div class="text-center py-5">
-                    <i class="bi bi-box-seam display-1 text-muted mb-3 d-block"></i>
-                    <p class="text-muted fs-5">Você ainda não cadastrou ou propôs produtos.</p>
-                    <p class="text-muted">Clique no botão acima para propor o seu primeiro produto de artesanato!</p>
+                    <i class="fa fa-box text-5xl text-gray-400 mb-3 block"></i>
+                    <p class="text-gray-500 text-xl">Você ainda não cadastrou ou propôs produtos.</p>
+                    <p class="text-gray-400">Clique no botão acima para propor o seu primeiro produto de artesanato!</p>
                 </div>
             @else
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach($produtos as $produto)
-                        <div class="col">
-                            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-                                <div class="overflow-hidden position-relative" style="height: 180px;">
-                                    <img src="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : config('association.placeholder') }}"
-                                         class="card-img-top w-100 h-100" alt="{{ $produto->nome }}" style="object-fit: cover;">
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden h-full flex flex-col">
+                            <div class="overflow-hidden relative h-44">
+                                <x-image :src="$produto->imagem" alt="$produto->nome" class="w-full h-full object-cover" />
+                            </div>
+                            <div class="p-3 flex flex-col flex-1">
+                                <div class="flex items-start justify-between gap-2 mb-1">
+                                    <h5 class="font-bold mb-0 truncate text-brand" title="{{ $produto->nome }}">{{ $produto->nome }}</h5>
+                                    @if($produto->is_approved)
+                                        <x-badge type="success">Ativo</x-badge>
+                                    @else
+                                        <x-badge type="pending">Pendente</x-badge>
+                                    @endif
                                 </div>
-                                <div class="card-body p-3">
-                                    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
-                                        <h5 class="fw-bold mb-0 text-truncate" style="color: #7a2f1f;" title="{{ $produto->nome }}">{{ $produto->nome }}</h5>
-                                        @if($produto->is_approved)
-                                            <span class="badge bg-success" style="font-size: 0.7rem;">Ativo</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark" style="font-size: 0.7rem;">Pendente</span>
-                                        @endif
-                                    </div>
-                                    <p class="text-muted small mb-2">{{ $produto->categoria?->nome_categoria }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold" style="color: #c85a3a;">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
-                                        <span class="small text-muted">Estoque: {{ $produto->estoque?->quantidade ?? 0 }}</span>
-                                    </div>
-                                    <div class="d-flex gap-2 mt-3 pt-2 border-top">
-                                        <a href="{{ route('artesan.produtos.editar', $produto->id_produto) }}" class="btn btn-sm btn-outline-primary flex-fill d-flex align-items-center justify-content-center gap-1" style="border-radius: 6px;">
-                                            <i class="bi bi-pencil"></i> Editar
-                                        </a>
-                                        <form action="{{ route('artesan.produtos.deletar', $produto->id_produto) }}" method="POST" class="flex-fill m-0 p-0" onsubmit="return confirm('Tem certeza que deseja remover este produto?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-1" style="border-radius: 6px;">
-                                                <i class="bi bi-trash"></i> Remover
-                                            </button>
-                                        </form>
-                                    </div>
+                                <p class="text-gray-500 text-sm mb-2">{{ $produto->categoria?->nome_categoria }}</p>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="font-bold text-price">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
+                                    <span class="text-sm text-gray-500">Estoque: {{ $produto->estoque?->quantidade ?? 0 }}</span>
+                                </div>
+                                <div class="flex gap-2 mt-3 pt-2 border-t border-gray-200">
+                                    <x-card-actions :edit-route="route('artesan.produtos.editar', $produto->id_produto)" :delete-route="route('artesan.produtos.deletar', $produto->id_produto)" />
                                 </div>
                             </div>
                         </div>
@@ -150,379 +136,158 @@
             @endif
         </div>
         @endsection
-
-    @else
-        @section('style')
-        <link rel="stylesheet" href="{{asset('css/styles-produtos.css')}}">
-        @endsection
-
-        @section('content')
-        <div class="container-fluid px-3 py-2">
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="row g-3 mb-2 align-items-center position-relative" style="z-index: 1050;">
-                        <div class="col-lg-9 col-xl-10">
-                            <div class="card border-0 shadow-sm rounded-pill p-1 bg-white">
-                                <form action="{{ route('produtos') }}" method="GET" class="d-flex w-100 m-0">
-                                    @if(request('categoria'))
-                                        <input type="hidden" name="categoria" value="{{ request('categoria') }}">
-                                    @endif
-                                    <div class="input-group input-group-lg border-0 bg-transparent">
-                                        <button class="btn dropdown-toggle d-flex align-items-center gap-2 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f0eecf; color: #7a2f1f; border-top-left-radius: 50rem; border-bottom-left-radius: 50rem; padding-left: 1rem; padding-right: 1rem; font-size: 0.95rem;">
-                                            <i class="fa fa-filter"></i>
-                                            <span class="d-none d-sm-inline fw-bold">Categorias</span>
-                                        </button>
-                                        <ul class="dropdown-menu shadow-lg border-0 mt-2 rounded-4 p-2" style="min-width: 250px; z-index: 1060; animation: fadeInPage 0.2s ease;">
-                                            <li>
-                                                <a class="dropdown-item rounded-3 py-2 mb-1 {{ !request('categoria') ? 'bg-light fw-bold' : '' }}" href="{{ route('produtos', ['busca' => request('busca')]) }}" style="color: #7a2f1f;">
-                                                    <i class="bi bi-grid-fill me-2 opacity-50"></i> Todas as Categorias
-                                                </a>
-                                            </li>
-                                            <li><hr class="dropdown-divider opacity-10"></li>
-                                            @foreach($categorias as $categoria)
-                                            <li>
-                                                <a class="dropdown-item rounded-3 py-2 {{ request('categoria') == $categoria->id_categoria ? 'bg-light fw-bold' : '' }}" 
-                                                   href="{{ route('produtos', ['categoria' => $categoria->id_categoria, 'busca' => request('busca')]) }}" 
-                                                   style="color: #333;">
-                                                    {{ $categoria->nome_categoria }}
-                                                </a>
-                                            </li>
-                                            @endforeach
-                                        </ul>
-                                        <input type="text" name="busca" class="form-control border-0 shadow-none bg-transparent fs-6 ps-4"
-                                               placeholder="Buscar artesanatos..." value="{{ request('busca') }}">
-                                        <button type="submit" class="btn px-4 text-white" style="background-color: #7a2f1f; border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-xl-2 d-flex justify-content-end gap-2 mt-3 mt-lg-0">
-                            <span class="small text-muted fw-bold bg-white px-3 py-2 rounded-pill shadow-sm text-nowrap">
-                                <i class="bi bi-box-seam me-1"></i> {{ $produtos->count() }} itens
-                            </span>
-                            <button class="btn text-white fw-bold rounded-pill px-3 shadow-sm position-relative" style="background-color: #7a2f1f;" onclick="abrirCarrinho()" title="Carrinho">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span id="badge-carrinho" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; display: none;">0</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    @if($produtos->isEmpty())
-                        <div class="text-center py-5">
-                            <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
-                            <p class="text-muted fs-5">Nenhum produto cadastrado nesta categoria.</p>
-                            <a href="{{ route('produtos') }}" class="btn btn-outline-dark mt-2">Ver tudo</a>
-                        </div>
-                    @endif
-
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4" id="produtos-grid">
-                        @foreach($produtos as $produto)
-                        <div class="col">
-                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden produto-card" 
-                                 data-id="{{ $produto->id_produto }}"
-                                 data-nome="{{ $produto->nome }}"
-                                 data-preco="{{ $produto->preco }}"
-                                 data-descricao="{{ $produto->descricao }}"
-                                 data-estoque="{{ $produto->estoque ? $produto->estoque->quantidade : 0 }}"
-                                 data-imagem="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
-                                <div class="position-relative overflow-hidden" style="height: 210px; background-color: #f8f9fa;">
-                                    <img src="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}" 
-                                         class="card-img-top w-100 h-100" alt="{{ $produto->nome }}" style="object-fit: cover; transition: transform 0.3s ease;">
-                                    @if($produto->estoque && $produto->estoque->quantidade <= 0)
-                                        <div class="position-absolute top-0 end-0 m-2">
-                                            <span class="badge bg-danger">Esgotado</span>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <div class="card-body d-flex flex-column p-3">
-                                    <h3 class="h6 fw-bold mb-1 text-truncate" title="{{ $produto->nome }}" style="color: #7a2f1f;">{{ $produto->nome }}</h3>
-                                    @if($produto->artisan)
-                                        <div class="mb-2 d-flex align-items-center gap-2">
-                                            @if($produto->artisan->artisanProfile && $produto->artisan->artisanProfile->profile_photo)
-                                                <img src="{{ asset('storage/' . $produto->artisan->artisanProfile->profile_photo) }}" alt="Foto de {{ $produto->artisan->name }}" class="rounded-circle" style="width: 20px; height: 20px; object-fit: cover; border: 1px solid #7a2f1f;">
-                                            @else
-                                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 20px; height: 20px; font-size: 0.65rem; background-color: #7a2f1f; font-weight: bold;">
-                                                    {{ substr($produto->artisan->name, 0, 1) }}
-                                                </div>
-                                            @endif
-                                            <a href="{{ route('artesao.publico', $produto->artisan->id) }}" class="text-decoration-none small text-muted hover-brown" style="font-size: 0.8rem;" title="Ver portfólio de {{ $produto->artisan->name }}">
-                                                Feito por <span class="fw-bold" style="color: #8b5a3c;">{{ $produto->artisan->name }}</span>
-                                            </a>
-                                        </div>
-                                    @endif
-
-                                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                                        <span class="fw-bold mb-0" style="color: #c85a3a;">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
-                                        <div class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-outline-brown p-1 d-flex align-items-center justify-content-center" onclick="abrirDetalhes(this)" style="width: 28px; height: 28px;" title="Ver Detalhes">
-                                                <i class="fa fa-eye" style="font-size: 0.8rem;"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-brown p-1 d-flex align-items-center justify-content-center text-white" onclick="adicionarRapido(this)" style="width: 28px; height: 28px; background-color: #7a2f1f;" title="Adicionar">
-                                                <i class="fa fa-shopping-cart" style="font-size: 0.8rem;"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endsection
-
-        @section('modals')
-        <div class="modal fade" id="modal-detalhes" tabindex="-1" aria-labelledby="modal-nome" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content rounded-4 border-0 shadow">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title fw-bold" id="modal-nome" style="color: #7a2f1f;"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="fecharModal()"></button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="rounded-4 overflow-hidden shadow-sm" style="height: 350px; background-color: #f8f9fa;">
-                                    <img id="modal-img" src="" alt="" class="w-100 h-100" style="object-fit: cover;">
-                                </div>
-                            </div>
-                            <div class="col-md-6 d-flex flex-column">
-                                <div class="modal-preco h3 fw-bold mb-3" id="modal-preco" style="color: #c85a3a;"></div>
-                                <div class="modal-estoque mb-3" id="modal-estoque"></div>
-                                <p id="modal-descricao" class="text-muted mb-4"></p>
-                                <div class="mt-auto">
-                                    <div class="d-flex align-items-center gap-3 mb-4">
-                                        <label for="modal-quantidade" class="fw-bold">Qtd:</label>
-                                        <input type="number" id="modal-quantidade" class="form-control text-center" value="1" min="1" style="width: 80px;">
-                                    </div>
-                                    <div class="d-flex gap-3">
-                                        <button class="btn btn-lg w-100 fw-bold text-white" style="background-color: #7a2f1f;" onclick="adicionarAoCarrinho()">
-                                            <i class="fa fa-shopping-cart me-2"></i> Adicionar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modal-carrinho" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 border-0 shadow">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title fw-bold" style="color: #7a2f1f;">Meu Carrinho</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="fecharCarrinho()"></button>
-                    </div>
-                    <div class="modal-body p-4" id="carrinho-conteudo">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modal-guest-checkout" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 border-0 shadow">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title fw-bold" style="color: #7a2f1f;">Finalizar Compra</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <p class="text-muted mb-3">Informe seus dados para finalizar o pedido:</p>
-                        <div class="mb-3">
-                            <label for="guest_name" class="form-label fw-semibold">Nome Completo</label>
-                            <input type="text" class="form-control" id="guest_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="guest_email" class="form-label fw-semibold">E-mail</label>
-                            <input type="email" class="form-control" id="guest_email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="guest_phone" class="form-label fw-semibold">Telefone (opcional)</label>
-                            <input type="text" class="form-control" id="guest_phone" placeholder="(99) 99999-9999">
-                        </div>
-                        <div class="d-flex gap-2 mt-3">
-                            <button class="btn flex-fill text-white fw-bold" style="background-color: #7a2f1f;" onclick="enviarCheckoutGuest()">
-                                <i class="fa fa-check-circle me-1"></i> Confirmar Pedido
-                            </button>
-                            <button class="btn flex-fill btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endsection
-
-        @section('scripts')
-        <script>
-            window.Laravel = {
-                auth: {{ auth()->check() ? 'true' : 'false' }},
-                checkoutUrl: '{{ route("checkout.store") }}',
-                csrfToken: '{{ csrf_token() }}'
-            };
-        </script>
-        <script src="{{ asset('js/cart.js') }}"></script>
-        @endsection
     @endif
-@else
-    @section('style')
-    <link rel="stylesheet" href="{{asset('css/styles-produtos.css')}}">
-    @endsection
+@endauth
+
+@if(auth()->guest() || (auth()->check() && !auth()->user()->isAdmin() && !auth()->user()->isArtisan()))
 
     @section('content')
-    <div class="container-fluid px-3 py-2">
-        <div class="row g-3">
-            <div class="col-12">
-                <div class="row g-3 mb-2 align-items-center position-relative" style="z-index: 1050;">
-                    <div class="col-lg-9 col-xl-10">
-                        <div class="card border-0 shadow-sm rounded-pill p-1 bg-white">
-                            <form action="{{ route('produtos') }}" method="GET" class="d-flex w-100 m-0">
-                                @if(request('categoria'))
-                                    <input type="hidden" name="categoria" value="{{ request('categoria') }}">
-                                @endif
-                                <div class="input-group input-group-lg border-0 bg-transparent">
-                                    <button class="btn dropdown-toggle d-flex align-items-center gap-2 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f0eecf; color: #7a2f1f; border-top-left-radius: 50rem; border-bottom-left-radius: 50rem; padding-left: 1rem; padding-right: 1rem; font-size: 0.95rem;">
-                                        <i class="fa fa-filter"></i>
-                                        <span class="d-none d-sm-inline fw-bold">Categorias</span>
-                                    </button>
-                                    <ul class="dropdown-menu shadow-lg border-0 mt-2 rounded-4 p-2" style="min-width: 250px; z-index: 1060; animation: fadeInPage 0.2s ease;">
-                                        <li>
-                                            <a class="dropdown-item rounded-3 py-2 mb-1 {{ !request('categoria') ? 'bg-light fw-bold' : '' }}" href="{{ route('produtos', ['busca' => request('busca')]) }}" style="color: #7a2f1f;">
-                                                <i class="bi bi-grid-fill me-2 opacity-50"></i> Todas as Categorias
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider opacity-10"></li>
-                                        @foreach($categorias as $categoria)
-                                        <li>
-                                            <a class="dropdown-item rounded-3 py-2 {{ request('categoria') == $categoria->id_categoria ? 'bg-light fw-bold' : '' }}" 
-                                               href="{{ route('produtos', ['categoria' => $categoria->id_categoria, 'busca' => request('busca')]) }}" 
-                                               style="color: #333;">
-                                                {{ $categoria->nome_categoria }}
-                                            </a>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                    <input type="text" name="busca" class="form-control border-0 shadow-none bg-transparent fs-6 ps-4"
-                                           placeholder="Buscar artesanatos..." value="{{ request('busca') }}">
-                                    <button type="submit" class="btn px-4 text-white" style="background-color: #7a2f1f; border-top-right-radius: 50rem; border-bottom-right-radius: 50rem;">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-xl-2 d-flex justify-content-end gap-2 mt-3 mt-lg-0">
-                        <span class="small text-muted fw-bold bg-white px-3 py-2 rounded-pill shadow-sm text-nowrap">
-                            <i class="bi bi-box-seam me-1"></i> {{ $produtos->count() }} itens
-                        </span>
-                        <button class="btn text-white fw-bold rounded-pill px-3 shadow-sm position-relative" style="background-color: #7a2f1f;" onclick="abrirCarrinho()" title="Carrinho">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span id="badge-carrinho" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; display: none;">0</span>
-                        </button>
-                    </div>
-                </div>
-
-                @if($produtos->isEmpty())
-                    <div class="text-center py-5">
-                        <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
-                        <p class="text-muted fs-5">Nenhum produto cadastrado nesta categoria.</p>
-                        <a href="{{ route('produtos') }}" class="btn btn-outline-dark mt-2">Ver tudo</a>
-                    </div>
-                @endif
-
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4" id="produtos-grid">
-                    @foreach($produtos as $produto)
-                    <div class="col">
-                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden produto-card" 
-                             data-id="{{ $produto->id_produto }}"
-                             data-nome="{{ $produto->nome }}"
-                             data-preco="{{ $produto->preco }}"
-                             data-descricao="{{ $produto->descricao }}"
-                             data-estoque="{{ $produto->estoque ? $produto->estoque->quantidade : 0 }}"
-                             data-imagem="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
-                            <div class="position-relative overflow-hidden" style="height: 210px; background-color: #f8f9fa;">
-                                <img src="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}" 
-                                     class="card-img-top w-100 h-100" alt="{{ $produto->nome }}" style="object-fit: cover; transition: transform 0.3s ease;">
-                                @if($produto->estoque && $produto->estoque->quantidade <= 0)
-                                    <div class="position-absolute top-0 end-0 m-2">
-                                        <span class="badge bg-danger">Esgotado</span>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="card-body d-flex flex-column p-3">
-                                <h3 class="h6 fw-bold mb-1 text-truncate" title="{{ $produto->nome }}" style="color: #7a2f1f;">{{ $produto->nome }}</h3>
-                                @if($produto->artisan)
-                                    <div class="mb-2 d-flex align-items-center gap-2">
-                                        @if($produto->artisan->artisanProfile && $produto->artisan->artisanProfile->profile_photo)
-                                            <img src="{{ asset('storage/' . $produto->artisan->artisanProfile->profile_photo) }}" alt="Foto de {{ $produto->artisan->name }}" class="rounded-circle" style="width: 20px; height: 20px; object-fit: cover; border: 1px solid #7a2f1f;">
-                                        @else
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 20px; height: 20px; font-size: 0.65rem; background-color: #7a2f1f; font-weight: bold;">
-                                                {{ substr($produto->artisan->name, 0, 1) }}
-                                            </div>
-                                        @endif
-                                        <a href="{{ route('artesao.publico', $produto->artisan->id) }}" class="text-decoration-none small text-muted hover-brown" style="font-size: 0.8rem;" title="Ver portfólio de {{ $produto->artisan->name }}">
-                                            Feito por <span class="fw-bold" style="color: #8b5a3c;">{{ $produto->artisan->name }}</span>
+    <div class="w-full px-3 py-2">
+        <div class="max-w-7xl mx-auto">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-2">
+                <i class="fas fa-arrow-left text-xs"></i> Voltar
+            </a>
+            <div class="flex flex-col lg:flex-row gap-3 mb-2 items-center relative" style="z-index: 40;">
+                <div class="flex-1 w-full lg:w-auto">
+                    <div class="bg-white rounded-full shadow-sm p-1">
+                        <form action="{{ route('produtos') }}" method="GET" class="flex w-full m-0">
+                            @if(request('categoria'))
+                                <input type="hidden" name="categoria" value="{{ request('categoria') }}">
+                            @endif
+                            <div class="relative" x-data="{ catOpen: false }">
+                                <button type="button" @click.prevent="catOpen = !catOpen" @click.away="catOpen = false"
+                                        class="flex items-center gap-2 px-4 py-3 text-sm font-bold text-brand rounded-l-full border-0 cursor-pointer" style="background-color: #f0eecf;">
+                                    <i class="fa fa-filter"></i>
+                                    <span class="hidden sm:inline font-bold">Categorias</span>
+                                </button>
+                                <ul x-show="catOpen" x-transition
+                                    class="absolute left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 list-none p-2"
+                                    style="display: none; min-width: 250px;">
+                                    <li>
+                                        <a class="block px-3 py-2 text-sm rounded-lg {{ !request('categoria') ? 'bg-gray-100 font-bold' : '' }} text-brand no-underline hover:bg-gray-100" href="{{ route('produtos', ['busca' => request('busca')]) }}">
+                                            <i class="fa fa-th-large mr-2 text-gray-400"></i> Todas as Categorias
                                         </a>
+                                    </li>
+                                    <li><hr class="my-1 border-gray-200"></li>
+                                    @foreach($categorias as $categoria)
+                                    <li>
+                                        <a class="block px-3 py-2 text-sm rounded-lg {{ request('categoria') == $categoria->id_categoria ? 'bg-gray-100 font-bold' : '' }} text-gray-700 no-underline hover:bg-gray-100"
+                                           href="{{ route('produtos', ['categoria' => $categoria->id_categoria, 'busca' => request('busca')]) }}">
+                                            {{ $categoria->nome_categoria }}
+                                        </a>
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            <input type="text" name="busca"
+                                   class="flex-1 border-0 px-4 py-3 text-base outline-none bg-transparent"
+                                   placeholder="Buscar artesanatos..." value="{{ request('busca') }}">
+                            <button type="submit" class="px-4 text-white rounded-r-full cursor-pointer border-0" style="background-color: #7a2f1f;">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <span class="text-sm text-gray-500 font-bold bg-white px-3 py-2 rounded-full shadow-sm whitespace-nowrap">
+                        <i class="fa fa-box mr-1"></i> {{ $produtos->count() }} itens
+                    </span>
+                    <button class="text-white font-bold px-3 py-2 rounded-full shadow-sm relative cursor-pointer border-0" style="background-color: #7a2f1f;" onclick="abrirCarrinho()" title="Carrinho">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span id="badge-carrinho" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full" style="display: none;">0</span>
+                    </button>
+                </div>
+            </div>
+
+            @if($produtos->isEmpty())
+                <div class="text-center py-5">
+                    <i class="fa fa-search text-5xl text-gray-400 mb-3 block"></i>
+                    <p class="text-gray-500 text-xl">Nenhum produto cadastrado nesta categoria.</p>
+                    <a href="{{ route('produtos') }}" class="mt-2 inline-block px-4 py-2 border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100 no-underline">Ver tudo</a>
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="produtos-grid">
+                @foreach($produtos as $produto)
+                <div class="bg-white h-full rounded-xl shadow-sm overflow-hidden produto-card cursor-pointer border-2 border-transparent hover:border-brand-light hover:-translate-y-2 hover:shadow-md transition-all"
+                     data-id="{{ $produto->id_produto }}"
+                     data-nome="{{ $produto->nome }}"
+                     data-preco="{{ $produto->preco }}"
+                     data-descricao="{{ $produto->descricao }}"
+                     data-estoque="{{ $produto->estoque ? $produto->estoque->quantidade : 0 }}"
+                     data-imagem="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
+                    <div class="relative overflow-hidden h-52" style="background: linear-gradient(135deg, #e8dfd6 0%, #f5e6d3 100%);">
+                        <img src="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}"
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="{{ $produto->nome }}" loading="lazy">
+                        @if($produto->estoque && $produto->estoque->quantidade <= 0)
+                            <span class="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white">Esgotado</span>
+                        @endif
+                    </div>
+
+                    <div class="p-3 flex flex-col">
+                        <h3 class="text-sm font-bold mb-1 truncate text-brand" title="{{ $produto->nome }}">{{ $produto->nome }}</h3>
+                        @if($produto->artisan)
+                            <div class="mb-2 flex items-center gap-2">
+                                @if($produto->artisan->artisanProfile && $produto->artisan->artisanProfile->profile_photo)
+                                    <img src="{{ asset('storage/' . $produto->artisan->artisanProfile->profile_photo) }}" alt="Foto de {{ $produto->artisan->name }}" class="rounded-full w-5 h-5 object-cover border border-brand" loading="lazy">
+                                @else
+                                    <div class="rounded-full w-5 h-5 flex items-center justify-center text-white text-xs font-bold" style="background-color: #7a2f1f;">
+                                        {{ substr($produto->artisan->name, 0, 1) }}
                                     </div>
                                 @endif
+                                <a href="{{ route('artesao.publico', $produto->artisan->id) }}" class="text-xs text-gray-500 no-underline hover:text-brand-light" title="Ver portfólio de {{ $produto->artisan->name }}">
+                                    Feito por <span class="font-bold text-brand-light">{{ $produto->artisan->name }}</span>
+                                </a>
+                            </div>
+                        @endif
 
-                                <div class="d-flex justify-content-between align-items-center mt-auto">
-                                    <span class="fw-bold mb-0" style="color: #c85a3a;">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
-                                    <div class="d-flex gap-1">
-                                        <button class="btn btn-sm btn-outline-brown p-1 d-flex align-items-center justify-content-center" onclick="abrirDetalhes(this)" style="width: 28px; height: 28px;" title="Ver Detalhes">
-                                            <i class="fa fa-eye" style="font-size: 0.8rem;"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-brown p-1 d-flex align-items-center justify-content-center text-white" onclick="adicionarRapido(this)" style="width: 28px; height: 28px; background-color: #7a2f1f;" title="Adicionar">
-                                            <i class="fa fa-shopping-cart" style="font-size: 0.8rem;"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="font-bold text-price text-lg">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
+                            <div class="flex gap-1">
+                                <button class="w-7 h-7 flex items-center justify-center text-sm border border-brand-light text-brand-light rounded hover:bg-brand-light hover:text-white transition cursor-pointer" onclick="abrirDetalhes(this)" title="Ver Detalhes">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                <button class="w-7 h-7 flex items-center justify-center text-sm text-white rounded cursor-pointer border-0" onclick="adicionarRapido(this)" title="Adicionar" style="background-color: #7a2f1f;">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    @endforeach
                 </div>
+                @endforeach
+            </div>
+
+            <div class="mt-4 flex justify-center">
+                {{ $produtos->links() }}
             </div>
         </div>
     </div>
     @endsection
 
     @section('modals')
-    <div class="modal fade" id="modal-detalhes" tabindex="-1" aria-labelledby="modal-nome" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-4 border-0 shadow">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" id="modal-nome" style="color: #7a2f1f;"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="fecharModal()"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="rounded-4 overflow-hidden shadow-sm" style="height: 350px; background-color: #f8f9fa;">
-                                <img id="modal-img" src="" alt="" class="w-100 h-100" style="object-fit: cover;">
+    <div id="modal-detalhes" class="modal-overlay modal-lg" onclick="if(event.target===this)hideModal('modal-detalhes')">
+        <div>
+            <div class="flex items-center justify-between px-6 pt-6 pb-0">
+                <h5 class="text-xl font-bold text-brand m-0" id="modal-nome"></h5>
+                <button onclick="fecharModal()" class="text-3xl text-gray-400 hover:text-gray-600 leading-none bg-transparent border-0 cursor-pointer">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="rounded-xl overflow-hidden shadow-sm h-80" style="background-color: #f8f9fa;">
+                        <img id="modal-img" src="" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="text-2xl font-bold text-price mb-3" id="modal-preco"></div>
+                        <div class="mb-3" id="modal-estoque"></div>
+                        <p class="text-gray-500 mb-4 flex-1" id="modal-descricao"></p>
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <label for="modal-quantidade" class="font-bold">Qtd:</label>
+                                <input type="number" id="modal-quantidade" class="w-20 text-center border border-gray-300 rounded-lg px-3 py-2" value="1" min="1">
                             </div>
-                        </div>
-                        <div class="col-md-6 d-flex flex-column">
-                            <div class="modal-preco h3 fw-bold mb-3" id="modal-preco" style="color: #c85a3a;"></div>
-                            <div class="modal-estoque mb-3" id="modal-estoque"></div>
-                            <p id="modal-descricao" class="text-muted mb-4"></p>
-                            <div class="mt-auto">
-                                <div class="d-flex align-items-center gap-3 mb-4">
-                                    <label for="modal-quantidade" class="fw-bold">Qtd:</label>
-                                    <input type="number" id="modal-quantidade" class="form-control text-center" value="1" min="1" style="width: 80px;">
-                                </div>
-                                <div class="d-flex gap-3">
-                                    <button class="btn btn-lg w-100 fw-bold text-white" style="background-color: #7a2f1f;" onclick="adicionarAoCarrinho()">
-                                        <i class="fa fa-shopping-cart me-2"></i> Adicionar
-                                    </button>
-                                </div>
-                            </div>
+                            <button class="w-full text-white font-bold px-4 py-3 rounded-lg cursor-pointer border-0 text-lg" style="background-color: #7a2f1f;" onclick="adicionarAoCarrinho()">
+                                <i class="fa fa-shopping-cart mr-2"></i> Adicionar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -530,46 +295,41 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-carrinho" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" style="color: #7a2f1f;">Meu Carrinho</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="fecharCarrinho()"></button>
-                </div>
-                <div class="modal-body p-4" id="carrinho-conteudo">
-                </div>
+    <div id="modal-carrinho" class="modal-overlay" onclick="if(event.target===this)hideModal('modal-carrinho')">
+        <div>
+            <div class="flex items-center justify-between px-6 pt-6 pb-0">
+                <h5 class="text-xl font-bold text-brand m-0">Meu Carrinho</h5>
+                <button onclick="fecharCarrinho()" class="text-3xl text-gray-400 hover:text-gray-600 leading-none bg-transparent border-0 cursor-pointer">&times;</button>
             </div>
+            <div class="p-6" id="carrinho-conteudo"></div>
         </div>
     </div>
 
-    <div class="modal fade" id="modal-guest-checkout" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" style="color: #7a2f1f;">Finalizar Compra</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="modal-guest-checkout" class="modal-overlay" onclick="if(event.target===this)hideModal('modal-guest-checkout')">
+        <div>
+            <div class="flex items-center justify-between px-6 pt-6 pb-0">
+                <h5 class="text-xl font-bold text-brand m-0">Finalizar Compra</h5>
+                <button onclick="hideModal('modal-guest-checkout')" class="text-3xl text-gray-400 hover:text-gray-600 leading-none bg-transparent border-0 cursor-pointer">&times;</button>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-500 mb-3">Informe seus dados para finalizar o pedido:</p>
+                <div class="mb-3">
+                    <label for="guest_name" class="block font-semibold mb-1 text-sm">Nome Completo</label>
+                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base" id="guest_name" required>
                 </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted mb-3">Informe seus dados para finalizar o pedido:</p>
-                    <div class="mb-3">
-                        <label for="guest_name" class="form-label fw-semibold">Nome Completo</label>
-                        <input type="text" class="form-control" id="guest_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="guest_email" class="form-label fw-semibold">E-mail</label>
-                        <input type="email" class="form-control" id="guest_email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="guest_phone" class="form-label fw-semibold">Telefone (opcional)</label>
-                        <input type="text" class="form-control" id="guest_phone" placeholder="(99) 99999-9999">
-                    </div>
-                    <div class="d-flex gap-2 mt-3">
-                        <button class="btn flex-fill text-white fw-bold" style="background-color: #7a2f1f;" onclick="enviarCheckoutGuest()">
-                            <i class="fa fa-check-circle me-1"></i> Confirmar Pedido
-                        </button>
-                        <button class="btn flex-fill btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
+                <div class="mb-3">
+                    <label for="guest_email" class="block font-semibold mb-1 text-sm">E-mail</label>
+                    <input type="email" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base" id="guest_email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="guest_phone" class="block font-semibold mb-1 text-sm">Telefone (opcional)</label>
+                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base" id="guest_phone" placeholder="(99) 99999-9999">
+                </div>
+                <div class="flex gap-2 mt-3">
+                    <button class="flex-1 text-white font-bold px-4 py-3 rounded-lg cursor-pointer border-0" style="background-color: #7a2f1f;" onclick="enviarCheckoutGuest()">
+                        <i class="fa fa-check-circle mr-1"></i> Confirmar Pedido
+                    </button>
+                    <button class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer bg-white" onclick="hideModal('modal-guest-checkout')">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -584,6 +344,6 @@
             csrfToken: '{{ csrf_token() }}'
         };
     </script>
-    <script src="{{ asset('js/cart.js') }}"></script>
+    @vite('resources/js/cart.js')
     @endsection
-@endauth
+@endif

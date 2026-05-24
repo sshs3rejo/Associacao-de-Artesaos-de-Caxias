@@ -154,7 +154,7 @@ class ArtisanController extends Controller
         if ($produto->id_artesan !== auth()->id()) {
             abort(403);
         }
-        $categorias = CategoriasProdutos::all();
+        $categorias = CategoriasProdutos::getAllCached();
         return view('artesan.produtos-edit', compact('produto', 'categorias'));
     }
 
@@ -213,7 +213,7 @@ class ArtisanController extends Controller
 
     public function criarProduto()
     {
-        $categorias = CategoriasProdutos::all();
+        $categorias = CategoriasProdutos::getAllCached();
         return view('artesan.produtos-create', compact('categorias'));
     }
 

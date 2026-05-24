@@ -2,91 +2,88 @@
 @section('titulo', 'Usuários do Sistema')
 
 @section('content')
-<div class="container-fluid px-4 py-5">
-    <h1 class="fw-bold mb-4" style="color: #7a2f1f;">Usuários do Sistema</h1>
-
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4 border-0 shadow-sm" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+<div class="w-full px-4 py-5">
+    <x-breadcrumb :items="[['Home', route('home')], ['Painel', route('admin.dashboard')], ['Usuários']]" />
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="font-bold text-2xl text-brand">Usuários do Sistema</h1>
+        <a href="{{ route('admin.usuarios.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold text-sm transition no-underline">
+            <i class="fas fa-plus"></i> Novo Usuário
+        </a>
+    </div>
 
     @if($usuarios->isEmpty())
         <div class="text-center py-5">
-            <i class="bi bi-people display-1 text-muted mb-3 d-block"></i>
-            <p class="text-muted fs-5">Nenhum usuário encontrado.</p>
+            <i class="fas fa-users text-5xl text-gray-500 mb-3 block"></i>
+            <p class="text-gray-500 text-lg">Nenhum usuário encontrado.</p>
         </div>
     @else
-        <div class="table-responsive">
-            <table class="table table-hover align-middle bg-white rounded-4 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 bg-white rounded-xl shadow-sm overflow-hidden">
                 <thead style="background-color: #7a2f1f; color: #F9F7D3;">
                     <tr>
-                        <th class="p-3">Nome</th>
-                        <th class="p-3">Email</th>
-                        <th class="p-3">Função (Role)</th>
-                        <th class="p-3">Status</th>
-                        <th class="p-3">Artesão</th>
-                        <th class="p-3">Cadastro</th>
-                        <th class="p-3 text-end">Ações</th>
+                        <th class="p-3 text-left text-sm font-semibold">Nome</th>
+                        <th class="p-3 text-left text-sm font-semibold">Email</th>
+                        <th class="p-3 text-left text-sm font-semibold">Função (Role)</th>
+                        <th class="p-3 text-left text-sm font-semibold">Status</th>
+                        <th class="p-3 text-left text-sm font-semibold">Artesão</th>
+                        <th class="p-3 text-left text-sm font-semibold">Cadastro</th>
+                        <th class="p-3 text-right text-sm font-semibold">Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @foreach($usuarios as $u)
-                        <tr>
-                            <td class="fw-semibold p-3">{{ $u->name }}</td>
-                            <td class="p-3">{{ $u->email }}</td>
-                            <td class="p-3">
-                                <form action="{{ route('admin.usuarios.change-role', $u->id) }}" method="POST" class="d-flex align-items-center gap-1 m-0">
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="font-semibold p-3 text-sm">{{ $u->name }}</td>
+                            <td class="p-3 text-sm">{{ $u->email }}</td>
+                            <td class="p-3 text-sm">
+                                <form action="{{ route('admin.usuarios.change-role', $u->id) }}" method="POST" class="flex items-center gap-1 m-0">
                                     @csrf
-                                    <select name="role" class="form-select form-select-sm rounded-pill" style="max-width: 130px; font-size: 0.85rem;" onchange="this.form.submit()">
+                                    <select name="role" class="w-full px-3 py-1 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent" style="max-width: 130px; font-size: 0.85rem;" onchange="this.form.submit()">
                                         <option value="user" {{ $u->role === 'user' ? 'selected' : '' }}>Comprador</option>
                                         <option value="artisan" {{ $u->role === 'artisan' ? 'selected' : '' }}>Artesão</option>
                                         <option value="admin" {{ $u->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                     </select>
                                 </form>
                             </td>
-                            <td class="p-3">
+                            <td class="p-3 text-sm">
                                 @if($u->isActive())
-                                    <span class="badge bg-success">Ativo</span>
+                                    <x-badge type="success">Ativo</x-badge>
                                 @else
-                                    <span class="badge bg-danger">Inativo</span>
+                                    <x-badge type="danger">Inativo</x-badge>
                                 @endif
                             </td>
-                            <td class="p-3">
+                            <td class="p-3 text-sm">
                                 @if($u->artisanProfile)
                                     @if($u->artisanProfile->isApproved())
-                                        <span class="badge bg-success">Aprovado</span>
+                                        <x-badge type="success">Aprovado</x-badge>
                                     @else
-                                        <span class="badge bg-warning text-dark">Pendente</span>
+                                        <x-badge type="pending">Pendente</x-badge>
                                     @endif
                                 @else
-                                    <span class="text-muted">—</span>
+                                    <span class="text-gray-500 text-sm">—</span>
                                 @endif
                             </td>
-                            <td class="p-3 small text-muted">{{ $u->created_at->format('d/m/Y') }}</td>
-                            <td class="p-3 text-end">
-                                <div class="d-flex justify-content-end gap-2">
-                                    {{-- Toggle Status Button --}}
+                            <td class="p-3 text-sm text-gray-500">{{ $u->created_at->format('d/m/Y') }}</td>
+                            <td class="p-3 text-sm text-right">
+                                <div class="flex justify-end gap-2">
                                     <form action="{{ route('admin.usuarios.toggle-status', $u->id) }}" method="POST" class="m-0">
                                         @csrf
                                         @if($u->isActive())
-                                            <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill px-3" title="Bloquear Usuário">
-                                                <i class="bi bi-slash-circle"></i> Bloquear
+                                            <button type="submit" class="inline-block px-3 py-1 rounded-full font-semibold text-center no-underline border border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-sm" title="Bloquear Usuário">
+                                                <i class="fas fa-ban"></i> Bloquear
                                             </button>
                                         @else
-                                            <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Reativar Usuário">
-                                                <i class="bi bi-check-circle"></i> Ativar
+                                            <button type="submit" class="inline-block px-3 py-1 rounded-full font-semibold text-center no-underline border border-green-500 text-green-600 hover:bg-green-50 text-sm" title="Reativar Usuário">
+                                                <i class="fas fa-check-circle"></i> Ativar
                                             </button>
                                         @endif
                                     </form>
 
-                                    {{-- Delete Button --}}
                                     <form action="{{ route('admin.usuarios.destroy', $u->id) }}" method="POST" class="m-0">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('Tem certeza de que deseja excluir permanentemente o usuário {{ $u->name }} do sistema?')" title="Excluir Usuário">
-                                            <i class="bi bi-trash"></i> Excluir
+                                        <button type="submit" class="inline-block px-3 py-1 rounded-full font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="return confirm('Tem certeza de que deseja excluir permanentemente o usuário {{ $u->name }} do sistema?')" title="Excluir Usuário">
+                                            <i class="fas fa-trash"></i> Excluir
                                         </button>
                                     </form>
                                 </div>

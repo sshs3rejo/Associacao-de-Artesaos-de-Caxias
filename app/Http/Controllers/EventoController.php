@@ -98,7 +98,7 @@ class EventoController extends Controller
 
     public function edit($id)
     {
-        $evento = Eventos::findOrFail($id);
+        $evento = Eventos::with('instrutor')->findOrFail($id);
         $instrutores = Instrutores::all();
 
         return view('eventos.edit', compact('evento', 'instrutores'));
@@ -106,7 +106,7 @@ class EventoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $evento = Eventos::findOrFail($id);
+        $evento = Eventos::with('instrutor')->findOrFail($id);
 
         $validated = $request->validate([
             'nome' => 'required|string|max:255',

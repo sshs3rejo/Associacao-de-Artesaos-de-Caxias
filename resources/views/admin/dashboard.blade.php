@@ -2,212 +2,16 @@
 
 @section('titulo', 'Painel Administrativo')
 
-@section('style')
-<style>
-    /* ==========================================
-       ESTILOS COMPLETOS DO DASHBOARD
-       FORÇANDO TODOS OS ESTILOS INLINE
-       ========================================== */
-
-    /* BOTÕES EDITAR E EXCLUIR - COM BOXES */
-    .btn-action-edit,
-    .btn-action-delete,
-    a.btn-action-edit,
-    button.btn-action-delete {
-        display: inline-block !important;
-        padding: 6px 16px !important;
-        margin: 0 4px !important;
-        border-radius: 6px !important;
-        font-size: 13px !important;
-        font-weight: 600 !important;
-        text-decoration: none !important;
-        text-align: center !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        border: 2px solid !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-    }
-
-    /* BOTÃO EDITAR - LARANJA */
-    .btn-action-edit,
-    a.btn-action-edit {
-        background-color: #fff !important;
-        border-color: #f0ad4e !important;
-        color: #f0ad4e !important;
-    }
-
-    .btn-action-edit:hover,
-    a.btn-action-edit:hover {
-        background-color: #f0ad4e !important;
-        border-color: #f0ad4e !important;
-        color: #fff !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 8px rgba(240,173,78,0.3) !important;
-    }
-
-    /* BOTÃO EXCLUIR - VERMELHO */
-    .btn-action-delete,
-    button.btn-action-delete {
-        background-color: #fff !important;
-        border-color: #d9534f !important;
-        color: #d9534f !important;
-    }
-
-    .btn-action-delete:hover,
-    button.btn-action-delete:hover {
-        background-color: #d9534f !important;
-        border-color: #d9534f !important;
-        color: #fff !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 8px rgba(217,83,79,0.3) !important;
-    }
-
-    /* CONTAINER DOS BOTÕES */
-    .action-buttons {
-        display: flex !important;
-        gap: 8px !important;
-        align-items: center !important;
-        justify-content: flex-end !important;
-    }
-
-    /* CARDS E TABELAS */
-    .data-table {
-        background: #fff !important;
-        border-radius: 12px !important;
-        padding: 1.5rem !important;
-        margin-bottom: 1.5rem !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-    }
-
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .dashboard-card {
-        background: #fff !important;
-        border-radius: 12px !important;
-        padding: 1.5rem !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-        border: 1px solid rgba(0,0,0,0.05) !important;
-    }
-
-    .dashboard-card h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #444;
-        margin-bottom: 0.5rem;
-    }
-
-    .dashboard-card strong {
-        display: block;
-        font-size: 1.8rem;
-        color: #5C3A2C;
-        font-weight: 700;
-    }
-
-    .dashboard-card a {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-    }
-
-    .dashboard-card a:hover strong {
-        color: #8C5E47;
-    }
-
-    .dashboard-card a:hover {
-        transform: translateY(-2px);
-        transition: transform 0.2s ease;
-    }
-
-    /* BOTÕES PRINCIPAIS DO DASHBOARD */
-    .btn-dashboard-primary {
-        background-color: #5C3A2C !important;
-        border: 2px solid #5C3A2C !important;
-        color: #fff !important;
-        padding: 10px 20px !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        transition: all 0.2s !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-    }
-
-    .btn-dashboard-primary:hover {
-        background-color: #8C5E47 !important;
-        border-color: #8C5E47 !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
-    }
-
-    .btn-dashboard-outline {
-        background-color: #fff !important;
-        border: 2px solid #8C5E47 !important;
-        color: #8C5E47 !important;
-        padding: 10px 20px !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        transition: all 0.2s !important;
-    }
-
-    .btn-dashboard-outline:hover {
-        background-color: #8C5E47 !important;
-        border-color: #8C5E47 !important;
-        color: #fff !important;
-        transform: translateY(-1px) !important;
-    }
-
-    /* RESPONSIVO MOBILE */
-    @media (max-width: 767px) {
-        .action-buttons {
-            flex-direction: column !important;
-            gap: 6px !important;
-        }
-
-        .btn-action-edit,
-        .btn-action-delete {
-            width: 100% !important;
-            margin: 0 !important;
-        }
-
-        .data-table {
-            padding: 1rem !important;
-        }
-    }
-</style>
-@endsection
-
-
-
 
 @section('content')
-<div class="container py-4">
-    <div class="d-flex align-items-center justify-content-between mb-4">
+<div class="w-full px-4 py-4">
+    <x-breadcrumb :items="[['Home', route('home')], ['Painel Administrativo']]" />
+    <div class="flex items-center justify-between mb-4">
         <div>
-            <h1 class="h3 mb-1">Painel Administrativo</h1>
-            <p class="text-muted mb-0">Visão geral das principais métricas do sistema.</p>
+            <h1 class="text-2xl font-bold mb-1 text-brand">Painel Administrativo</h1>
+            <p class="text-gray-500 mb-0">Visão geral das principais métricas do sistema.</p>
         </div>
     </div>
-
-    {{-- Mensagens de feedback --}}
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Ops!</strong> Corrija os campos destacados abaixo.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
-    @endif
-
-    {{-- Gerenciamento rápido removido daqui para páginas próprias --}}
 
     {{-- Estatísticas principais --}}
     <section class="dashboard-grid mb-5">
@@ -242,49 +46,49 @@
     </section>
 
     {{-- Histórico de Vendas --}}
-    <div class="row g-4">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12">
             <div class="data-table p-0">
-                <div class="p-4 border-bottom">
-                    <h2 class="h5 mb-0 fw-bold" style="color: #7a2f1f;">Histórico de Vendas</h2>
+                <div class="p-4 border-b">
+                    <h2 class="text-lg mb-0 font-bold" style="color: #7a2f1f;">Histórico de Vendas</h2>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead style="background-color: #f8f9fa;">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-3">ID</th>
-                                <th class="px-4 py-3">Cliente</th>
-                                <th class="px-4 py-3">Data</th>
-                                <th class="px-4 py-3">Total</th>
-                                <th class="px-4 py-3">Status</th>
-                                <th class="px-4 py-3 text-end">Ações</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">ID</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Cliente</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Data</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Total</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-600">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-200">
                             @forelse($vendas as $venda)
-                            <tr>
-                                <td class="px-4 py-3">#{{ $venda->id_venda }}</td>
-                                <td class="px-4 py-3">{{ $venda->cliente->nome ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ \Carbon\Carbon::parse($venda->data_venda)->format('d/m/Y') }}</td>
-                                <td class="px-4 py-3">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
-                                <td class="px-4 py-3">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm">#{{ $venda->id_venda }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $venda->cliente->nome ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm">{{ \Carbon\Carbon::parse($venda->data_venda)->format('d/m/Y') }}</td>
+                                <td class="px-4 py-3 text-sm">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-sm">
                                     @if($venda->mp_status === 'approved')
-                                        <span class="badge bg-success">Pago</span>
+                                        <x-badge type="success">Pago</x-badge>
                                     @else
-                                        <span class="badge bg-warning text-dark">Pendente</span>
+                                        <x-badge type="pending">Pendente</x-badge>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-end">
-                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                <td class="px-4 py-3 text-sm text-right">
+                                    <div class="flex justify-end items-center gap-2">
                                         @if($venda->mp_status !== 'approved')
-                                        <form action="{{ route('admin.vendas.aprovar', $venda->id_venda) }}" method="POST" class="d-inline m-0 p-0">
+                                        <form action="{{ route('admin.vendas.aprovar', $venda->id_venda) }}" method="POST" class="inline m-0 p-0">
                                             @csrf
-                                            <button type="submit" class="btn btn-success text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
+                                            <button type="submit" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg font-semibold text-white shadow-sm bg-green-500 hover:bg-green-600 no-underline text-center" style="font-size: 0.75rem; border: none;">
                                                 <i class="fas fa-check"></i> Aprovar Pix
                                             </button>
                                         </form>
                                         @endif
-                                        <button class="btn btn-outline-secondary p-0 d-flex align-items-center justify-content-center" title="Itens do Pedido: @foreach($venda->itens as $item) {{ $item->produto->nome }} x{{ $item->quantidade }}; @endforeach" style="width: 28px; height: 28px; border-radius: 6px;">
+                                        <button class="inline-flex items-center justify-center p-0 border border-gray-400 text-gray-600 hover:bg-gray-50 rounded-lg no-underline text-center font-semibold" title="Itens do Pedido: @foreach($venda->itens as $item) {{ $item->produto->nome }} x{{ $item->quantidade }}; @endforeach" style="width: 28px; height: 28px;">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
                                     </div>
@@ -292,14 +96,14 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">Nenhuma venda encontrada.</td>
+                                <td colspan="5" class="text-center py-5 text-gray-500 text-sm">Nenhuma venda encontrada.</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-            
+
             <div class="mt-4">
                 {{ $vendas->links() }}
             </div>
@@ -307,63 +111,50 @@
     </div>
 
     <!-- Propostas de Produtos Pendentes -->
-    <div class="row g-4 mt-5">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4 mt-8">
+        <div class="col-span-12">
             <div class="data-table p-0">
-                <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
-                    <h2 class="h5 mb-0 fw-bold" style="color: #7a2f1f;"><i class="bi bi-boxes me-2"></i> Propostas de Produtos Pendentes</h2>
-                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3">{{ $produtosPendentes->total() }} aguardando</span>
+                <div class="p-4 border-b flex items-center justify-between">
+                    <h2 class="text-lg mb-0 font-bold" style="color: #7a2f1f;"><i class="fas fa-boxes me-2"></i> Propostas de Produtos Pendentes</h2>
+                    <x-badge type="pending" size="md">{{ $produtosPendentes->total() }} aguardando</x-badge>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead style="background-color: #f8f9fa;">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-3">Miniatura</th>
-                                <th class="px-4 py-3">Nome</th>
-                                <th class="px-4 py-3">Artesão</th>
-                                <th class="px-4 py-3">Categoria</th>
-                                <th class="px-4 py-3">Preço</th>
-                                <th class="px-4 py-3">Estoque</th>
-                                <th class="px-4 py-3 text-end">Ações</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Miniatura</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Nome</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Artesão</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Categoria</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Preço</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Estoque</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-600">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-200">
                             @forelse($produtosPendentes as $prodPendente)
-                            <tr>
-                                <td class="px-4 py-3">
-                                    <img src="{{ $prodPendente->imagem ? asset('storage/' . $prodPendente->imagem) : config('association.placeholder') }}" alt="{{ $prodPendente->nome }}" class="rounded shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm">
+                                    <x-image :src="$prodPendente->imagem" :alt="$prodPendente->nome" class="rounded shadow-sm" style="width: 45px; height: 45px; object-fit: cover;" />
                                 </td>
-                                <td class="px-4 py-3 fw-bold" style="color: #8b5a3c;">{{ $prodPendente->nome }}</td>
-                                <td class="px-4 py-3">{{ $prodPendente->artisan->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $prodPendente->categoria->nome_categoria ?? 'Sem Categoria' }}</td>
-                                <td class="px-4 py-3 fw-bold text-success">R$ {{ number_format($prodPendente->preco, 2, ',', '.') }}</td>
-                                <td class="px-4 py-3">{{ $prodPendente->estoque->quantidade ?? 0 }} unid.</td>
-                                <td class="px-4 py-3 text-end">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <form action="{{ route('admin.produtos.aprovar', $prodPendente->id_produto) }}" method="POST" class="d-inline m-0 p-0">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
-                                                <i class="fas fa-check"></i> Aprovar
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin.produtos.rejeitar', $prodPendente->id_produto) }}" method="POST" class="d-inline m-0 p-0" onsubmit="return confirm('Rejeitar este produto?')">
-                                            @csrf
-                                            <button type="submit" class="btn btn-danger text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
-                                                <i class="fas fa-times"></i> Rejeitar
-                                            </button>
-                                        </form>
-                                    </div>
+                                <td class="px-4 py-3 text-sm font-bold" style="color: #8b5a3c;">{{ $prodPendente->nome }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $prodPendente->artisan->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $prodPendente->categoria->nome_categoria ?? 'Sem Categoria' }}</td>
+                                <td class="px-4 py-3 text-sm font-bold text-green-600">R$ {{ number_format($prodPendente->preco, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $prodPendente->estoque->quantidade ?? 0 }} unid.</td>
+                                <td class="px-4 py-3 text-sm text-right">
+                                    <x-card-actions :approve-route="route('admin.produtos.aprovar', $prodPendente->id_produto)" :reject-route="route('admin.produtos.rejeitar', $prodPendente->id_produto)" />
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">Nenhum produto pendente de aprovação.</td>
+                                <td colspan="7" class="text-center py-5 text-gray-500 text-sm">Nenhum produto pendente de aprovação.</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                <div class="p-3 border-top">
+                <div class="p-3 border-t">
                     {{ $produtosPendentes->links() }}
                 </div>
             </div>
@@ -371,65 +162,52 @@
     </div>
 
     <!-- Propostas de Eventos Pendentes -->
-    <div class="row g-4 mt-5">
-        <div class="col-12">
+    <div class="grid grid-cols-12 gap-4 mt-8">
+        <div class="col-span-12">
             <div class="data-table p-0">
-                <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
-                    <h2 class="h5 mb-0 fw-bold" style="color: #7a2f1f;"><i class="bi bi-calendar-event me-2"></i> Propostas de Eventos Pendentes</h2>
-                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3">{{ $eventosPendentes->total() }} aguardando</span>
+                <div class="p-4 border-b flex items-center justify-between">
+                    <h2 class="text-lg mb-0 font-bold" style="color: #7a2f1f;"><i class="fas fa-calendar-alt me-2"></i> Propostas de Eventos Pendentes</h2>
+                    <x-badge type="pending" size="md">{{ $eventosPendentes->total() }} aguardando</x-badge>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead style="background-color: #f8f9fa;">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-3">Capa</th>
-                                <th class="px-4 py-3">Nome</th>
-                                <th class="px-4 py-3">Proponente</th>
-                                <th class="px-4 py-3">Tipo</th>
-                                <th class="px-4 py-3">Data Início</th>
-                                <th class="px-4 py-3">Local</th>
-                                <th class="px-4 py-3">Preço</th>
-                                <th class="px-4 py-3 text-end">Ações</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Capa</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Nome</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Proponente</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Tipo</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Data Início</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Local</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Preço</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-600">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-200">
                             @forelse($eventosPendentes as $evPendente)
-                            <tr>
-                                <td class="px-4 py-3">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm">
                                     <img src="{{ $evPendente->imagem ? asset('storage/' . $evPendente->imagem) : config('association.placeholder') }}" alt="{{ $evPendente->nome }}" class="rounded shadow-sm" style="width: 55px; height: 40px; object-fit: cover;">
                                 </td>
-                                <td class="px-4 py-3 fw-bold" style="color: #8b5a3c;">{{ $evPendente->nome }}</td>
-                                <td class="px-4 py-3">{{ $evPendente->artisan->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3"><span class="badge bg-secondary">{{ ucfirst($evPendente->tipo_evento) }}</span></td>
-                                <td class="px-4 py-3">{{ $evPendente->data_inicio?->format('d/m/Y H:i') ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $evPendente->local }}</td>
-                                <td class="px-4 py-3 fw-bold text-success">{{ $evPendente->isGratuito() ? 'Gratuito' : 'R$ ' . number_format($evPendente->valor_inscricao, 2, ',', '.') }}</td>
-                                <td class="px-4 py-3 text-end">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <form action="{{ route('admin.eventos.aprovar', $evPendente->id_evento) }}" method="POST" class="d-inline m-0 p-0">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
-                                                <i class="fas fa-check"></i> Aprovar
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin.eventos.rejeitar', $evPendente->id_evento) }}" method="POST" class="d-inline m-0 p-0" onsubmit="return confirm('Rejeitar este evento?')">
-                                            @csrf
-                                            <button type="submit" class="btn btn-danger text-white fw-bold px-3 py-1 rounded shadow-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; border: none; border-radius: 6px !important;">
-                                                <i class="fas fa-times"></i> Rejeitar
-                                            </button>
-                                        </form>
-                                    </div>
+                                <td class="px-4 py-3 text-sm font-bold" style="color: #8b5a3c;">{{ $evPendente->nome }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $evPendente->artisan->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm"><x-badge type="inactive">{{ ucfirst($evPendente->tipo_evento) }}</x-badge></td>
+                                <td class="px-4 py-3 text-sm">{{ $evPendente->data_inicio?->format('d/m/Y H:i') ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $evPendente->local }}</td>
+                                <td class="px-4 py-3 text-sm font-bold text-green-600">{{ $evPendente->isGratuito() ? 'Gratuito' : 'R$ ' . number_format($evPendente->valor_inscricao, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-sm text-right">
+                                    <x-card-actions :approve-route="route('admin.eventos.aprovar', $evPendente->id_evento)" :reject-route="route('admin.eventos.rejeitar', $evPendente->id_evento)" />
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">Nenhum evento pendente de aprovação.</td>
+                                <td colspan="8" class="text-center py-5 text-gray-500 text-sm">Nenhum evento pendente de aprovação.</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                <div class="p-3 border-top">
+                <div class="p-3 border-t">
                     {{ $eventosPendentes->links() }}
                 </div>
             </div>

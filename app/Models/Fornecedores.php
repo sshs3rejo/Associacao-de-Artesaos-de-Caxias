@@ -10,7 +10,7 @@ class Fornecedores extends Model
 
     protected $primaryKey = 'id_fornecedor';
 
-    protected $fillable = ['nome', 'contato', 'telefone', 'email'];
+    protected $fillable = ['nome', 'contato', 'telefone', 'email', 'endereco'];
 
     public function materiasPrimas()
     {

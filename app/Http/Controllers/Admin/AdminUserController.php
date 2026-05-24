@@ -42,6 +42,32 @@ class AdminUserController extends Controller
         return back()->with('success', "Função (Role) do usuário {$user->name} atualizada com sucesso!");
     }
 
+    public function create()
+    {
+        return view('admin.usuarios-create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:admin,artisan,user',
+        ]);
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'role' => $validated['role'],
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('admin.usuarios')
+            ->with('success', 'Usuário criado com sucesso!');
+    }
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {

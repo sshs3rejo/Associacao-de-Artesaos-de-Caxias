@@ -6,7 +6,7 @@
     <title>Login - {{ config('association.name') }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-color: #7a2f1f;
@@ -40,14 +40,13 @@
             z-index: 1;
         }
 
-        /* FOTO DESLIZANTE (DESKTOP) */
         .foto {
             position: fixed;
             top: 0;
             right: 0;
             width: 50vw;
             height: 100vh;
-            background-image: url('/imagens/art_back_logo.png');
+            background-image: url('/imagens/art_back_logo.webp');
             background-size: cover;
             background-position: center;
             z-index: 10;
@@ -85,7 +84,6 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* PAINÉIS */
         .esquerda, .direita {
             width: 50vw;
             height: 100vh;
@@ -95,7 +93,7 @@
             justify-content: center;
             z-index: 5;
         }
-        
+
         .areaLogin, .areaCadastro {
             width: 70%;
             max-width: 450px;
@@ -171,8 +169,6 @@
             transform: scale(0.97);
         }
 
-
-
         .toggle-link {
             text-align: center;
             margin-top: 20px;
@@ -194,33 +190,72 @@
             width: 100%;
         }
 
-        /* RESPONSIVIDADE MOBILE (mantenha como está no design anterior para celular) */
         @media (max-width: 767px) {
-            body { 
-                background: linear-gradient(135deg, #7a2f1f 0%, #4a1d13 100%); 
-                padding: 20px; 
+            body {
+                background: linear-gradient(135deg, #7a2f1f 0%, #4a1d13 100%);
+                padding: 0;
+                overflow: hidden;
+                height: 100dvh;
             }
-            .container { 
-                height: auto; 
-                flex-direction: column; 
-                background: transparent; 
+            .container {
+                height: 100dvh;
+                flex-direction: column;
+                background: transparent;
                 width: 100%;
+                overflow: hidden;
             }
             .foto { display: none !important; }
             .esquerda, .direita {
                 width: 100%;
-                height: auto;
+                height: 100dvh;
+                justify-content: center;
             }
-            
+
             .areaLogin, .areaCadastro {
                 background: var(--accent-color);
                 border-radius: 20px;
-                padding: 35px 25px;
+                padding: 20px 18px;
                 box-shadow: 0 15px 35px rgba(0,0,0,0.3);
                 width: 100%;
                 max-width: 100%;
+                gap: 0.6rem;
             }
-            
+
+            .areaLogin .inputarea, .areaCadastro .inputarea {
+                margin-bottom: 6px;
+            }
+
+            .areaLogin .inputarea input, .areaCadastro .inputarea input {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+
+            .areaLogin .btosLines button, .areaCadastro .btosLines button {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .areaLogin .titulo h1, .areaCadastro .titulo h1 {
+                font-size: 1.4rem;
+                margin-bottom: 0;
+            }
+
+            .areaLogin .sub-titulo, .areaCadastro .sub-titulo {
+                font-size: 0.85rem;
+                margin-bottom: 10px;
+            }
+
+            .areaLogin .alert-danger, .areaCadastro .alert-danger {
+                padding: 8px;
+                font-size: 0.8rem;
+                margin-bottom: 8px;
+            }
+
+            .areaLogin .toggle-link, .areaCadastro .toggle-link {
+                margin-top: 10px;
+                font-size: 0.85rem;
+            }
+
             .direita { display: none; }
             .container.register-active .esquerda { display: none; }
             .container.register-active .direita { display: flex; }
@@ -231,14 +266,12 @@
 </head>
 <body>
     <div class="container" id="mainContainer">
-        
-        <!-- FOTO DESLIZANTE -->
+
         <div class="foto" id="caixaFoto">
             <h2 id="sideTitle">Bem-vindo!</h2>
             <p id="sideDesc">Acesse sua conta na {{ config('association.name_short') }}.</p>
         </div>
 
-        <!-- LOGIN -->
         <div class="esquerda">
             <div class="areaLogin">
                 <div class="titulo"><h1>Entrar</h1></div>
@@ -267,18 +300,15 @@
                     </div>
                 </form>
 
-
-
                 <p class="toggle-link" id="LoginBtn">Criar nova conta</p>
             </div>
         </div>
 
-        <!-- CADASTRO -->
         <div class="direita">
             <div class="areaCadastro">
                 <div class="titulo"><h1>Criar Conta</h1></div>
                 <p class="sub-titulo">Cadastre-se para comprar ou se tornar artesão.</p>
-                
+
                 <form method="POST" action="{{ route('register') }}" style="width: 100%;">
                     @csrf
                     <div class="inputarea">
@@ -301,7 +331,7 @@
                         <button type="submit">Enviar Solicitação</button>
                     </div>
                 </form>
-                
+
                 <p class="toggle-link" id="RegistrarBtn">Já possui conta? Entrar</p>
             </div>
         </div>
@@ -324,7 +354,7 @@
             } else {
                 caixaFoto.style.right = "50vw";
                 setTimeout(() => {
-                    caixaFoto.style.backgroundImage = "url(/imagens/art_back_logo.png)"; // Poderia ter outra imagem aqui se quiser
+                    caixaFoto.style.backgroundImage = "url(/imagens/art_back_logo.webp)";
                     sideTitle.innerText = "Novo por aqui?";
                     sideDesc.innerText = "Crie sua conta na {{ config('association.name_short') }}.";
                 }, 400);
@@ -337,7 +367,7 @@
             } else {
                 caixaFoto.style.right = "0";
                 setTimeout(() => {
-                    caixaFoto.style.backgroundImage = "url(/imagens/art_back_logo.png)";
+                    caixaFoto.style.backgroundImage = "url(/imagens/art_back_logo.webp)";
                     sideTitle.innerText = "Bem-vindo!";
                     sideDesc.innerText = "Acesse sua conta na {{ config('association.name_short') }}.";
                 }, 400);

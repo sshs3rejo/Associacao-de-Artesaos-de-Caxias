@@ -3,6 +3,16 @@
 use App\Http\Controllers\Admin\AdminArtisanController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\CategoriaProdutoController;
+use App\Http\Controllers\Admin\ClienteController;
+use App\Http\Controllers\Admin\VendaController;
+use App\Http\Controllers\Admin\CompraMateriaPrimaController;
+use App\Http\Controllers\Admin\MateriaPrimaController;
+use App\Http\Controllers\Admin\ContatoController as AdminContatoController;
+use App\Http\Controllers\Admin\FornecedorController;
+use App\Http\Controllers\Admin\InscricaoOficinaController;
+use App\Http\Controllers\Admin\InstrutorController;
+use App\Http\Controllers\Admin\OficinaController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
@@ -88,6 +98,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Gestão de Usuários
     Route::get('/admin/usuarios', [AdminUserController::class, 'index'])->name('admin.usuarios');
+    Route::get('/admin/usuarios/create', [AdminUserController::class, 'create'])->name('admin.usuarios.create');
+    Route::post('/admin/usuarios', [AdminUserController::class, 'store'])->name('admin.usuarios.store');
     Route::post('/admin/usuarios/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('admin.usuarios.toggle-status');
     Route::post('/admin/usuarios/{user}/change-role', [AdminUserController::class, 'changeRole'])->name('admin.usuarios.change-role');
     Route::delete('/admin/usuarios/{user}', [AdminUserController::class, 'destroy'])->name('admin.usuarios.destroy');
@@ -105,6 +117,59 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Gestão de Eventos (Aprovar/Rejeitar Proposta do Artesão)
     Route::post('/admin/eventos/{evento}/aprovar', [AdminDashboardController::class, 'aprovarEvento'])->name('admin.eventos.aprovar');
     Route::post('/admin/eventos/{evento}/rejeitar', [AdminDashboardController::class, 'rejeitarEvento'])->name('admin.eventos.rejeitar');
+
+    // Gestão de Clientes
+    Route::get('/admin/clientes', [ClienteController::class, 'index'])->name('admin.clientes.index');
+    Route::get('/admin/clientes/{cliente}', [ClienteController::class, 'show'])->name('admin.clientes.show');
+
+    // Gestão de Vendas
+    Route::get('/admin/vendas', [VendaController::class, 'index'])->name('admin.vendas.index');
+    Route::get('/admin/vendas/{venda}', [VendaController::class, 'show'])->name('admin.vendas.show');
+    Route::delete('/admin/vendas/{venda}', [VendaController::class, 'destroy'])->name('admin.vendas.destroy');
+
+    // Gestão de Contato (submissões do formulário público)
+    Route::get('/admin/contatos', [AdminContatoController::class, 'index'])->name('admin.contatos.index');
+    Route::get('/admin/contatos/{contato}', [AdminContatoController::class, 'show'])->name('admin.contatos.show');
+    Route::delete('/admin/contatos/{contato}', [AdminContatoController::class, 'destroy'])->name('admin.contatos.destroy');
+
+    // Gestão de Instrutores
+    Route::get('/admin/instrutores', [InstrutorController::class, 'index'])->name('admin.instrutores.index');
+    Route::get('/admin/instrutores/create', [InstrutorController::class, 'create'])->name('admin.instrutores.create');
+    Route::post('/admin/instrutores', [InstrutorController::class, 'store'])->name('admin.instrutores.store');
+    Route::get('/admin/instrutores/{instrutor}/edit', [InstrutorController::class, 'edit'])->name('admin.instrutores.edit');
+    Route::put('/admin/instrutores/{instrutor}', [InstrutorController::class, 'update'])->name('admin.instrutores.update');
+    Route::delete('/admin/instrutores/{instrutor}', [InstrutorController::class, 'destroy'])->name('admin.instrutores.destroy');
+
+    // Gestão de Categorias de Produtos
+    Route::get('/admin/categorias', [CategoriaProdutoController::class, 'index'])->name('admin.categorias.index');
+    Route::get('/admin/categorias/create', [CategoriaProdutoController::class, 'create'])->name('admin.categorias.create');
+    Route::post('/admin/categorias', [CategoriaProdutoController::class, 'store'])->name('admin.categorias.store');
+    Route::get('/admin/categorias/{categoria}/edit', [CategoriaProdutoController::class, 'edit'])->name('admin.categorias.edit');
+    Route::put('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'update'])->name('admin.categorias.update');
+    Route::delete('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'destroy'])->name('admin.categorias.destroy');
+
+    // Gestão de Matérias-Primas
+    Route::get('/admin/materias-primas', [MateriaPrimaController::class, 'index'])->name('admin.materias-primas.index');
+    Route::get('/admin/materias-primas/create', [MateriaPrimaController::class, 'create'])->name('admin.materias-primas.create');
+    Route::post('/admin/materias-primas', [MateriaPrimaController::class, 'store'])->name('admin.materias-primas.store');
+    Route::get('/admin/materias-primas/{materiasPrima}/edit', [MateriaPrimaController::class, 'edit'])->name('admin.materias-primas.edit');
+    Route::put('/admin/materias-primas/{materiasPrima}', [MateriaPrimaController::class, 'update'])->name('admin.materias-primas.update');
+    Route::delete('/admin/materias-primas/{materiasPrima}', [MateriaPrimaController::class, 'destroy'])->name('admin.materias-primas.destroy');
+
+    // Gestão de Compras de Matéria-Prima
+    Route::get('/admin/compras-materia-prima', [CompraMateriaPrimaController::class, 'index'])->name('admin.compras-materia-prima.index');
+    Route::get('/admin/compras-materia-prima/create', [CompraMateriaPrimaController::class, 'create'])->name('admin.compras-materia-prima.create');
+    Route::post('/admin/compras-materia-prima', [CompraMateriaPrimaController::class, 'store'])->name('admin.compras-materia-prima.store');
+    Route::get('/admin/compras-materia-prima/{compraMateriaPrima}/edit', [CompraMateriaPrimaController::class, 'edit'])->name('admin.compras-materia-prima.edit');
+    Route::put('/admin/compras-materia-prima/{compraMateriaPrima}', [CompraMateriaPrimaController::class, 'update'])->name('admin.compras-materia-prima.update');
+    Route::delete('/admin/compras-materia-prima/{compraMateriaPrima}', [CompraMateriaPrimaController::class, 'destroy'])->name('admin.compras-materia-prima.destroy');
+
+    // Gestão de Oficinas
+    Route::resource('/admin/oficinas', OficinaController::class)->names('admin.oficinas');
+
+    // Gestão de Inscrições em Oficinas
+    Route::get('/admin/inscricoes-oficina', [InscricaoOficinaController::class, 'index'])->name('admin.inscricoes-oficina.index');
+    Route::delete('/admin/inscricoes-oficina/{inscricao}', [InscricaoOficinaController::class, 'destroy'])->name('admin.inscricoes-oficina.destroy');
 
     // ✅ Rotas específicas devem vir antes das com {id}
     Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');

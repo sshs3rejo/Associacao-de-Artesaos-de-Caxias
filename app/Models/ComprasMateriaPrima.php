@@ -10,7 +10,7 @@ class ComprasMateriaPrima extends Model
 
     protected $primaryKey = 'id_compra';
 
-    protected $fillable = ['id_fornecedor', 'id_materia', 'data_compra', 'quantidade', 'valor_total'];
+    protected $fillable = ['id_fornecedor', 'id_materia', 'data_compra', 'quantidade', 'preco_unitario', 'valor_total'];
 
     public function fornecedor()
     {

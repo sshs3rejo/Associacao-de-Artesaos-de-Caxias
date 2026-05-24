@@ -3,149 +3,88 @@
 @section('titulo', 'Editar Produto - Artesão')
 
 @section('content')
-<style>
-    .produto-container {
-        max-width: 900px;
-        margin: 40px auto;
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-        padding: 40px 50px;
-    }
 
-    .produto-container h1 {
-        color: var(--brand-color, #7a2f1f);
-        font-weight: 600;
-        text-align: center;
-        margin-bottom: 30px;
-    }
+<div class="max-w-4xl mx-auto my-10 bg-white rounded-2xl shadow-lg px-8 py-10">
+    <h1 class="text-2xl font-bold text-brand mb-6">Editar Produto</h1>
 
-    .form-label {
-        font-weight: 600;
-        color: var(--brand-color, #7a2f1f);
-    }
+    @if ($errors->any())
+        <div x-data="{ show: true }" x-show="show" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative">
+            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" @click="show = false">
+                <i class="fas fa-times"></i>
+            </button>
+            <strong class="font-bold">Ops!</strong> Corrija os erros abaixo:
+            <ul class="mt-2 mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ ucfirst($error) }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-    .form-control, .form-select {
-        border-radius: 10px;
-        padding: 12px;
-        border: 1px solid #ccc;
-        transition: 0.2s;
-    }
+    <form action="{{ route('artesan.produtos.atualizar', $produto->id_produto) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
-    .form-control:focus, .form-select:focus {
-        border-color: #8b5a3c;
-        box-shadow: 0 0 4px rgba(139,90,60,0.3);
-    }
+        <x-input name="nome" label="Nome do Produto" placeholder="Ex: Escultura de Leão em Madeira de Lei" value="{{ $produto->nome }}" required />
 
-    .btn-primary {
-        background-color: #7a2f1f;
-        border: none;
-        font-weight: bold;
-        padding: 12px 28px;
-        border-radius: 10px;
-        transition: 0.3s;
-    }
+        <x-textarea name="descricao" label="Descrição da Peça e Processo Criativo" placeholder="Fale um pouco sobre o material e a técnica artesanal utilizada" rows="4" value="{{ $produto->descricao }}" />
 
-    .btn-primary:hover {
-        background-color: #8b5a3c;
-        transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-        background-color: #bbb;
-        border: none;
-        color: #fff;
-        font-weight: bold;
-        padding: 12px 28px;
-        border-radius: 10px;
-        transition: 0.3s;
-    }
-
-    .btn-secondary:hover {
-        background-color: #999;
-        transform: translateY(-2px);
-    }
-</style>
-
-<div class="container py-5">
-    <div class="produto-container">
-        <h1>Editar Produto</h1>
-
-        @if ($errors->any())
-            <div class="alert alert-danger rounded-3">
-                <strong>Ops!</strong> Corrija os erros abaixo:
-                <ul class="mb-0 mt-2">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ ucfirst($error) }}</li>
-                    @endforeach
-                </ul>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <x-select name="id_categoria" label="Categoria" :options="$categorias->pluck('nome_categoria', 'id_categoria')->toArray()" value="{{ $produto->id_categoria }}" placeholder="Selecione..." required />
             </div>
-        @endif
-
-        <form action="{{ route('artesan.produtos.atualizar', $produto->id_produto) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-
-            <div class="mb-3">
-                <label for="nome" class="form-label">Nome do Produto</label>
-                <input type="text" class="form-control @error('nome') is-invalid @enderror" id="nome" name="nome"
-                       placeholder="Ex: Escultura de Leão em Madeira de Lei" value="{{ old('nome', $produto->nome) }}" required>
-                @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            <div>
+                <x-input name="preco" label="Preço Unitário (R$)" type="number" step="0.01" placeholder="0,00" value="{{ $produto->preco }}" required />
             </div>
-
-            <div class="mb-3">
-                <label for="descricao" class="form-label">Descrição da Peça e Processo Criativo</label>
-                <textarea class="form-control @error('descricao') is-invalid @enderror" id="descricao" name="descricao"
-                          placeholder="Fale um pouco sobre o material e a técnica artesanal utilizada" rows="4">{{ old('descricao', $produto->descricao) }}</textarea>
-                @error('descricao') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            <div>
+                <x-input name="quantidade" label="Estoque" type="number" placeholder="1" value="{{ $produto->estoque?->quantidade ?? 0 }}" required />
             </div>
+        </div>
 
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label for="id_categoria" class="form-label">Categoria</label>
-                    <select class="form-select @error('id_categoria') is-invalid @enderror" id="id_categoria" name="id_categoria" required>
-                        <option value="">Selecione...</option>
-                        @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id_categoria }}" {{ old('id_categoria', $produto->id_categoria) == $categoria->id_categoria ? 'selected' : '' }}>
-                                {{ $categoria->nome_categoria }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="preco" class="form-label">Preço Unitário (R$)</label>
-                    <input type="number" step="0.01" class="form-control @error('preco') is-invalid @enderror" id="preco" name="preco"
-                           placeholder="0,00" value="{{ old('preco', $produto->preco) }}" required>
-                    @error('preco') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="quantidade" class="form-label">Estoque</label>
-                    <input type="number" class="form-control @error('quantidade') is-invalid @enderror" id="quantidade" name="quantidade"
-                           placeholder="1" value="{{ old('quantidade', $produto->estoque?->quantidade ?? 0) }}" required>
-                    @error('quantidade') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label for="imagem" class="form-label">Imagem do Produto</label>
-                @if($produto->imagem)
-                    <div class="mb-2">
-                        <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem atual" class="rounded shadow-sm" style="max-height: 120px; object-fit: cover;">
-                        <div class="form-check mt-1">
-                            <input class="form-check-input" type="checkbox" id="remover_imagem" name="remover_imagem" value="1">
-                            <label class="form-check-label text-danger small" for="remover_imagem">Remover imagem atual</label>
-                        </div>
+        <div class="mb-6">
+            <label for="imagem" class="block font-bold mb-1 text-brand">Imagem do Produto</label>
+            @if($produto->imagem)
+                <div class="mb-2">
+                    <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem atual" class="rounded shadow-sm" style="max-height: 120px; object-fit: cover;" loading="lazy">
+                    <div class="flex items-center mt-1">
+                        <input class="w-4 h-4 text-brand border-gray-300 rounded focus:ring-brand-light" type="checkbox" id="remover_imagem" name="remover_imagem" value="1">
+                        <label class="ml-2 text-red-600 text-sm" for="remover_imagem">Remover imagem atual</label>
                     </div>
-                @endif
-                <input class="form-control @error('imagem') is-invalid @enderror" type="file" id="imagem" name="imagem" accept="image/*">
-                @error('imagem') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+            @endif
+            <div class="flex gap-2 mb-2">
+                <input class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none @error('imagem') border-red-500 @enderror" type="file" id="imagem" name="imagem" accept="image/*" capture="environment" onchange="previewImagem(this)">
+                <button type="button" class="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-600" onclick="document.getElementById('imagem').click()" title="Tirar Foto">
+                    <i class="fas fa-camera"></i>
+                </button>
             </div>
+            <div id="preview-imagem" class="mt-2" style="display:none;">
+                <img id="preview-img" class="rounded-lg border" style="max-height:200px;max-width:100%;">
+            </div>
+            @error('imagem') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
+        </div>
 
-            <div class="d-flex justify-content-between align-items-center">
-                <a href="{{ route('produtos') }}" class="btn btn-secondary">Cancelar</a>
-                <button type="submit" class="btn btn-primary text-white">Salvar Alterações</button>
-            </div>
-        </form>
-    </div>
+        <div class="flex justify-between items-center">
+            <x-back-button :route="route('produtos')" label="Cancelar" />
+            <button type="submit" class="px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200">Salvar Alterações</button>
+        </div>
+    </form>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function previewImagem(input) {
+        const preview = document.getElementById('preview-imagem');
+        const img = document.getElementById('preview-img');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => { img.src = e.target.result; preview.style.display = 'block'; };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.style.display = 'none';
+            img.src = '';
+        }
+    }
+</script>
 @endsection

@@ -1,11 +1,7 @@
-/**
- * Associação de Artesãos de Caxias - Carrinho de Compras Modulado
- * Foco em Clean Code e Separação de Preocupações (SoC)
- */
-
 function formatarPreco(valor) {
     return 'R$ ' + valor.toFixed(2).replace('.', ',');
 }
+
 
 window.abrirDetalhes = function(botao) {
     const card = botao.closest(".produto-card");
@@ -26,10 +22,10 @@ window.abrirDetalhes = function(botao) {
 
     const estoqueDiv = document.getElementById("modal-estoque");
     estoqueDiv.innerHTML = window.produtoAtual.estoque > 0
-        ? `<span class="em-estoque">Em estoque (${window.produtoAtual.estoque} disponível)</span>`
-        : `<span class="fora-estoque">Fora de estoque</span>`;
+        ? `<span class="text-green-600 font-semibold">Em estoque (${window.produtoAtual.estoque} disponível)</span>`
+        : `<span class="text-red-600 font-semibold">Fora de estoque</span>`;
 
-    bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-detalhes")).show();
+    showModal('modal-detalhes');
 };
 
 window.adicionarAoCarrinho = function() {
@@ -47,9 +43,8 @@ window.adicionarAoCarrinho = function() {
         });
     }
     window.atualizarBadge();
-    const bs = bootstrap.Modal.getInstance(document.getElementById("modal-detalhes"));
-    if (bs) bs.hide();
-    
+    hideModal('modal-detalhes');
+
     Swal.fire({
         toast: true,
         position: 'top-end',
@@ -62,35 +57,20 @@ window.adicionarAoCarrinho = function() {
 };
 
 window.fecharModal = function() {
-    const modal = document.getElementById("modal-detalhes");
-    const bs = bootstrap.Modal.getInstance(modal);
-    if (bs) { bs.hide(); return; }
-    modal.style.display = "none";
-    document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
-    document.body.classList.remove("modal-open");
+    hideModal('modal-detalhes');
 };
 
 window.fecharCarrinho = function() {
-    const modal = document.getElementById("modal-carrinho");
-    const bs = bootstrap.Modal.getInstance(modal);
-    if (bs) { bs.hide(); return; }
-    modal.style.display = "none";
-    document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
-    document.body.classList.remove("modal-open");
+    hideModal('modal-carrinho');
 };
 
-window.onclick = function(event) {
-    const modal = document.getElementById("modal-detalhes");
-    const modalCarrinho = document.getElementById("modal-carrinho");
-    if (event.target === modal) {
-        const bs = bootstrap.Modal.getInstance(modal);
-        if (bs) bs.hide();
-    }
-    if (event.target === modalCarrinho) {
-        const bs = bootstrap.Modal.getInstance(modalCarrinho);
-        if (bs) bs.hide();
-    }
-};
+document.addEventListener('click', function(event) {
+    const modals = ['modal-detalhes', 'modal-carrinho', 'modal-guest-checkout'];
+    modals.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && event.target === el) hideModal(id);
+    });
+});
 
 window.adicionarRapido = function(botao) {
     const card = botao.closest(".produto-card");
@@ -107,7 +87,7 @@ window.adicionarRapido = function(botao) {
         window.carrinho.push({ ...produto, quantidade: 1 });
     }
     window.atualizarBadge();
-    
+
     Swal.fire({
         toast: true,
         position: 'top-end',
@@ -123,57 +103,56 @@ window.atualizarBadge = function() {
     const badge = document.getElementById("badge-carrinho");
     const total = window.carrinho.reduce((s, i) => s + i.quantidade, 0);
     badge.textContent = total;
-    
     if (total > 0) {
-        badge.style.setProperty('display', 'block', 'important');
+        badge.style.display = 'inline';
     } else {
-        badge.style.setProperty('display', 'none', 'important');
+        badge.style.display = 'none';
     }
 };
 
 window.abrirCarrinho = function() {
     const conteudo = document.getElementById("carrinho-conteudo");
     if (window.carrinho.length === 0) {
-        conteudo.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-cart-x fs-1 d-block mb-2"></i>Seu carrinho está vazio</div>';
+        conteudo.innerHTML = '<div class="text-center py-4 text-gray-400"><i class="fa fa-shopping-cart text-5xl d-block mb-2"></i>Seu carrinho est\u00e1 vazio</div>';
     } else {
-        let html = '<div class="carrinho-itens">';
+        let html = '<div class="divide-y divide-gray-200">';
         let total = 0;
         window.carrinho.forEach(item => {
             const subtotal = item.preco * item.quantidade;
             total += subtotal;
             html += `
-                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <div class="flex items-center justify-between py-3">
                     <div>
-                        <div class="fw-bold" style="color: #8b5a3c;">${item.nome}</div>
-                        <div style="color: #c85a3a;">${formatarPreco(item.preco)}</div>
+                        <div class="font-bold text-brand-light">${item.nome}</div>
+                        <div class="text-price font-semibold">${formatarPreco(item.preco)}</div>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="alterarQtd('${item.id}', -1)">-</button>
-                        <span class="fw-bold">${item.quantidade}</span>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="alterarQtd('${item.id}', 1)">+</button>
-                        <span class="fw-bold ms-3" style="color: #c85a3a;">${formatarPreco(subtotal)}</span>
-                        <button class="btn btn-sm btn-outline-danger ms-2" onclick="removerItem('${item.id}')"><i class="fa fa-trash"></i></button>
+                    <div class="flex items-center gap-2">
+                        <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100" onclick="alterarQtd('${item.id}', -1)">-</button>
+                        <span class="font-bold w-6 text-center">${item.quantidade}</span>
+                        <button class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100" onclick="alterarQtd('${item.id}', 1)">+</button>
+                        <span class="font-bold ml-2 text-price">${formatarPreco(subtotal)}</span>
+                        <button class="ml-2 text-red-500 hover:text-red-700" onclick="removerItem('${item.id}')"><i class="fa fa-trash"></i></button>
                     </div>
                 </div>
             `;
         });
         html += '</div>';
         html += `
-            <div class="bg-light p-3 rounded mt-3">
-                <div class="d-flex justify-content-between"><span>Subtotal:</span><span>${formatarPreco(total)}</span></div>
-                <div class="d-flex justify-content-between"><span>Frete:</span><span>Grátis</span></div>
-                <div class="d-flex justify-content-between fw-bold fs-5 mt-2 pt-2 border-top" style="color: #8b5a3c;">Total: <span>${formatarPreco(total)}</span></div>
+            <div class="bg-gray-100 p-4 rounded-lg mt-3">
+                <div class="flex justify-between"><span>Subtotal:</span><span>${formatarPreco(total)}</span></div>
+                <div class="flex justify-between"><span>Frete:</span><span class="text-green-600">Gr\u00e1tis</span></div>
+                <div class="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-300 text-brand-light">Total: <span>${formatarPreco(total)}</span></div>
             </div>
-            <div class="d-flex gap-2 mt-3">
-                <button class="btn flex-fill text-white fw-bold" style="background-color: #7a2f1f;" onclick="finalizarCompra()">
-                    <i class="fa fa-check-circle me-1"></i> Finalizar Compra
+            <div class="flex gap-2 mt-3">
+                <button class="flex-1 text-white font-bold px-4 py-3 rounded-lg" style="background-color: #7a2f1f;" onclick="finalizarCompra()">
+                    <i class="fa fa-check-circle mr-1"></i> Finalizar Compra
                 </button>
-                <button class="btn flex-fill btn-outline-secondary" data-bs-dismiss="modal">Continuar Comprando</button>
+                <button class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100" onclick="hideModal('modal-carrinho')">Continuar Comprando</button>
             </div>
         `;
         conteudo.innerHTML = html;
     }
-    bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-carrinho")).show();
+    showModal('modal-carrinho');
 };
 
 window.alterarQtd = function(id, delta) {
@@ -198,7 +177,7 @@ window.finalizarCompra = function() {
     if (window.Laravel.auth) {
         window.enviarCheckoutAPI();
     } else {
-        bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-guest-checkout")).show();
+        showModal('modal-guest-checkout');
     }
 };
 
@@ -209,9 +188,9 @@ window.enviarCheckoutAPI = async function(dadosCliente) {
     } else {
         botao = document.querySelector('[onclick="finalizarCompra()"]');
     }
-    
+
     const textoOriginal = botao ? botao.innerHTML : '';
-    if (botao) { botao.disabled = true; botao.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Processando...'; }
+    if (botao) { botao.disabled = true; botao.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> Processando...'; }
 
     const body = dadosCliente || {
         itens: window.carrinho.map(item => ({

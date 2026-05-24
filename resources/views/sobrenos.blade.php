@@ -5,58 +5,42 @@
 @section('style')
 <style>
     .about-hero {
-        background: linear-gradient(rgba(122, 46, 29, 0.75), rgba(122, 46, 29, 0.75)), url('{{ asset('imagens/fundo.png') }}') no-repeat center/cover;
-        padding: 80px 0;
+        background: linear-gradient(rgba(122, 46, 29, 0.75), rgba(122, 46, 29, 0.75)), url('{{ asset('imagens/fundo.webp') }}') no-repeat center/cover;
         color: white;
-    }
-    .about-card {
-        background: white;
-        border-radius: 15px;
-        padding: 40px;
-        margin-bottom: 30px;
-        border: none;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    .about-card h2 {
-        color: #7a2f1f;
-        font-weight: 700;
-        margin-bottom: 20px;
-    }
-    .about-card p {
-        color: #555;
-        font-size: 1.1rem;
-        line-height: 1.8;
     }
 </style>
 @endsection
 
 @section('content')
-<div class="about-hero text-center mb-5">
-    <div class="container">
-        <h1 class="display-4 fw-bold">Sobre a Associação</h1>
-        <p class="lead">Conheça nossa história, nossa missão e as pessoas que tornam o artesanato de Caxias único.</p>
+<div class="about-hero text-center mb-5 hero-section flex items-center min-h-[35vh] md:min-h-[50vh] py-10 md:py-20">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">Sobre a Associação</h1>
+        <p class="text-lg md:text-xl max-w-2xl mx-auto" style="color: rgba(255,255,255,0.9);">Conheça nossa história, nossa missão e as pessoas que tornam o artesanato de Caxias único.</p>
     </div>
 </div>
 
-<div class="container mb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="about-card shadow-sm">
-                <h2><i class="bi bi-people-fill me-2"></i> Nossa Missão</h2>
+<div class="max-w-7xl mx-auto px-4 mb-5">
+    <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
+        <i class="fas fa-arrow-left text-xs"></i> Voltar
+    </a>
+    <div class="flex justify-center">
+        <div class="w-full max-w-4xl">
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h2><i class="fas fa-users me-2"></i> Nossa Missão</h2>
                 <p>
                     A Associação dos Artesãos de Caxias tem como missão fortalecer, divulgar e valorizar o trabalho dos artesãos locais. Conectamos produtores, comunidade e novos públicos, promovendo o artesanato como expressão cultural e fonte de renda sustentável.
                 </p>
             </div>
 
-            <div class="about-card shadow-sm">
-                <h2><i class="bi bi-journal-text me-2"></i> Nossa História</h2>
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h2><i class="fas fa-book me-2"></i> Nossa História</h2>
                 <p>
                     Nascemos da união de artesãos apaixonados pela cultura maranhense e estudantes de tecnologia da UniFacema. Nosso objetivo inicial era criar uma ponte digital para organizar e divulgar as atividades artesanais, facilitando a gestão e a comunicação entre os membros.
                 </p>
             </div>
 
-            <div class="about-card shadow-sm">
-                <h2><i class="bi bi-person-hearts me-2"></i> Nossa Equipe</h2>
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h2><i class="fas fa-hand-holding-heart me-2"></i> Nossa Equipe</h2>
                 <p>
                     Nossa equipe é formada por mestres artesãos, voluntários engajados e estudantes dedicados. Cada integrante contribui com um talento único — seja na técnica ancestral do barro, na delicadeza do bordado ou no desenvolvimento de soluções que impulsionam a economia criativa de Caxias.
                 </p>

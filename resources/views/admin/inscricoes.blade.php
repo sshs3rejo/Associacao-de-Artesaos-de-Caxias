@@ -2,35 +2,34 @@
 @section('titulo', 'Inscrições em Eventos')
 
 @section('content')
-<div class="container-fluid px-4 py-5">
-    <h1 class="fw-bold mb-4" style="color: #7a2f1f;">Inscrições em Eventos</h1>
+<div class="w-full px-4 py-5">
+    <x-breadcrumb :items="[['Home', route('home')], ['Painel', route('admin.dashboard')], ['Inscrições']]" />
+    <h1 class="font-bold mb-4 text-2xl text-brand">Inscrições em Eventos</h1>
 
     @if($inscricoes->isEmpty())
         <div class="text-center py-5">
-            <i class="bi bi-journal-text display-1 text-muted mb-3 d-block"></i>
-            <p class="text-muted fs-5">Nenhuma inscrição realizada ainda.</p>
+            <i class="fas fa-book-open text-5xl text-gray-500 mb-3 block"></i>
+            <p class="text-gray-500 text-lg">Nenhuma inscrição realizada ainda.</p>
         </div>
     @else
-        <div class="table-responsive">
-            <table class="table table-hover align-middle bg-white rounded-4 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 bg-white rounded-xl shadow-sm overflow-hidden">
                 <thead style="background-color: #7a2f1f; color: #F9F7D3;">
                     <tr>
-                        <th class="p-3">Evento</th>
-                        <th class="p-3">Cliente</th>
-                        <th class="p-3">Data Inscrição</th>
-                        <th class="p-3">Pagamento</th>
+                        <th class="p-3 text-left text-sm font-semibold">Evento</th>
+                        <th class="p-3 text-left text-sm font-semibold">Cliente</th>
+                        <th class="p-3 text-left text-sm font-semibold">Data Inscrição</th>
+                        <th class="p-3 text-left text-sm font-semibold">Pagamento</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @foreach($inscricoes as $inscricao)
-                        <tr>
-                            <td class="fw-semibold p-3">{{ $inscricao->evento->nome }}</td>
-                            <td class="p-3">{{ $inscricao->cliente->nome ?? 'N/D' }}</td>
-                            <td class="p-3">{{ $inscricao->data_inscricao?->format('d/m/Y H:i') ?? '-' }}</td>
-                            <td class="p-3">
-                                <span class="badge {{ $inscricao->isPago() ? 'bg-success' : ($inscricao->isPendente() ? 'bg-warning text-dark' : 'bg-danger') }}">
-                                    {{ $inscricao->status_pagamento }}
-                                </span>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="font-semibold p-3 text-sm">{{ $inscricao->evento->nome }}</td>
+                            <td class="p-3 text-sm">{{ $inscricao->cliente->nome ?? 'N/D' }}</td>
+                            <td class="p-3 text-sm">{{ $inscricao->data_inscricao?->format('d/m/Y H:i') ?? '-' }}</td>
+                            <td class="p-3 text-sm">
+                                <x-badge type="{{ $inscricao->isPago() ? 'success' : ($inscricao->isPendente() ? 'pending' : 'danger') }}">{{ $inscricao->status_pagamento }}</x-badge>
                             </td>
                         </tr>
                     @endforeach

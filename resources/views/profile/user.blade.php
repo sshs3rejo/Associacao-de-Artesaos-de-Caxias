@@ -3,63 +3,66 @@
 @section('titulo', 'Meu Perfil - ' . config('association.name'))
 
 @section('content')
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4">
-                    <h3 class="fw-bold mb-4" style="color: #7a2f1f;">
+<div class="max-w-7xl mx-auto px-4 py-5">
+    <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
+        <i class="fas fa-arrow-left text-xs"></i> Voltar
+    </a>
+    <div class="flex justify-center">
+        <div class="w-full lg:w-2/3">
+            <div class="bg-white rounded-xl shadow-sm">
+                <div class="p-4">
+                    <h3 class="font-bold mb-4 text-brand">
                         <i class="fas fa-user-circle me-2"></i>Meu Perfil
                     </h3>
 
                     <div class="mb-4">
-                        <label class="fw-semibold text-muted small">Nome</label>
-                        <p class="fs-5 mb-3">{{ $user->name }}</p>
+                        <label class="font-semibold text-gray-500 text-sm">Nome</label>
+                        <p class="text-lg mb-3">{{ $user->name }}</p>
 
-                        <label class="fw-semibold text-muted small">Email</label>
-                        <p class="fs-5 mb-3">{{ $user->email }}</p>
+                        <label class="font-semibold text-gray-500 text-sm">Email</label>
+                        <p class="text-lg mb-3">{{ $user->email }}</p>
                     </div>
 
                     @if($user->isArtisan() && $profile && !$profile->isApproved())
-                        <div class="alert alert-info">
-                            <i class="bi bi-hourglass-split me-2"></i>
+                        <div class="flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-3 rounded-lg border border-blue-200 mb-4">
+                            <i class="fas fa-hourglass-half me-2"></i>
                             Sua solicitação para se tornar artesão está aguardando aprovação do administrador.
                             Você receberá uma notificação quando for aprovado.
                         </div>
                     @elseif(!$user->isArtisan())
                         <hr>
-                        <h5 class="fw-bold mb-3" style="color: #7a2f1f;">
+                        <h5 class="font-bold mb-3 text-brand">
                             <i class="fas fa-hammer me-2"></i>Quero ser artesão
                         </h5>
-                        <p class="text-muted mb-3">Preencha os dados abaixo para solicitar seu cadastro como artesão na associação.</p>
+                        <p class="text-gray-500 mb-3">Preencha os dados abaixo para solicitar seu cadastro como artesão na associação.</p>
 
                         <form method="POST" action="{{ route('user.tornar-se-artesao') }}" enctype="multipart/form-data">
                             @csrf
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="cpf" class="form-label fw-semibold">CPF <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('cpf') is-invalid @enderror" id="cpf" name="cpf" value="{{ old('cpf') }}" placeholder="000.000.000-00" maxlength="14" required>
-                                    @error('cpf')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label for="cpf" class="block font-bold mb-1">CPF <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('cpf') border-red-500 @enderror" id="cpf" name="cpf" value="{{ old('cpf') }}" placeholder="000.000.000-00" maxlength="14" required>
+                                    @error('cpf')<div class="text-red-500 text-sm mt-1">{{ $message }}</div>@enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="telefone" class="form-label fw-semibold">Telefone <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('telefone') is-invalid @enderror" id="telefone" name="telefone" value="{{ old('telefone') }}" placeholder="(11) 99999-9999" maxlength="20" required>
-                                    @error('telefone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <div>
+                                    <label for="telefone" class="block font-bold mb-1">Telefone <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('telefone') border-red-500 @enderror" id="telefone" name="telefone" value="{{ old('telefone') }}" placeholder="(11) 99999-9999" maxlength="20" required>
+                                    @error('telefone')<div class="text-red-500 text-sm mt-1">{{ $message }}</div>@enderror
                                 </div>
-                                <div class="col-12">
-                                    <label for="bio" class="form-label fw-semibold">Biografia / Sobre você</label>
-                                    <textarea class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio" rows="3" placeholder="Conte um pouco sobre seu trabalho artesanal...">{{ old('bio') }}</textarea>
-                                    @error('bio')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <div class="md:col-span-2">
+                                    <label for="bio" class="block font-bold mb-1">Biografia / Sobre você</label>
+                                    <textarea class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('bio') border-red-500 @enderror" id="bio" name="bio" rows="3" placeholder="Conte um pouco sobre seu trabalho artesanal...">{{ old('bio') }}</textarea>
+                                    @error('bio')<div class="text-red-500 text-sm mt-1">{{ $message }}</div>@enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="foto" class="form-label fw-semibold">Foto de Perfil</label>
-                                    <input type="file" class="form-control @error('foto') is-invalid @enderror" id="foto" name="foto" accept="image/jpeg,image/png">
-                                    @error('foto')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                    <div class="form-text">Aceita JPG, PNG até 2MB.</div>
+                                <div>
+                                    <label for="foto" class="block font-bold mb-1">Foto de Perfil</label>
+                                    <input type="file" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('foto') border-red-500 @enderror" id="foto" name="foto" accept="image/jpeg,image/png">
+                                    @error('foto')<div class="text-red-500 text-sm mt-1">{{ $message }}</div>@enderror
+                                    <div class="text-gray-500 text-sm mt-1">Aceita JPG, PNG até 2MB.</div>
                                 </div>
                             </div>
                             <div class="mt-4">
-                                <button type="submit" class="btn btn-lg rounded-pill px-5 fw-bold" style="background-color: #7a2f1f; color: #F9F7D3;">
+                                <button type="submit" class="inline-block px-4 py-2 rounded-lg font-semibold text-lg px-5 font-bold rounded-full bg-brand text-accent">
                                     <i class="fas fa-paper-plane me-2"></i>Fazer Cadastro
                                 </button>
                             </div>

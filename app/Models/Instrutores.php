@@ -10,7 +10,7 @@ class Instrutores extends Model
 
     protected $primaryKey = 'id_instrutor';
 
-    protected $fillable = ['nome', 'especialidade', 'email'];
+    protected $fillable = ['nome', 'telefone', 'email', 'especialidade', 'biografia', 'foto'];
 
     public function oficinas()
     {
