@@ -28,12 +28,6 @@
             </a>
         </article>
         <article class="dashboard-card">
-            <a href="{{ route('admin.categorias.index') }}">
-                <h3>Categorias de produtos</h3>
-                <strong>{{ $stats['categorias'] }}</strong>
-            </a>
-        </article>
-        <article class="dashboard-card">
             <a href="{{ route('admin.vendas.index') }}">
                 <h3>Vendas</h3>
                 <strong>{{ $stats['vendas'] }}</strong>
@@ -91,6 +85,12 @@
             <a href="{{ route('admin.contatos.index') }}">
                 <h3>Contatos</h3>
                 <strong>{{ $stats['contatos'] ?? 0 }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.categorias.index') }}">
+                <h3>Categorias</h3>
+                <strong>{{ $stats['categorias'] ?? 0 }}</strong>
             </a>
         </article>
     </section>

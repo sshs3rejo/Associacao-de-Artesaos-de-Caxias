@@ -50,5 +50,11 @@ class CategoriaSeeder extends Seeder
         DB::table('categorias_produtos')->insert([
             ['nome_categoria' => 'Jarros e Vasos', 'parent_id' => 5, 'created_at' => now(), 'updated_at' => now()],
         ]);
+
+        \Illuminate\Support\Facades\Cache::forget('categorias_produtos');
+        \Illuminate\Support\Facades\Cache::forget('categorias_produtos_ordered');
+        \Illuminate\Support\Facades\Cache::forget('categorias_tree');
+        \Illuminate\Support\Facades\Cache::forget('categorias_hierarchical');
+        \Illuminate\Support\Facades\Cache::forget('categorias_grouped_list');
     }
 }

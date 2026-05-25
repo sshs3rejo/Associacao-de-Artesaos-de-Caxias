@@ -73,6 +73,8 @@ $faMap = [
     'x' => 'fas fa-times',
     'alert-triangle' => 'fas fa-exclamation-triangle',
     'history' => 'fas fa-history',
+    'folder' => 'fas fa-folder',
+    'folder-open' => 'fas fa-folder-open',
 ];
 
 $faClass = $faMap[$name] ?? 'fas fa-circle';

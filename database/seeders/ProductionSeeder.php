@@ -48,6 +48,9 @@ class ProductionSeeder extends Seeder
         }
         Cache::forget('categorias_produtos');
         Cache::forget('categorias_produtos_ordered');
+        Cache::forget('categorias_tree');
+        Cache::forget('categorias_hierarchical');
+        Cache::forget('categorias_grouped_list');
         $this->command->info('   ✓ 5 categorias principais criadas');
 
         $this->command->info('');

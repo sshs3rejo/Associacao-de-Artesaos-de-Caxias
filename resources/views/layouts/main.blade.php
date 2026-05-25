@@ -45,6 +45,26 @@
                     </div>
                 @endif
 
+        @if(session('success'))
+            <div class="bg-green-100 text-green-800 px-4 py-3 rounded-lg border border-green-200 mb-4" role="alert" id="success-alert">
+                <div class="flex items-center gap-2">
+                    <x-icon name="check-circle" class="w-5 h-5 text-green-600 animate-pulse" />
+                    <span class="font-semibold">{{ session('success') }}</span>
+                    <button onclick="this.closest('#success-alert').remove()" class="ml-auto text-green-600 hover:text-green-950 text-xl leading-none cursor-pointer border-0 bg-transparent">&times;</button>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-100 text-red-800 px-4 py-3 rounded-lg border border-red-200 mb-4" role="alert" id="session-error-alert">
+                <div class="flex items-center gap-2">
+                    <x-icon name="exclamation" class="w-5 h-5 text-red-600" />
+                    <span class="font-semibold">{{ session('error') }}</span>
+                    <button onclick="this.closest('#session-error-alert').remove()" class="ml-auto text-red-600 hover:text-red-950 text-xl leading-none cursor-pointer border-0 bg-transparent">&times;</button>
+                </div>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 

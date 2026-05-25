@@ -29,7 +29,6 @@ class AdminDashboardController extends Controller
             return [
                 'produtos' => Produto::count(),
                 'eventos' => Eventos::count(),
-                'categorias' => CategoriasProdutos::count(),
                 'usuariosAdmin' => User::where('role', 'admin')->count(),
                 'usuariosAtivos' => User::where('is_active', true)->count(),
                 'artesos' => User::where('role', 'artisan')->count(),
@@ -40,6 +39,7 @@ class AdminDashboardController extends Controller
                 'fornecedores' => Fornecedores::count(),
                 'materiasPrimas' => MateriasPrimas::count(),
                 'contatos' => Contato::count(),
+                'categorias' => CategoriasProdutos::count(),
             ];
         });
 

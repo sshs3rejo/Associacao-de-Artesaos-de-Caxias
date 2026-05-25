@@ -54,8 +54,8 @@
                                         <li><hr class="my-1 border-gray-200"></li>
                                         <li><span class="block px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Gest&atilde;o</span></li>
                                         <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('produtos') }}"><x-icon name="box" class="w-5 h-5" /> Produtos</a></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.categorias.index') }}"><x-icon name="tags" class="w-5 h-5" /> Categorias</a></li>
                                         <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('evento') }}"><x-icon name="calendar" class="w-5 h-5" /> Eventos</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.categorias.index') }}"><x-icon name="tags" class="w-5 h-5" /> Categorias</a></li>
                                         <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.oficinas.index') }}"><x-icon name="chalkboard" class="w-5 h-5" /> Oficinas</a></li>
                                         <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.instrutores.index') }}"><x-icon name="user-tie" class="w-5 h-5" /> Instrutores</a></li>
                                         <li><hr class="my-1 border-gray-200"></li>
@@ -154,8 +154,8 @@
                         @if(auth()->user()->isAdmin())
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.dashboard') }}"><x-icon name="dashboard" class="w-5 h-5" /> Dashboard</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}"><x-icon name="box" class="w-5 h-5" /> Produtos</a></li>
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.categorias.index') }}"><x-icon name="tags" class="w-5 h-5" /> Categorias</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('evento') }}"><x-icon name="calendar" class="w-5 h-5" /> Eventos</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.categorias.index') }}"><x-icon name="tags" class="w-5 h-5" /> Categorias</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.oficinas.index') }}"><x-icon name="chalkboard" class="w-5 h-5" /> Oficinas</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.instrutores.index') }}"><x-icon name="user-tie" class="w-5 h-5" /> Instrutores</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.artesao') }}"><x-icon name="users" class="w-5 h-5" /> Artes&atilde;os</a></li>

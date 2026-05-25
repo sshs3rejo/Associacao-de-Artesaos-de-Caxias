@@ -150,11 +150,10 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::put('/admin/instrutores/{instrutor}', [InstrutorController::class, 'update'])->name('admin.instrutores.update');
     Route::delete('/admin/instrutores/{instrutor}', [InstrutorController::class, 'destroy'])->name('admin.instrutores.destroy');
 
-    // Gestão de Categorias de Produtos
+    // Gestão de categorias (inline no form de produto)
     Route::get('/admin/categorias', [CategoriaProdutoController::class, 'index'])->name('admin.categorias.index');
-    Route::get('/admin/categorias/create', [CategoriaProdutoController::class, 'create'])->name('admin.categorias.create');
     Route::post('/admin/categorias', [CategoriaProdutoController::class, 'store'])->name('admin.categorias.store');
-    Route::get('/admin/categorias/{categoria}/edit', [CategoriaProdutoController::class, 'edit'])->name('admin.categorias.edit');
+    Route::post('/admin/categorias/quick-store', [CategoriaProdutoController::class, 'quickStore'])->name('admin.categorias.quick-store');
     Route::put('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'update'])->name('admin.categorias.update');
     Route::delete('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'destroy'])->name('admin.categorias.destroy');
 
@@ -189,12 +188,12 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::get('/admin/inscricoes-oficina', [InscricaoOficinaController::class, 'index'])->name('admin.inscricoes-oficina.index');
     Route::delete('/admin/inscricoes-oficina/{inscricao}', [InscricaoOficinaController::class, 'destroy'])->name('admin.inscricoes-oficina.destroy');
 
-    // ✅ Rotas específicas devem vir antes das com {id}
-    Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');
-    Route::post('/produtos', [ProdutoController::class, 'store'])->name('produtos.store');
-    Route::get('/produtos/{id}/edit', [ProdutoController::class, 'edit'])->name('produtos.edit');
-    Route::put('/produtos/{id}', [ProdutoController::class, 'update'])->name('produtos.update');
-    Route::delete('/produtos/{id}', [ProdutoController::class, 'destroy'])->name('produtos.destroy');
+    // ✅ Gestão de Produtos (admin)
+    Route::get('/admin/produtos/create', [ProdutoController::class, 'create'])->name('admin.produtos.create');
+    Route::post('/admin/produtos', [ProdutoController::class, 'store'])->name('admin.produtos.store');
+    Route::get('/admin/produtos/{id}/edit', [ProdutoController::class, 'edit'])->name('admin.produtos.edit');
+    Route::put('/admin/produtos/{id}', [ProdutoController::class, 'update'])->name('admin.produtos.update');
+    Route::delete('/admin/produtos/{id}', [ProdutoController::class, 'destroy'])->name('admin.produtos.destroy');
 
     // ✅ Aqui também — “create” precisa vir antes de “{id}”
     Route::get('/eventos/create', [EventoController::class, 'create'])->name('eventos.create');

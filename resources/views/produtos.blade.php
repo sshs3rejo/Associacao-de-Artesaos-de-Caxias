@@ -10,7 +10,7 @@
             </a>
             <div class="flex items-center justify-between mb-4">
                 <h1 class="font-bold mb-0 text-brand text-2xl">Gerenciar Produtos</h1>
-                <a href="{{ route('produtos.create') }}" class="inline-flex items-center gap-2 text-white font-bold px-4 py-2 rounded-full shadow-sm bg-brand hover:bg-brand-dark transition no-underline">
+                <a href="{{ route('admin.produtos.create') }}" class="inline-flex items-center gap-2 text-white font-bold px-4 py-2 rounded-full shadow-sm bg-brand hover:bg-brand-dark transition no-underline">
                     <x-icon name="plus" class="w-4 h-4" /> Novo Produto
                 </a>
             </div>
@@ -61,10 +61,10 @@
                                     </td>
                                     <td class="p-3 text-right">
                                         <div class="flex justify-end gap-2">
-                                            <a href="{{ route('produtos.edit', $produto->id_produto) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-yellow-400 text-yellow-600 rounded-lg hover:bg-yellow-400 hover:text-white transition no-underline">
+                                            <a href="{{ route('admin.produtos.edit', $produto->id_produto) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-yellow-400 text-yellow-600 rounded-lg hover:bg-yellow-400 hover:text-white transition no-underline">
                                                 <x-icon name="pencil" class="w-4 h-4" /> Editar
                                             </a>
-                                            <form action="{{ route('produtos.destroy', $produto->id_produto) }}" method="POST" class="inline">
+                                            <form action="{{ route('admin.produtos.destroy', $produto->id_produto) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-red-400 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition" onclick="confirmarExclusao(this)">

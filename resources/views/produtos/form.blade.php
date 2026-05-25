@@ -13,7 +13,7 @@
         $infoText = 'Ao salvar, o produto será cadastrado como "Aguardando Aprovação". A administração revisará os dados antes de torná-lo público.';
     } else {
         $pageTitle = $isEdit ? 'Editar Produto' : 'Cadastrar Novo Produto';
-        $formAction = $isEdit ? route('produtos.update', $produto->id_produto) : route('produtos.store');
+        $formAction = $isEdit ? route('admin.produtos.update', $produto->id_produto) : route('admin.produtos.store');
         $descLabel = 'Descrição';
         $descPlaceholder = 'Descreva brevemente o produto';
         $btnText = $isEdit ? 'Atualizar Produto' : 'Salvar Produto';
@@ -71,7 +71,14 @@
             {{-- Grid Categoria / Preço / Estoque --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <x-select name="id_categoria" label="Categoria" :options="\App\Models\CategoriasProdutos::getGroupedList()" value="{{ old('id_categoria', $produto->id_categoria) }}" placeholder="Selecione..." required />
+                    <div class="flex items-end gap-2">
+                        <div class="flex-1">
+                            <x-select name="id_categoria" label="Categoria" :options="\App\Models\CategoriasProdutos::getHierarchicalList()" value="{{ old('id_categoria', $produto->id_categoria) }}" placeholder="Selecione..." required />
+                        </div>
+                        <button type="button" onclick="abrirModalCategoria()" class="mb-4 px-3 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-bold shadow-sm transition duration-200 cursor-pointer border-0 flex items-center justify-center" title="Nova Categoria">
+                            <x-icon name="plus" class="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <x-input name="preco" label="Preço (R$)" type="number" step="0.01" value="{{ old('preco', $produto->preco) }}" placeholder="0,00" required />
@@ -132,6 +139,49 @@
         </div>
     </form>
 </div>
+
+{{-- Modal Categorias --}}
+<div id="modal-nova-categoria" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden" style="backdrop-filter: blur(2px);">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 relative">
+        <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+            <h3 class="text-lg font-bold text-brand m-0 flex items-center gap-2">
+                <x-icon name="plus" class="w-5 h-5 text-brand" /> Criar Nova Categoria
+            </h3>
+            <button type="button" onclick="fecharModalCategoria()" class="text-gray-400 hover:text-gray-700 cursor-pointer border-0 bg-transparent flex items-center">
+                <x-icon name="times" class="w-5 h-5" />
+            </button>
+        </div>
+
+        <div class="p-6">
+            <p class="text-gray-500 text-sm mb-5">Crie uma nova categoria para classificar o produto.</p>
+            <div id="erro-modal-categoria" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl mb-4 text-sm hidden"></div>
+            <div class="space-y-4">
+                <div>
+                    <label for="modal-categoria-nome" class="block font-bold mb-1 text-brand text-sm">Nome da Categoria</label>
+                    <input type="text" id="modal-categoria-nome" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Ex: Artesanato em Cerâmica" required />
+                </div>
+                <div>
+                    <label for="modal-categoria-parent" class="block font-bold mb-1 text-brand text-sm">Categoria Pai</label>
+                    <select id="modal-categoria-parent" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm">
+                        <option value="">Nenhuma (categoria raiz)</option>
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1">Selecione uma categoria existente para criar uma subcategoria.</p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" onclick="fecharModalCategoria()" class="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-semibold text-sm transition cursor-pointer bg-white">
+                    Cancelar
+                </button>
+                <button type="button" onclick="salvarCategoriaAjax()" class="px-5 py-2.5 bg-brand hover:bg-brand-light text-white rounded-lg font-bold shadow-sm transition duration-200 cursor-pointer border-0 flex items-center gap-2 text-sm" id="btn-salvar-categoria">
+                    <x-icon name="check-circle" class="w-4 h-4" /> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@php $categoriasTreeJson = $categoriasTree->toArray(); @endphp
+<script>window._categoriasTree = @json($categoriasTreeJson);</script>
 @endsection
 
 @section('scripts')
@@ -191,5 +241,77 @@
             img.src = '';
         }
     }
+
+    /* ── Modal Categorias ── */
+
+    function abrirModalCategoria() {
+        const parentSelect = document.getElementById('modal-categoria-parent');
+        parentSelect.innerHTML = '<option value="">Nenhuma (categoria raiz)</option>';
+        
+        const tree = window._categoriasTree || [];
+        tree.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat.id_categoria;
+            opt.textContent = cat.nome_categoria;
+            parentSelect.appendChild(opt);
+        });
+        
+        document.getElementById('modal-categoria-nome').value = '';
+        document.getElementById('erro-modal-categoria').classList.add('hidden');
+        document.getElementById('modal-nova-categoria').classList.remove('hidden');
+    }
+
+    function fecharModalCategoria() {
+        document.getElementById('modal-nova-categoria').classList.add('hidden');
+    }
+
+    function salvarCategoriaAjax() {
+        const nome = document.getElementById('modal-categoria-nome').value.trim();
+        const parentId = document.getElementById('modal-categoria-parent').value;
+        const erroDiv = document.getElementById('erro-modal-categoria');
+        const btn = document.getElementById('btn-salvar-categoria');
+
+        if (!nome) {
+            erroDiv.textContent = 'Informe o nome da categoria.';
+            erroDiv.classList.remove('hidden');
+            return;
+        }
+
+        erroDiv.classList.add('hidden');
+        btn.disabled = true;
+        btn.textContent = 'Salvando...';
+
+        fetch('{{ route("admin.categorias.quick-store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ nome_categoria: nome, parent_id: parentId || null }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                erroDiv.textContent = data.message || 'Erro ao criar categoria.';
+                erroDiv.classList.remove('hidden');
+            }
+        })
+        .catch(() => {
+            erroDiv.textContent = 'Erro de conexão. Tente novamente.';
+            erroDiv.classList.remove('hidden');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.textContent = 'Salvar';
+        });
+    }
+
+    function csrfToken() {
+        return document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+    }
 </script>
+
 @endsection
