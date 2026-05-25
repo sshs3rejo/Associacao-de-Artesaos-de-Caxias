@@ -49,4 +49,19 @@ class CategoriasProdutos extends Model
     {
         return $query->whereNull('parent_id');
     }
+
+    public static function getHierarchicalList()
+    {
+        return Cache::remember('categorias_hierarchical', 3600, function () {
+            $result = [];
+            $parents = self::parents()->orderBy('nome_categoria')->get();
+            foreach ($parents as $parent) {
+                $result[$parent->id_categoria] = $parent->nome_categoria;
+                foreach ($parent->children()->orderBy('nome_categoria')->get() as $child) {
+                    $result[$child->id_categoria] = '— ' . $child->nome_categoria;
+                }
+            }
+            return $result;
+        });
+    }
 }

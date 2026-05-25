@@ -38,7 +38,7 @@
         {{-- Categoria / Preço / Quantidade --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <x-select name="id_categoria" label="Categoria" :options="$categorias->pluck('nome_categoria', 'id_categoria')->toArray()" placeholder="Selecione..." required />
+                <x-select name="id_categoria" label="Categoria" :options="\App\Models\CategoriasProdutos::getHierarchicalList()" placeholder="Selecione..." required />
             </div>
             <div>
                 <x-input name="preco" label="Preço Unitário (R$)" type="number" step="0.01" placeholder="0,00" required />
