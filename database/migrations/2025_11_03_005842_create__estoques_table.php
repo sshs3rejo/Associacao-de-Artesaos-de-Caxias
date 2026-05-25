@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_estoques', function (Blueprint $table) {
+                if (!Schema::hasTable('_estoques')) {
+                    Schema::create('_estoques', function (Blueprint $table) {
             $table->unsignedBigInteger('id_produto')->primary();
             $table->integer('quantidade');
             $table->timestamps();
 
             $table->foreign('id_produto')->references('id_produto')->on('produto');
         });
+        }
     }
 
     /**

@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('_fornecedores', function (Blueprint $table) {
+                if (!Schema::hasTable('_fornecedores')) {
+                    Schema::create('_fornecedores', function (Blueprint $table) {
             $table->id('id_fornecedor'); // AQUI ESTÁ O PONTO-CHAVE
             $table->string('nome');
             $table->string('contato')->nullable();
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->timestamps();
         });
+        }
     }
 
     public function down(): void

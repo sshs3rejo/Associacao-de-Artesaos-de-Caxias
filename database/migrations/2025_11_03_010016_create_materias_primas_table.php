@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('materias_primas', function (Blueprint $table) {
+                if (!Schema::hasTable('materias_primas')) {
+                    Schema::create('materias_primas', function (Blueprint $table) {
             // A linha mais importante é esta:
             $table->id('id_materia');
 
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->text('descricao')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     public function down(): void

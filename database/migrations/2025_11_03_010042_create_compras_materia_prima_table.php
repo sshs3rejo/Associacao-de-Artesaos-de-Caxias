@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('compras_materia_prima', function (Blueprint $table) {
+                if (!Schema::hasTable('compras_materia_prima')) {
+                    Schema::create('compras_materia_prima', function (Blueprint $table) {
             $table->id('id_compra');
             $table->unsignedBigInteger('id_fornecedor');
             $table->unsignedBigInteger('id_materia');
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->foreign('id_fornecedor')->references('id_fornecedor')->on('_fornecedores')->onDelete('cascade');
             $table->foreign('id_materia')->references('id_materia')->on('materias_primas')->onDelete('cascade');
         });
+        }
     }
 
     /**

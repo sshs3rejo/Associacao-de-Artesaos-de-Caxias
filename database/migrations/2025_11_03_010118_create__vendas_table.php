@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('_vendas', function (Blueprint $table) {
+                if (!Schema::hasTable('_vendas')) {
+                    Schema::create('_vendas', function (Blueprint $table) {
             $table->id('id_venda'); // AQUI ESTÁ O PONTO-CHAVE
             $table->unsignedBigInteger('id_cliente');
             $table->date('data_venda');
@@ -17,6 +18,7 @@ return new class extends Migration
 
             $table->foreign('id_cliente')->references('id_cliente')->on('_cliente');
         });
+        }
     }
 
     public function down(): void

@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('activity_logs', function (Blueprint $table) {
+                if (!Schema::hasTable('activity_logs')) {
+                    Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('action');
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->index('action');
             $table->index('created_at');
         });
+        }
     }
 
     public function down(): void

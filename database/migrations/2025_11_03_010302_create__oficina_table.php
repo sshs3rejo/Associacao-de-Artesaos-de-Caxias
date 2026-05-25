@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_oficina', function (Blueprint $table) {
+                if (!Schema::hasTable('_oficina')) {
+                    Schema::create('_oficina', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
+        }
     }
 
     /**

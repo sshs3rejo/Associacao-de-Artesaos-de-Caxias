@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('contatos', function (Blueprint $table) {
+                if (!Schema::hasTable('contatos')) {
+                    Schema::create('contatos', function (Blueprint $table) {
             $table->id();
             $table->string('nome', 255);
             $table->string('email', 255);
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->boolean('lido')->default(false);
             $table->timestamps();
         });
+        }
     }
 
     public function down(): void

@@ -8,12 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+                if (!Schema::hasTable('settings')) {
+                    Schema::create('settings', function (Blueprint $table) {
             $table->string('key')->primary();
             $table->text('value')->nullable();
             $table->timestamps();
         });
-
+        }
         if (file_exists(storage_path('app/settings.json'))) {
             $data = json_decode(file_get_contents(storage_path('app/settings.json')), true) ?? [];
             foreach ($data as $key => $value) {

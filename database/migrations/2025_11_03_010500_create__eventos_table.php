@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_eventos', function (Blueprint $table) {
+                if (!Schema::hasTable('_eventos')) {
+                    Schema::create('_eventos', function (Blueprint $table) {
             $table->id('id_evento');
             $table->string('nome');
             $table->text('descricao');
@@ -30,6 +31,7 @@ return new class extends Migration
             // Foreign key
             $table->foreign('id_instrutor')->references('id_instrutor')->on('instrutores')->onDelete('set null');
         });
+        }
     }
 
     /**

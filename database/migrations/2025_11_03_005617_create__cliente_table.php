@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_cliente', function (Blueprint $table) {
+                if (!Schema::hasTable('_cliente')) {
+                    Schema::create('_cliente', function (Blueprint $table) {
             $table->id('id_cliente');
             $table->string('nome');
             $table->string('email')->unique();
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->text('endereco');
             $table->timestamps();
         });
+        }
     }
 
     /**

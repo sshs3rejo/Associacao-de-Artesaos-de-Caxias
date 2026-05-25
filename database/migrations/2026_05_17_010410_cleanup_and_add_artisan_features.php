@@ -32,7 +32,9 @@ return new class extends Migration
 
         // ========== PERFIL DO ARTESÃO ==========
 
-        Schema::create('artisan_profiles', function (Blueprint $table) {
+                if (!Schema::hasTable('artisan_profiles')) {
+
+                    Schema::create('artisan_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->unique();
             $table->string('phone', 20)->nullable();
@@ -46,6 +48,7 @@ return new class extends Migration
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     public function down(): void
@@ -63,20 +66,25 @@ return new class extends Migration
             $table->dropColumn(['nome', 'descricao', 'data_inicio', 'data_fim', 'id_instrutor']);
         });
 
-        Schema::create('_funcionarios', function (Blueprint $table) {
+                if (!Schema::hasTable('_funcionarios')) {
+
+                    Schema::create('_funcionarios', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
-
-        Schema::create('_usuarios_sistema', function (Blueprint $table) {
+        }
+                if (!Schema::hasTable('_usuarios_sistema')) {
+                    Schema::create('_usuarios_sistema', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });
-
-        Schema::create('categorias', function (Blueprint $table) {
+        }
+                if (!Schema::hasTable('categorias')) {
+                    Schema::create('categorias', function (Blueprint $table) {
             $table->id();
             $table->string('nome_categoria');
             $table->timestamps();
         });
+        }
     }
 };

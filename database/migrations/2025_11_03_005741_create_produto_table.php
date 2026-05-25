@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('produto', function (Blueprint $table) {
+                if (!Schema::hasTable('produto')) {
+                    Schema::create('produto', function (Blueprint $table) {
             $table->id('id_produto');
             $table->string('nome');
             $table->text('descricao');
@@ -21,6 +22,7 @@ return new class extends Migration
 
             $table->foreign('id_categoria')->references('id_categoria')->on('categorias_produtos')->onDelete('cascade');
         });
+        }
     }
 
     /**

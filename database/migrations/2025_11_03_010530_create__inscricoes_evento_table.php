@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_inscricoes_evento', function (Blueprint $table) {
+                if (!Schema::hasTable('_inscricoes_evento')) {
+                    Schema::create('_inscricoes_evento', function (Blueprint $table) {
             $table->id('id_inscricao');
             $table->unsignedBigInteger('id_cliente');
             $table->unsignedBigInteger('id_evento');
@@ -26,6 +27,7 @@ return new class extends Migration
             // Evitar inscrições duplicadas
             $table->unique(['id_cliente', 'id_evento']);
         });
+        }
     }
 
     /**
