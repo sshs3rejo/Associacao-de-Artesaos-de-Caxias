@@ -64,23 +64,33 @@ class EventoController extends Controller
     public function create()
     {
         $instrutores = Instrutores::all();
+        $isArtisan = request()->routeIs('artesan.*');
+        $evento = new Eventos();
 
-        return view('eventos.create', compact('instrutores'));
+        return view('eventos.form', compact('instrutores', 'isArtisan', 'evento'));
     }
 
     public function store(EventoRequest $request)
     {
         $validated = $request->validated();
+        $isArtisan = request()->routeIs('artesan.*');
 
-        if (!empty($validated['nome_instrutor'])) {
-            $instrutor = Instrutores::firstOrCreate(
-                ['nome' => $validated['nome_instrutor']],
-                [
-                    'email' => 'pendente_' . uniqid() . '@associacao.com.br',
-                    'especialidade' => 'Não definida'
-                ]
-            );
-            $validated['id_instrutor'] = $instrutor->id_instrutor;
+        if ($isArtisan) {
+            $validated['id_artesan'] = auth()->id();
+            $validated['is_approved'] = false;
+            $validated['status'] = 'planejado';
+        } else {
+            $validated['is_approved'] = true;
+            if (!empty($validated['nome_instrutor'])) {
+                $instrutor = Instrutores::firstOrCreate(
+                    ['nome' => $validated['nome_instrutor']],
+                    [
+                        'email' => 'pendente_' . uniqid() . '@associacao.com.br',
+                        'especialidade' => 'Não definida'
+                    ]
+                );
+                $validated['id_instrutor'] = $instrutor->id_instrutor;
+            }
         }
         unset($validated['nome_instrutor']);
 
@@ -90,11 +100,15 @@ class EventoController extends Controller
             $validated['imagem'] = $request->file('imagem')->store('eventos', 'public');
         }
 
-        $validated['is_approved'] = true;
-
         $evento = Eventos::create($validated);
 
         Cache::forget('eventos_publicos');
+
+        if ($isArtisan) {
+            ActivityLog::log('evento.proposto', "Evento \"{$evento->nome}\" proposto por " . auth()->user()->name . ".", $evento);
+            return redirect()->route('evento')->with('success', 'Proposta de evento enviada com sucesso! Aguarde a aprovação do administrador.');
+        }
+
         ActivityLog::log('evento.criado', "Evento \"{$evento->nome}\" criado.", $evento);
 
         return redirect()->route('evento')->with('success', 'Evento criado com sucesso!');
@@ -103,30 +117,46 @@ class EventoController extends Controller
     public function edit($id)
     {
         $evento = Eventos::with('instrutor')->findOrFail($id);
+        $isArtisan = request()->routeIs('artesan.*');
+
+        if ($isArtisan && $evento->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+
         $instrutores = Instrutores::all();
 
-        return view('eventos.edit', compact('evento', 'instrutores'));
+        return view('eventos.form', compact('evento', 'instrutores', 'isArtisan'));
     }
 
     public function update(EventoRequest $request, $id)
     {
         $evento = Eventos::with('instrutor')->findOrFail($id);
+        $isArtisan = request()->routeIs('artesan.*');
+
+        if ($isArtisan && $evento->id_artesan !== auth()->id()) {
+            abort(403);
+        }
 
         $validated = $request->validated();
 
-        if (!empty($validated['nome_instrutor'])) {
-            $instrutor = Instrutores::firstOrCreate(
-                ['nome' => $validated['nome_instrutor']],
-                [
-                    'email' => 'pendente_' . uniqid() . '@associacao.com.br',
-                    'especialidade' => 'Não definida'
-                ]
-            );
-            $validated['id_instrutor'] = $instrutor->id_instrutor;
+        if ($isArtisan) {
+            unset($validated['nome_instrutor']);
+            unset($validated['status']);
         } else {
-            $validated['id_instrutor'] = null;
+            if (!empty($validated['nome_instrutor'])) {
+                $instrutor = Instrutores::firstOrCreate(
+                    ['nome' => $validated['nome_instrutor']],
+                    [
+                        'email' => 'pendente_' . uniqid() . '@associacao.com.br',
+                        'especialidade' => 'Não definida'
+                    ]
+                );
+                $validated['id_instrutor'] = $instrutor->id_instrutor;
+            } else {
+                $validated['id_instrutor'] = null;
+            }
+            unset($validated['nome_instrutor']);
         }
-        unset($validated['nome_instrutor']);
 
         if ($validated['capacidade_maxima'] != $evento->capacidade_maxima) {
             $diferenca = $validated['capacidade_maxima'] - $evento->capacidade_maxima;
@@ -143,7 +173,12 @@ class EventoController extends Controller
         $evento->update($validated);
 
         Cache::forget('eventos_publicos');
-        ActivityLog::log('evento.atualizado', "Evento \"{$evento->nome}\" atualizado.", $evento);
+
+        if ($isArtisan) {
+            ActivityLog::log('evento.atualizado', "Evento \"{$evento->nome}\" atualizado por artesão.", $evento);
+        } else {
+            ActivityLog::log('evento.atualizado', "Evento \"{$evento->nome}\" atualizado.", $evento);
+        }
 
         return redirect()->route('evento')->with('success', 'Evento atualizado com sucesso!');
     }
@@ -151,13 +186,23 @@ class EventoController extends Controller
     public function destroy($id)
     {
         $evento = Eventos::findOrFail($id);
+        $isArtisan = request()->routeIs('artesan.*');
+
+        if ($isArtisan && $evento->id_artesan !== auth()->id()) {
+            abort(403);
+        }
 
         if ($evento->imagem) {
             Storage::disk('public')->delete($evento->imagem);
         }
 
         Cache::forget('eventos_publicos');
-        ActivityLog::log('evento.removido', "Evento \"{$evento->nome}\" removido.", $evento);
+
+        if ($isArtisan) {
+            ActivityLog::log('evento.removido', "Evento \"{$evento->nome}\" removido por artesão.", $evento);
+        } else {
+            ActivityLog::log('evento.removido', "Evento \"{$evento->nome}\" removido.", $evento);
+        }
 
         $evento->inscricoes()->delete();
 

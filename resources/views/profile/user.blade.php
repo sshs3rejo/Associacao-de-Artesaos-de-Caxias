@@ -41,7 +41,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div>
                                     <label for="cpf" class="block font-bold mb-1">CPF <span class="text-red-500">*</span></label>
-                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('cpf') border-red-500 @enderror" id="cpf" name="cpf" value="{{ old('cpf') }}" placeholder="000.000.000-00" maxlength="14" required>
+                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('cpf') border-red-500 @enderror" id="cpf" name="cpf" value="{{ old('cpf') }}" placeholder="000.000.000-00" maxlength="14" required oninput="window.mascaraCPF(this)">
                                     @error('cpf')<div class="text-red-500 text-sm mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div>
@@ -56,7 +56,7 @@
                                 </div>
                                 <div>
                                     <label for="foto" class="block font-bold mb-1">Foto de Perfil</label>
-                                    <input type="file" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('foto') border-red-500 @enderror" id="foto" name="foto" accept="image/jpeg,image/png">
+                                    <input type="file" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('foto') border-red-500 @enderror" id="foto" name="foto" accept="image/jpeg,image/png" onchange="window.validarTamanhoImagem(this)">
                                     @error('foto')<div class="text-red-500 text-sm mt-1">{{ $message }}</div>@enderror
                                     <div class="text-gray-500 text-sm mt-1">Aceita JPG, PNG até 2MB.</div>
                                 </div>

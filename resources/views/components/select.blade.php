@@ -13,7 +13,15 @@
             <option value="">{{ $placeholder }}</option>
         @endif
         @foreach($options as $key => $option)
-            <option value="{{ $key }}" {{ old($name, $value) == $key ? 'selected' : '' }}>{{ $option }}</option>
+            @if(is_array($option))
+                <optgroup label="{{ $key }}">
+                    @foreach($option as $subKey => $subOption)
+                        <option value="{{ $subKey }}" {{ old($name, $value) == $subKey ? 'selected' : '' }}>{{ $subOption }}</option>
+                    @endforeach
+                </optgroup>
+            @else
+                <option value="{{ $key }}" {{ old($name, $value) == $key ? 'selected' : '' }}>{{ $option }}</option>
+            @endif
         @endforeach
     </select>
     @error($name)

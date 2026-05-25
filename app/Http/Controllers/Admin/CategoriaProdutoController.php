@@ -11,7 +11,10 @@ class CategoriaProdutoController extends Controller
 {
     public function index()
     {
-        $categorias = CategoriasProdutos::with('parent', 'children')
+        $categorias = CategoriasProdutos::parents()
+            ->with(['children' => function ($q) {
+                $q->orderBy('nome_categoria');
+            }])
             ->orderBy('nome_categoria')
             ->get();
 
@@ -31,7 +34,18 @@ class CategoriaProdutoController extends Controller
     {
         $validated = $request->validate([
             'nome_categoria' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categorias_produtos,id_categoria',
+            'parent_id' => [
+                'nullable',
+                'exists:categorias_produtos,id_categoria',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        $parent = CategoriasProdutos::find($value);
+                        if ($parent && $parent->parent_id !== null) {
+                            $fail('A categoria pai selecionada é uma subcategoria. Não é permitido aninhamento com mais de um nível.');
+                        }
+                    }
+                }
+            ],
         ]);
 
         CategoriasProdutos::create($validated);
@@ -39,6 +53,7 @@ class CategoriaProdutoController extends Controller
         Cache::forget('categorias_produtos');
         Cache::forget('categorias_produtos_ordered');
         Cache::forget('categorias_hierarchical');
+        Cache::forget('categorias_grouped_list');
 
         return redirect()->route('admin.categorias.index')
             ->with('success', 'Categoria criada com sucesso!');
@@ -58,7 +73,28 @@ class CategoriaProdutoController extends Controller
     {
         $validated = $request->validate([
             'nome_categoria' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categorias_produtos,id_categoria',
+            'parent_id' => [
+                'nullable',
+                'exists:categorias_produtos,id_categoria',
+                function ($attribute, $value, $fail) use ($categoria) {
+                    if ($value) {
+                        if ($value == $categoria->id_categoria) {
+                            $fail('Uma categoria não pode ser pai de si mesma.');
+                            return;
+                        }
+
+                        $parent = CategoriasProdutos::find($value);
+                        if ($parent && $parent->parent_id !== null) {
+                            $fail('A categoria pai selecionada é uma subcategoria. Não é permitido aninhamento com mais de um nível.');
+                            return;
+                        }
+
+                        if ($categoria->children()->exists()) {
+                            $fail('Esta categoria possui subcategorias e não pode se tornar uma subcategoria.');
+                        }
+                    }
+                }
+            ],
         ]);
 
         $categoria->update($validated);
@@ -66,6 +102,7 @@ class CategoriaProdutoController extends Controller
         Cache::forget('categorias_produtos');
         Cache::forget('categorias_produtos_ordered');
         Cache::forget('categorias_hierarchical');
+        Cache::forget('categorias_grouped_list');
 
         return redirect()->route('admin.categorias.index')
             ->with('success', 'Categoria atualizada com sucesso!');
@@ -86,6 +123,7 @@ class CategoriaProdutoController extends Controller
         Cache::forget('categorias_produtos');
         Cache::forget('categorias_produtos_ordered');
         Cache::forget('categorias_hierarchical');
+        Cache::forget('categorias_grouped_list');
 
         return back()->with('success', 'Categoria excluída com sucesso!');
     }

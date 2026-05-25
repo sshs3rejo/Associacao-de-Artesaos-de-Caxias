@@ -141,6 +141,48 @@ window.mascaraTelefone = function (input) {
     }
 };
 
+/* ======================== MÁSCARA DE CPF ======================== */
+window.mascaraCPF = function (input) {
+    var value = input.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    if (value.length <= 3) {
+        input.value = value;
+    } else if (value.length <= 6) {
+        input.value = value.slice(0, 3) + '.' + value.slice(3);
+    } else if (value.length <= 9) {
+        input.value = value.slice(0, 3) + '.' + value.slice(3, 6) + '.' + value.slice(6);
+    } else {
+        input.value = value.slice(0, 3) + '.' + value.slice(3, 6) + '.' + value.slice(6, 9) + '-' + value.slice(9, 11);
+    }
+};
+
+/* ======================== VALIDAÇÃO DE ANEXO DE IMAGEM (CLIENTE) ======================== */
+window.validarTamanhoImagem = function (input) {
+    if (input.files && input.files[0]) {
+        var file = input.files[0];
+        var maxSize = 2 * 1024 * 1024; // 2MB
+        if (file.size > maxSize) {
+            if (typeof window.mostrarToast === 'function') {
+                window.mostrarToast('A imagem selecionada é muito grande! Escolha um arquivo de até 2MB.', 'danger');
+            } else {
+                alert('A imagem selecionada é muito grande! Escolha um arquivo de até 2MB.');
+            }
+            input.value = ''; // Limpa o input
+            
+            // Também tenta limpar qualquer preview de imagem se existir
+            var preview = document.getElementById('preview-imagem');
+            var img = document.getElementById('preview-img');
+            if (preview && img) {
+                preview.style.display = 'none';
+                img.src = '';
+            }
+            return false;
+        }
+    }
+    return true;
+};
+
+
 /* ======================== PAGE LOADER (navigation) ======================== */
 window.showPageLoader = function () {
     var loader = document.getElementById('page-loader');

@@ -72,17 +72,17 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'artisan', 'throttle:30,1'])->prefix('artesan')->name('artesan.')->group(function () {
     Route::get('/dashboard', [ArtisanController::class, 'dashboard'])->name('dashboard');
     
-    Route::get('/produtos/criar', [ArtisanController::class, 'criarProduto'])->name('produtos.criar');
-    Route::post('/produtos', [ArtisanController::class, 'salvarProduto'])->name('produtos.salvar');
-    Route::get('/produtos/{produto}/editar', [ArtisanController::class, 'editarProduto'])->name('produtos.editar');
-    Route::put('/produtos/{produto}', [ArtisanController::class, 'atualizarProduto'])->name('produtos.atualizar');
-    Route::delete('/produtos/{produto}', [ArtisanController::class, 'deletarProduto'])->name('produtos.deletar');
+    Route::get('/produtos/criar', [ProdutoController::class, 'create'])->name('produtos.criar');
+    Route::post('/produtos', [ProdutoController::class, 'store'])->name('produtos.salvar');
+    Route::get('/produtos/{produto}/editar', [ProdutoController::class, 'edit'])->name('produtos.editar');
+    Route::put('/produtos/{produto}', [ProdutoController::class, 'update'])->name('produtos.atualizar');
+    Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroy'])->name('produtos.deletar');
     
-    Route::get('/eventos/criar', [ArtisanController::class, 'criarEvento'])->name('eventos.criar');
-    Route::post('/eventos', [ArtisanController::class, 'salvarEvento'])->name('eventos.salvar');
-    Route::get('/eventos/{evento}/editar', [ArtisanController::class, 'editarEvento'])->name('eventos.editar');
-    Route::put('/eventos/{evento}', [ArtisanController::class, 'atualizarEvento'])->name('eventos.atualizar');
-    Route::delete('/eventos/{evento}', [ArtisanController::class, 'deletarEvento'])->name('eventos.deletar');
+    Route::get('/eventos/criar', [EventoController::class, 'create'])->name('eventos.criar');
+    Route::post('/eventos', [EventoController::class, 'store'])->name('eventos.salvar');
+    Route::get('/eventos/{evento}/editar', [EventoController::class, 'edit'])->name('eventos.editar');
+    Route::put('/eventos/{evento}', [EventoController::class, 'update'])->name('eventos.atualizar');
+    Route::delete('/eventos/{evento}', [EventoController::class, 'destroy'])->name('eventos.deletar');
     Route::get('/perfil', [ArtisanController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [ArtisanController::class, 'atualizarPerfil'])->name('perfil.atualizar');
 });

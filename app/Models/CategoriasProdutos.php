@@ -30,6 +30,15 @@ class CategoriasProdutos extends Model
         });
     }
 
+    public static function getTreeCached()
+    {
+        return Cache::remember('categorias_tree', 3600, function () {
+            return self::parents()->with(['children' => function ($q) {
+                $q->orderBy('nome_categoria');
+            }])->orderBy('nome_categoria')->get();
+        });
+    }
+
     public function produtos()
     {
         return $this->hasMany(Produto::class, 'id_categoria');
@@ -59,6 +68,29 @@ class CategoriasProdutos extends Model
                 $result[$parent->id_categoria] = $parent->nome_categoria;
                 foreach ($parent->children->sortBy('nome_categoria') as $child) {
                     $result[$child->id_categoria] = '— ' . $child->nome_categoria;
+                }
+            }
+            return $result;
+        });
+    }
+
+    public static function getGroupedList()
+    {
+        return Cache::remember('categorias_grouped_list', 3600, function () {
+            $result = [];
+            $parents = self::parents()->with(['children' => function ($q) {
+                $q->orderBy('nome_categoria');
+            }])->orderBy('nome_categoria')->get();
+
+            foreach ($parents as $parent) {
+                if ($parent->children->isEmpty()) {
+                    $result[$parent->id_categoria] = $parent->nome_categoria;
+                } else {
+                    $subCategories = [];
+                    foreach ($parent->children as $child) {
+                        $subCategories[$child->id_categoria] = $child->nome_categoria;
+                    }
+                    $result[$parent->nome_categoria] = $subCategories;
                 }
             }
             return $result;

@@ -30,7 +30,7 @@ class ProdutoController extends Controller
             return view('produtos', compact('produtos'));
         }
 
-        $categorias = CategoriasProdutos::getAllCached();
+        $categorias = CategoriasProdutos::getTreeCached();
 
         $query = Produto::approved()->with(['categoria', 'estoque', 'artisan.artisanProfile']);
 
@@ -61,19 +61,27 @@ class ProdutoController extends Controller
     public function create()
     {
         $categorias = CategoriasProdutos::getAllCached();
+        $isArtisan = request()->routeIs('artesan.*');
+        $produto = new Produto();
 
-        return view('produtos.create', compact('categorias'));
+        return view('produtos.form', compact('categorias', 'isArtisan', 'produto'));
     }
 
     public function store(ProdutoRequest $request)
     {
         $validated = $request->validated();
+        $isArtisan = request()->routeIs('artesan.*');
 
         if ($request->hasFile('imagem')) {
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
         }
 
-        $validated['is_approved'] = true;
+        if ($isArtisan) {
+            $validated['id_artesan'] = auth()->id();
+            $validated['is_approved'] = false;
+        } else {
+            $validated['is_approved'] = true;
+        }
 
         $produto = Produto::create($validated);
 
@@ -81,6 +89,11 @@ class ProdutoController extends Controller
             'id_produto' => $produto->id_produto,
             'quantidade' => $request->quantidade,
         ]);
+
+        if ($isArtisan) {
+            ActivityLog::log('produto.proposto', "Produto \"{$produto->nome}\" proposto por " . auth()->user()->name . ".", $produto);
+            return redirect()->route('produtos')->with('success', 'Produto proposto com sucesso! Aguarde a aprovação do administrador.');
+        }
 
         ActivityLog::log('produto.criado', "Produto \"{$produto->nome}\" criado.", $produto);
 
@@ -90,14 +103,25 @@ class ProdutoController extends Controller
     public function edit($id)
     {
         $produto = Produto::with(['categoria', 'estoque'])->findOrFail($id);
+        $isArtisan = request()->routeIs('artesan.*');
+
+        if ($isArtisan && $produto->id_artesan !== auth()->id()) {
+            abort(403);
+        }
+
         $categorias = CategoriasProdutos::getAllCached();
 
-        return view('produtos.edit', compact('produto', 'categorias'));
+        return view('produtos.form', compact('produto', 'categorias', 'isArtisan'));
     }
 
     public function update(ProdutoRequest $request, $id)
     {
         $produto = Produto::findOrFail($id);
+        $isArtisan = request()->routeIs('artesan.*');
+
+        if ($isArtisan && $produto->id_artesan !== auth()->id()) {
+            abort(403);
+        }
 
         $validated = $request->validated();
 
@@ -120,7 +144,11 @@ class ProdutoController extends Controller
             ['quantidade' => $request->quantidade]
         );
 
-        ActivityLog::log('produto.atualizado', "Produto \"{$produto->nome}\" atualizado.", $produto);
+        if ($isArtisan) {
+            ActivityLog::log('produto.atualizado', "Produto \"{$produto->nome}\" atualizado por artesão.", $produto);
+        } else {
+            ActivityLog::log('produto.atualizado', "Produto \"{$produto->nome}\" atualizado.", $produto);
+        }
 
         return redirect()->route('produtos')->with('success', 'Produto atualizado com sucesso!');
     }
@@ -128,12 +156,21 @@ class ProdutoController extends Controller
     public function destroy($id)
     {
         $produto = Produto::findOrFail($id);
+        $isArtisan = request()->routeIs('artesan.*');
+
+        if ($isArtisan && $produto->id_artesan !== auth()->id()) {
+            abort(403);
+        }
 
         if ($produto->imagem) {
             Storage::disk('public')->delete($produto->imagem);
         }
 
-        ActivityLog::log('produto.removido', "Produto \"{$produto->nome}\" removido.", $produto);
+        if ($isArtisan) {
+            ActivityLog::log('produto.removido', "Produto \"{$produto->nome}\" removido por artesão.", $produto);
+        } else {
+            ActivityLog::log('produto.removido', "Produto \"{$produto->nome}\" removido.", $produto);
+        }
 
         $produto->estoque()->delete();
 
