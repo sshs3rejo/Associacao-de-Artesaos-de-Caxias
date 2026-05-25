@@ -217,8 +217,7 @@
                      data-estoque="{{ $produto->estoque ? $produto->estoque->quantidade : 0 }}"
                      data-imagem="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
                     <div class="relative overflow-hidden h-52" style="background: linear-gradient(135deg, #e8dfd6 0%, #f5e6d3 100%);">
-                        <img src="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}"
-                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="{{ $produto->nome }}" loading="lazy">
+                        <x-image src="{{ $produto->imagem }}" alt="{{ $produto->nome }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                         @if($produto->estoque && $produto->estoque->quantidade <= 0)
                             <span class="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white">Esgotado</span>
                         @endif
@@ -229,7 +228,7 @@
                         @if($produto->artisan)
                             <div class="mb-2 flex items-center gap-2">
                                 @if($produto->artisan->artisanProfile && $produto->artisan->artisanProfile->profile_photo)
-                                    <img src="{{ asset('storage/' . $produto->artisan->artisanProfile->profile_photo) }}" alt="Foto de {{ $produto->artisan->name }}" class="rounded-full w-5 h-5 object-cover border border-brand" loading="lazy">
+                                    <x-image src="{{ $produto->artisan->artisanProfile->profile_photo }}" alt="Foto de {{ $produto->artisan->name }}" class="rounded-full w-5 h-5 object-cover border border-brand" />
                                 @else
                                     <div class="rounded-full w-5 h-5 flex items-center justify-center text-white text-xs font-bold" style="background-color: #7a2f1f;">
                                         {{ substr($produto->artisan->name, 0, 1) }}

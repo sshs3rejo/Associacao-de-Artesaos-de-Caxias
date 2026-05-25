@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -31,6 +32,8 @@ class AdminArtisanController extends Controller
 
         $user->update(['is_active' => true]);
 
+        ActivityLog::log('artesao.aprovado', "Artesão {$user->name} aprovado.", $user);
+
         return back()->with('success', "Artesão {$user->name} aprovado com sucesso!");
     }
 
@@ -45,6 +48,8 @@ class AdminArtisanController extends Controller
             $profile->update(['approved_at' => null]);
         }
 
+        ActivityLog::log('artesao.rejeitado', "Perfil de artesão {$user->name} rejeitado.", $user);
+
         return back()->with('success', "Perfil de artesão {$user->name} foi rejeitado.");
     }
 
@@ -55,6 +60,8 @@ class AdminArtisanController extends Controller
         }
 
         $user->update(['is_active' => true]);
+
+        ActivityLog::log('artesao.ativado', "Artesão {$user->name} reativado.", $user);
 
         return back()->with('success', "Artesão {$user->name} foi reativado com sucesso!");
     }

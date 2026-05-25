@@ -169,13 +169,13 @@
                             @foreach($inscricoes as $inscricao)
                                 <div class="bg-white shadow-sm rounded-xl h-full flex flex-col">
                                     <div class="p-4 flex flex-col flex-1">
-                                        <h5 class="font-bold mb-2 text-brand">{{ $inscricao->evento->nome }}</h5>
+                                        <h5 class="font-bold mb-2 text-brand">{{ $inscricao->evento?->nome ?? 'Evento removido' }}</h5>
                                         <div class="text-sm text-gray-500 mb-3">
                                             <x-icon name="calendar" class="w-4 h-4 mr-1" />
-                                            {{ $inscricao->evento->data_inicio?->format('d/m/Y H:i') ?? 'Data a definir' }}
+                                            {{ $inscricao->evento?->data_inicio?->format('d/m/Y H:i') ?? 'Data a definir' }}
                                         </div>
                                         <x-badge type="{{ $inscricao->isPago() ? 'success' : 'pending' }}">{{ $inscricao->status_pagamento }}</x-badge>
-                                        <x-badge type="info">{{ $inscricao->evento->status }}</x-badge>
+                                        <x-badge type="info">{{ $inscricao->evento?->status ?? '—' }}</x-badge>
                                     </div>
                                 </div>
                             @endforeach
@@ -241,7 +241,7 @@
                             <div class="bg-white h-full rounded-xl overflow-hidden flex flex-col shadow-sm hover:-translate-y-1 hover:shadow-lg transition" style="border: 1px solid rgba(122,47,31,0.1);">
                                 <div class="relative" style="height: 200px; background-color: #f5f1ed;">
                                     @if($evento->imagem)
-                                        <img src="{{ asset('storage/' . $evento->imagem) }}" alt="{{$evento->nome}}" class="w-full h-full object-cover" loading="lazy">
+                                        <x-image src="{{ $evento->imagem }}" alt="{{ $evento->nome }}" class="w-full h-full object-cover" />
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
                                             <x-icon name="calendar" class="w-12 h-12" style="color: #d1b8a4;" />

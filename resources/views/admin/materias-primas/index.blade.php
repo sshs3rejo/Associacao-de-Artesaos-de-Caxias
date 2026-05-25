@@ -33,7 +33,7 @@
                     @foreach($materiasPrimas as $materia)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="font-semibold p-3 text-sm">{{ $materia->nome }}</td>
-                            <td class="p-3 text-sm text-gray-500">{{ Str::limit($materia->descricao, 60) ?? '<span class="text-gray-400">—</span>' }}</td>
+                            <td class="p-3 text-sm text-gray-500">                            <td class="p-3 text-sm text-gray-500">{{ Str::limit($materia->descricao ?: '—', 60) }}</td>
                             <td class="p-3 text-sm text-gray-600">{{ $materia->unidade_medida }}</td>
                             <td class="p-3 text-sm">
                                 @if($materia->fornecedores_count > 0)

@@ -12,6 +12,10 @@ class InscricoesOficina extends Model
 
     protected $fillable = ['id_cliente', 'id_oficina', 'data_inscricao'];
 
+    protected $casts = [
+        'data_inscricao' => 'datetime',
+    ];
+
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'id_cliente');

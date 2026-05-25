@@ -33,9 +33,9 @@
                     @foreach($fornecedores as $fornecedor)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="font-semibold p-3 text-sm">{{ $fornecedor->nome }}</td>
-                            <td class="p-3 text-sm text-gray-500">{{ $fornecedor->contato ?: '<span class="text-gray-400">—</span>' }}</td>
-                            <td class="p-3 text-sm text-gray-500">{{ $fornecedor->email ?: '<span class="text-gray-400">—</span>' }}</td>
-                            <td class="p-3 text-sm text-gray-500">{{ $fornecedor->telefone ?: '<span class="text-gray-400">—</span>' }}</td>
+                            <td class="p-3 text-sm text-gray-500">{{ $fornecedor->contato ?: '—' }}</td>
+                            <td class="p-3 text-sm text-gray-500">{{ $fornecedor->email ?: '—' }}</td>
+                            <td class="p-3 text-sm text-gray-500">{{ $fornecedor->telefone ?: '—' }}</td>
                             <td class="p-3 text-sm">
                                 @if($fornecedor->materias_primas_count > 0)
                                     <span class="text-gray-600">{{ $fornecedor->materias_primas_count }} matérias-primas</span>

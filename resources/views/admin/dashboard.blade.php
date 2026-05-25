@@ -188,10 +188,10 @@
                                     <x-image :src="$prodPendente->imagem" :alt="$prodPendente->nome" class="rounded shadow-sm" style="width: 45px; height: 45px; object-fit: cover;" />
                                 </td>
                                 <td class="px-4 py-3 text-sm font-bold" style="color: #8b5a3c;">{{ $prodPendente->nome }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $prodPendente->artisan->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $prodPendente->categoria->nome_categoria ?? 'Sem Categoria' }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $prodPendente->artisan?->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $prodPendente->categoria?->nome_categoria ?? 'Sem Categoria' }}</td>
                                 <td class="px-4 py-3 text-sm font-bold text-green-600">R$ {{ number_format($prodPendente->preco, 2, ',', '.') }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $prodPendente->estoque->quantidade ?? 0 }} unid.</td>
+                                <td class="px-4 py-3 text-sm">{{ $prodPendente->estoque?->quantidade ?? 0 }} unid.</td>
                                 <td class="px-4 py-3 text-sm text-right">
                                     <x-card-actions :approve-route="route('admin.produtos.aprovar', $prodPendente->id_produto)" :reject-route="route('admin.produtos.rejeitar', $prodPendente->id_produto)" />
                                 </td>
@@ -237,10 +237,10 @@
                             @forelse($eventosPendentes as $evPendente)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-3 text-sm">
-                                    <img src="{{ $evPendente->imagem ? asset('storage/' . $evPendente->imagem) : config('association.placeholder') }}" alt="{{ $evPendente->nome }}" class="rounded shadow-sm" style="width: 55px; height: 40px; object-fit: cover;">
+                                    <x-image src="{{ $evPendente->imagem }}" alt="{{ $evPendente->nome }}" fallback="{{ config('association.placeholder') }}" class="rounded shadow-sm" style="width: 55px; height: 40px; object-fit: cover;" />
                                 </td>
                                 <td class="px-4 py-3 text-sm font-bold" style="color: #8b5a3c;">{{ $evPendente->nome }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $evPendente->artisan->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $evPendente->artisan?->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm"><x-badge type="inactive">{{ ucfirst($evPendente->tipo_evento) }}</x-badge></td>
                                 <td class="px-4 py-3 text-sm">{{ $evPendente->data_inicio?->format('d/m/Y H:i') ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm">{{ $evPendente->local }}</td>

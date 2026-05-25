@@ -57,7 +57,7 @@
             <label for="imagem" class="block font-bold mb-1 text-brand">Imagem de Capa (Banner/Folder)</label>
             @if($evento->imagem)
                 <div class="mb-2">
-                    <img src="{{ asset('storage/' . $evento->imagem) }}" alt="Imagem atual" class="rounded shadow-sm" style="max-height: 100px; object-fit: cover;" loading="lazy">
+                    <x-image src="{{ $evento->imagem }}" alt="Imagem atual" class="rounded shadow-sm" style="max-height: 100px; object-fit: cover;" />
                 </div>
             @endif
             <input class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none @error('imagem') border-red-500 @enderror" type="file" id="imagem" name="imagem" accept="image/*">

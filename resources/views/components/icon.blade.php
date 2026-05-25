@@ -72,6 +72,7 @@ $faMap = [
     'menu' => 'fas fa-bars',
     'x' => 'fas fa-times',
     'alert-triangle' => 'fas fa-exclamation-triangle',
+    'history' => 'fas fa-history',
 ];
 
 $faClass = $faMap[$name] ?? 'fas fa-circle';

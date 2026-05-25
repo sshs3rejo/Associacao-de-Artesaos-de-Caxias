@@ -12,6 +12,11 @@ class ItensVenda extends Model
 
     protected $fillable = ['id_venda', 'id_produto', 'quantidade', 'preco_unitario'];
 
+    protected $casts = [
+        'quantidade' => 'integer',
+        'preco_unitario' => 'decimal:2',
+    ];
+
     public function venda()
     {
         return $this->belongsTo(Vendas::class, 'id_venda');

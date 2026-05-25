@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckoutRequest;
+use App\Http\Requests\ProdutoRequest;
+use App\Models\ActivityLog;
 use App\Models\CategoriasProdutos;
 use App\Models\Cliente;
 use App\Models\ItensVenda;
@@ -62,16 +65,9 @@ class ProdutoController extends Controller
         return view('produtos.create', compact('categorias'));
     }
 
-    public function store(Request $request)
+    public function store(ProdutoRequest $request)
     {
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'preco' => 'required|numeric|min:0',
-            'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'quantidade' => 'required|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('imagem')) {
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
@@ -86,6 +82,8 @@ class ProdutoController extends Controller
             'quantidade' => $request->quantidade,
         ]);
 
+        ActivityLog::log('produto.criado', "Produto \"{$produto->nome}\" criado.", $produto);
+
         return redirect()->route('produtos')->with('success', 'Produto criado com sucesso!');
     }
 
@@ -97,18 +95,11 @@ class ProdutoController extends Controller
         return view('produtos.edit', compact('produto', 'categorias'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ProdutoRequest $request, $id)
     {
         $produto = Produto::findOrFail($id);
 
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'preco' => 'required|numeric|min:0',
-            'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'quantidade' => 'required|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('imagem')) {
             if ($produto->imagem) {
@@ -129,6 +120,8 @@ class ProdutoController extends Controller
             ['quantidade' => $request->quantidade]
         );
 
+        ActivityLog::log('produto.atualizado', "Produto \"{$produto->nome}\" atualizado.", $produto);
+
         return redirect()->route('produtos')->with('success', 'Produto atualizado com sucesso!');
     }
 
@@ -140,6 +133,8 @@ class ProdutoController extends Controller
             Storage::disk('public')->delete($produto->imagem);
         }
 
+        ActivityLog::log('produto.removido', "Produto \"{$produto->nome}\" removido.", $produto);
+
         $produto->estoque()->delete();
 
         $produto->delete();
@@ -147,7 +142,7 @@ class ProdutoController extends Controller
         return redirect()->route('produtos')->with('success', 'Produto removido com sucesso!');
     }
 
-    public function checkout(Request $request)
+    public function checkout(CheckoutRequest $request)
     {
         $user = auth()->user();
         $cliente = Cliente::where('user_id', $user->id)->first();
@@ -156,11 +151,7 @@ class ProdutoController extends Controller
             return response()->json(['error' => 'Cliente não encontrado. Complete seu cadastro primeiro.'], 400);
         }
 
-        $validated = $request->validate([
-            'itens' => 'required|array|min:1',
-            'itens.*.id' => 'required|exists:produto,id_produto',
-            'itens.*.quantidade' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         try {
             $venda = DB::transaction(function () use ($validated, $cliente) {
@@ -202,6 +193,8 @@ class ProdutoController extends Controller
         } catch (\Throwable $e) {
             return response()->json(['error' => 'Erro ao processar pedido.'], 500);
         }
+
+        ActivityLog::log('venda.realizada', "Pedido #{$venda->id_venda} realizado por {$cliente->nome}.", $venda);
 
         return response()->json([
             'success' => true,

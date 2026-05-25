@@ -30,10 +30,7 @@
     <x-navbar />
 
     <main class="layout-main @yield('main_class')">
-        @if(session('success') || $errors->any())
-            <div class="max-w-7xl mx-auto px-4 mt-3">
-                <x-alert type="success" :message="session('success')" />
-                @if($errors->any())
+        @if($errors->any())
                     <div class="bg-red-100 text-red-800 px-4 py-3 rounded-lg border border-red-200 mb-4" role="alert" id="error-alert">
                         <div class="flex items-center gap-2 mb-1">
                             <x-icon name="exclamation" class="w-5 h-5" />
@@ -47,8 +44,7 @@
                         </ul>
                     </div>
                 @endif
-            </div>
-        @endif
+            @endif
 
         @yield('content')
     </main>

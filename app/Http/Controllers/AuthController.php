@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Models\ActivityLog;
 use App\Models\ArtisanProfile;
 use App\Models\Cliente;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -17,12 +21,9 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $credentials = $request->validated();
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -32,7 +33,7 @@ class AuthController extends Controller
                 Auth::logout();
                 return back()->withErrors([
                     'email' => 'Sua conta está inativa. Entre em contato com o administrador.',
-                ]);
+                ])->onlyInput('email');
             }
 
             if ($user->isAdmin()) {
@@ -57,31 +58,29 @@ class AuthController extends Controller
 
 
 
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        $validated = $request->validated();
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => 'user',
-            'is_active' => true,
-        ]);
+        DB::transaction(function () use ($validated, &$user) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'user',
+                'is_active' => true,
+            ]);
 
-        Cliente::updateOrCreate(
-            ['email' => $validated['email']],
-            [
-                'user_id' => $user->id,
-                'nome' => $validated['name'],
-                'telefone' => '',
-                'endereco' => '',
-            ]
-        );
+            Cliente::updateOrCreate(
+                ['email' => $validated['email']],
+                [
+                    'user_id' => $user->id,
+                    'nome' => $validated['name'],
+                    'telefone' => '',
+                    'endereco' => '',
+                ]
+            );
+        });
 
         Auth::login($user);
 

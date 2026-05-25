@@ -14,6 +14,11 @@ class Vendas extends Model
 
     protected $fillable = ['id_cliente', 'data_venda', 'valor_total', 'status_pagamento'];
 
+    protected $casts = [
+        'data_venda' => 'date',
+        'valor_total' => 'decimal:2',
+    ];
+
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'id_cliente');

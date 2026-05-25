@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ArtisanRequest;
+use App\Http\Requests\EventoRequest;
+use App\Http\Requests\PerfilRequest;
+use App\Http\Requests\ProdutoRequest;
+use App\Models\ActivityLog;
 use App\Models\ArtisanProfile;
 use App\Models\CategoriasProdutos;
 use App\Models\Cliente;
@@ -37,21 +42,11 @@ class ArtisanController extends Controller
         return view('artesan.perfil', compact('user', 'perfil'));
     }
 
-    public function atualizarPerfil(Request $request)
+    public function atualizarPerfil(PerfilRequest $request)
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'specialty' => ['nullable', 'string', 'max:100'],
-            'bio' => ['nullable', 'string', 'max:1000'],
-            'instagram' => ['nullable', 'string', 'max:100'],
-            'facebook' => ['nullable', 'string', 'max:100'],
-            'whatsapp' => ['nullable', 'string', 'max:20'],
-            'is_public' => ['nullable', 'boolean'],
-            'profile_photo' => ['nullable', 'image', 'max:2048'],
-        ]);
+        $validated = $request->validated();
 
         $user->update(['name' => $validated['name']]);
 
@@ -74,6 +69,8 @@ class ArtisanController extends Controller
             'is_public' => $request->boolean('is_public'),
             'profile_photo' => $validated['profile_photo'] ?? $profile->profile_photo,
         ]);
+
+        ActivityLog::log('perfil.atualizado', "Perfil de {$user->name} atualizado.", $user);
 
         return redirect()->route('artesan.perfil')->with('success', 'Perfil atualizado com sucesso!');
     }
@@ -98,7 +95,7 @@ class ArtisanController extends Controller
         return view('profile.user', compact('user', 'profile'));
     }
 
-    public function tornarSePeloPerfil(Request $request)
+    public function tornarSePeloPerfil(ArtisanRequest $request)
     {
         $user = auth()->user();
 
@@ -106,12 +103,7 @@ class ArtisanController extends Controller
             return back()->withErrors(['msg' => 'Você já é um artesão.']);
         }
 
-        $validated = $request->validate([
-            'cpf' => ['required', 'string', 'max:14'],
-            'telefone' => ['required', 'string', 'max:20'],
-            'bio' => ['nullable', 'string', 'max:1000'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-        ]);
+        $validated = $request->validated();
 
         $data = [
             'user_id' => $user->id,
@@ -132,6 +124,8 @@ class ArtisanController extends Controller
         Cliente::where('user_id', $user->id)->update([
             'telefone' => $validated['telefone'],
         ]);
+
+        ActivityLog::log('artesao.solicitou', "{$user->name} solicitou tornar-se artesão.", $user);
 
         return redirect()->route('user.perfil')
             ->with('success', 'Solicitação enviada! Aguarde a aprovação do administrador.');
@@ -158,20 +152,13 @@ class ArtisanController extends Controller
         return view('artesan.produtos-edit', compact('produto', 'categorias'));
     }
 
-    public function atualizarProduto(Request $request, Produto $produto)
+    public function atualizarProduto(ProdutoRequest $request, Produto $produto)
     {
         if ($produto->id_artesan !== auth()->id()) {
             abort(403);
         }
 
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'preco' => 'required|numeric|min:0',
-            'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'quantidade' => 'required|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('imagem')) {
             if ($produto->imagem) {
@@ -192,6 +179,8 @@ class ArtisanController extends Controller
             ['quantidade' => $request->quantidade]
         );
 
+        ActivityLog::log('produto.atualizado', "Produto \"{$produto->nome}\" atualizado por artesão.", $produto);
+
         return redirect()->route('produtos')->with('success', 'Produto atualizado com sucesso!');
     }
 
@@ -205,6 +194,8 @@ class ArtisanController extends Controller
             Storage::disk('public')->delete($produto->imagem);
         }
 
+        ActivityLog::log('produto.removido', "Produto \"{$produto->nome}\" removido por artesão.", $produto);
+
         $produto->estoque()->delete();
         $produto->delete();
 
@@ -217,21 +208,14 @@ class ArtisanController extends Controller
         return view('artesan.produtos-create', compact('categorias'));
     }
 
-    public function salvarProduto(Request $request)
+    public function salvarProduto(ProdutoRequest $request)
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'preco' => 'required|numeric|min:0',
-            'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'quantidade' => 'required|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         $validated['id_artesan'] = $user->id;
-        $validated['is_approved'] = false; // Aguardando aprovação!
+        $validated['is_approved'] = false;
 
         if ($request->hasFile('imagem')) {
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
@@ -239,11 +223,12 @@ class ArtisanController extends Controller
 
         $produto = Produto::create($validated);
 
-        // Cria o registro no estoque
         $produto->estoque()->create([
             'id_produto' => $produto->id_produto,
             'quantidade' => $request->quantidade,
         ]);
+
+        ActivityLog::log('produto.proposto', "Produto \"{$produto->nome}\" proposto por {$user->name}.", $produto);
 
         return redirect()->route('produtos')->with('success', 'Produto proposto com sucesso! Aguarde a aprovação do administrador.');
     }
@@ -253,24 +238,14 @@ class ArtisanController extends Controller
         return view('artesan.eventos-create');
     }
 
-    public function salvarEvento(Request $request)
+    public function salvarEvento(EventoRequest $request)
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'tipo_evento' => 'required|in:feira,exposicao,workshop,lancamento,palestra,outro',
-            'data_inicio' => 'required|date',
-            'data_fim' => 'required|date|after_or_equal:data_inicio',
-            'local' => 'required|string|max:255',
-            'capacidade_maxima' => 'required|integer|min:1',
-            'valor_inscricao' => 'required|numeric|min:0',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         $validated['id_artesan'] = $user->id;
-        $validated['is_approved'] = false; // Aguardando aprovação!
+        $validated['is_approved'] = false;
         $validated['status'] = 'planejado';
         $validated['vagas_disponiveis'] = $validated['capacidade_maxima'];
 
@@ -278,7 +253,9 @@ class ArtisanController extends Controller
             $validated['imagem'] = $request->file('imagem')->store('eventos', 'public');
         }
 
-        Eventos::create($validated);
+        $evento = Eventos::create($validated);
+
+        ActivityLog::log('evento.proposto', "Evento \"{$evento->nome}\" proposto por {$user->name}.", $evento);
 
         return redirect()->route('evento')->with('success', 'Proposta de evento enviada com sucesso! Aguarde a aprovação do administrador.');
     }
@@ -291,23 +268,13 @@ class ArtisanController extends Controller
         return view('artesan.eventos-edit', compact('evento'));
     }
 
-    public function atualizarEvento(Request $request, Eventos $evento)
+    public function atualizarEvento(EventoRequest $request, Eventos $evento)
     {
         if ($evento->id_artesan !== auth()->id()) {
             abort(403);
         }
 
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'required|string',
-            'tipo_evento' => 'required|in:feira,exposicao,workshop,lancamento,palestra,outro',
-            'data_inicio' => 'required|date',
-            'data_fim' => 'required|date|after_or_equal:data_inicio',
-            'local' => 'required|string|max:255',
-            'capacidade_maxima' => 'required|integer|min:1',
-            'valor_inscricao' => 'required|numeric|min:0',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('imagem')) {
             if ($evento->imagem) {
@@ -323,6 +290,8 @@ class ArtisanController extends Controller
 
         $evento->update($validated);
 
+        ActivityLog::log('evento.atualizado', "Evento \"{$evento->nome}\" atualizado por artesão.", $evento);
+
         return redirect()->route('evento')->with('success', 'Evento atualizado com sucesso!');
     }
 
@@ -335,6 +304,8 @@ class ArtisanController extends Controller
         if ($evento->imagem) {
             Storage::disk('public')->delete($evento->imagem);
         }
+
+        ActivityLog::log('evento.removido', "Evento \"{$evento->nome}\" removido por artesão.", $evento);
 
         $evento->inscricoes()->delete();
         $evento->delete();

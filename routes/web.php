@@ -21,6 +21,7 @@ use App\Http\Controllers\InscricaoController;
 use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ContatoController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 // Rotas de Autenticação
@@ -34,18 +35,28 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Rota Padrão
 Route::get('/', [PaginaController::class, 'home'])->name('home');
 
+// Health Check
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo();
+        return response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+    }
+});
+
 // Rotas Públicas
 Route::get('/home', fn () => redirect()->route('home'));
 Route::get('/sobre', [PaginaController::class, 'sobre'])->name('sobrenos');
 Route::get('/contato', [PaginaController::class, 'contato'])->name('contato');
-Route::post('/contato', [ContatoController::class, 'store'])->name('contato.store');
+Route::post('/contato', [ContatoController::class, 'store'])->middleware('throttle:5,10')->name('contato.store');
 
 // Rotas Públicas de Visualização
 Route::get('/eventos', [EventoController::class, 'index'])->name('evento');
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
 
 // Inscrição em Eventos (público, precisa de login)
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'throttle:20,1'])->group(function () {
     Route::post('/eventos/{evento}/inscrever', [InscricaoController::class, 'store'])->name('eventos.inscrever');
     Route::delete('/eventos/{evento}/cancelar-inscricao', [InscricaoController::class, 'destroy'])->name('eventos.cancelar-inscricao');
     Route::post('/carrinho/finalizar', [ProdutoController::class, 'checkout'])->name('carrinho.finalizar');
@@ -58,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Dashboard do Artesão
-Route::middleware(['auth', 'artisan'])->prefix('artesan')->name('artesan.')->group(function () {
+Route::middleware(['auth', 'artisan', 'throttle:30,1'])->prefix('artesan')->name('artesan.')->group(function () {
     Route::get('/dashboard', [ArtisanController::class, 'dashboard'])->name('dashboard');
     
     Route::get('/produtos/criar', [ArtisanController::class, 'criarProduto'])->name('produtos.criar');
@@ -80,7 +91,7 @@ Route::middleware(['auth', 'artisan'])->prefix('artesan')->name('artesan.')->gro
 Route::get('/artesao/{user}', [ArtisanController::class, 'publico'])->name('artesao.publico');
 
 // Rotas Administrativas
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/settings', [AdminDashboardController::class, 'settings'])->name('admin.settings');
     Route::post('/admin/settings', [AdminDashboardController::class, 'updateSettings'])->name('admin.settings.update');
@@ -98,6 +109,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/usuarios/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('admin.usuarios.toggle-status');
     Route::post('/admin/usuarios/{user}/change-role', [AdminUserController::class, 'changeRole'])->name('admin.usuarios.change-role');
     Route::delete('/admin/usuarios/{user}', [AdminUserController::class, 'destroy'])->name('admin.usuarios.destroy');
+
+    // Activity Log
+    Route::get('/admin/activity-log', [AdminDashboardController::class, 'activityLog'])->name('admin.activity-log');
 
     // Gestão de Inscrições
     Route::get('/admin/inscricoes', [AdminDashboardController::class, 'inscricoes'])->name('admin.inscricoes');

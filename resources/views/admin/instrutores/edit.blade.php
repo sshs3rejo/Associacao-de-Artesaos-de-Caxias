@@ -38,7 +38,7 @@
         @if($instrutor->foto)
             <div class="mb-4">
                 <label class="block font-bold mb-1 text-brand">Foto Atual</label>
-                <img src="{{ asset('storage/' . $instrutor->foto) }}" alt="{{ $instrutor->nome }}" class="w-32 h-32 object-cover rounded-lg border border-gray-200">
+                <x-image src="{{ $instrutor->foto }}" alt="{{ $instrutor->nome }}" class="w-32 h-32 object-cover rounded-lg border border-gray-200" />
             </div>
         @endif
 

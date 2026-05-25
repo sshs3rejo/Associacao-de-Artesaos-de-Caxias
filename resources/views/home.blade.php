@@ -37,7 +37,7 @@
                         <div class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col card-hover">
                             @if($evento->imagem)
                                 <div class="card-img-hover h-48">
-                                    <img src="{{ asset('storage/' . $evento->imagem) }}" alt="{{ $evento->nome }}" class="w-full h-full object-cover" loading="lazy">
+                                    <x-image src="{{ $evento->imagem }}" alt="{{ $evento->nome }}" class="w-full h-full object-cover" />
                                 </div>
                             @endif
                             <div class="p-5 flex flex-col flex-1">

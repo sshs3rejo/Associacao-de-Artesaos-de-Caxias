@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\CategoriasProdutos;
+use App\Observers\CategoriaProdutosObserver;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 
@@ -19,8 +22,13 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        // Carregar configurações dinâmicas da Associação do arquivo JSON
-        if (file_exists(storage_path('app/settings.json'))) {
+        // Carregar configurações dinâmicas da Associação
+        if (Schema::hasTable('settings')) {
+            $settings = \App\Models\Setting::getAll();
+            foreach ($settings as $key => $value) {
+                config(['association.' . $key => $value]);
+            }
+        } elseif (file_exists(storage_path('app/settings.json'))) {
             $customSettings = json_decode(file_get_contents(storage_path('app/settings.json')), true);
             if (is_array($customSettings)) {
                 foreach ($customSettings as $key => $value) {
@@ -28,5 +36,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         }
+
+        CategoriasProdutos::observe(CategoriaProdutosObserver::class);
     }
 }

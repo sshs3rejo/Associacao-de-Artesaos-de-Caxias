@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SettingRequest;
+use App\Models\ActivityLog;
 use App\Models\CategoriasProdutos;
 use App\Models\Cliente;
 use App\Models\Contato;
@@ -13,8 +15,10 @@ use App\Models\Instrutores;
 use App\Models\MateriasPrimas;
 use App\Models\Oficina;
 use App\Models\Produto;
+use App\Models\Setting;
 use App\Models\User;
 use App\Models\Vendas;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class AdminDashboardController extends Controller
@@ -41,21 +45,12 @@ class AdminDashboardController extends Controller
 
         $vendas = Vendas::with(['cliente', 'itens.produto'])->orderBy('data_venda', 'desc')->paginate(10);
 
-        $categorias = CategoriasProdutos::getOrderedCached();
-        $instrutores = Instrutores::orderBy('nome')->get();
-        $tiposEvento = ['feira', 'exposicao', 'workshop', 'lancamento', 'palestra', 'outro'];
-        $statusEvento = ['planejado', 'confirmado', 'em_andamento', 'concluido', 'cancelado'];
-
         $produtosPendentes = Produto::where('is_approved', false)->with('artisan', 'categoria', 'estoque')->paginate(10);
         $eventosPendentes = Eventos::where('is_approved', false)->with('artisan')->paginate(10);
 
         return view('admin.dashboard', [
             'stats' => $stats,
             'vendas' => $vendas,
-            'categorias' => $categorias,
-            'instrutores' => $instrutores,
-            'tiposEvento' => $tiposEvento,
-            'statusEvento' => $statusEvento,
             'produtosPendentes' => $produtosPendentes,
             'eventosPendentes' => $eventosPendentes,
         ]);
@@ -72,37 +67,53 @@ class AdminDashboardController extends Controller
 
     public function destroyInscricao(InscricoesEvento $inscricao)
     {
+        $evento = $inscricao->evento;
         $inscricao->delete();
+        if ($evento) {
+            $evento->incrementarVagas();
+        }
         return redirect()->back()->with('success', 'Inscrição cancelada com sucesso.');
     }
 
     public function aprovarVenda(Vendas $venda)
     {
         $venda->update(['status_pagamento' => 'approved']);
+        Cache::forget('dashboard_stats');
+        ActivityLog::log('venda.aprovada', "Pagamento do pedido #{$venda->id_venda} confirmado.", $venda);
         return redirect()->back()->with('success', 'Pagamento do pedido #' . $venda->id_venda . ' confirmado com sucesso!');
     }
 
     public function aprovarProduto(Produto $produto)
     {
         $produto->update(['is_approved' => true]);
+        Cache::forget('dashboard_stats');
+        ActivityLog::log('produto.aprovado', "Produto \"{$produto->nome}\" aprovado.", $produto);
         return redirect()->back()->with('success', 'Produto "' . $produto->nome . '" aprovado com sucesso e publicado na vitrine!');
     }
 
     public function rejeitarProduto(Produto $produto)
     {
         $produto->update(['is_approved' => false]);
+        Cache::forget('dashboard_stats');
+        ActivityLog::log('produto.rejeitado', "Produto \"{$produto->nome}\" rejeitado.", $produto);
         return redirect()->back()->with('success', 'Produto "' . $produto->nome . '" foi rejeitado.');
     }
 
     public function aprovarEvento(Eventos $evento)
     {
         $evento->update(['is_approved' => true]);
+        Cache::forget('dashboard_stats');
+        Cache::forget('eventos_publicos');
+        ActivityLog::log('evento.aprovado', "Evento \"{$evento->nome}\" aprovado.", $evento);
         return redirect()->back()->with('success', 'Evento "' . $evento->nome . '" aprovado com sucesso e publicado na agenda!');
     }
 
     public function rejeitarEvento(Eventos $evento)
     {
         $evento->update(['is_approved' => false]);
+        Cache::forget('dashboard_stats');
+        Cache::forget('eventos_publicos');
+        ActivityLog::log('evento.rejeitado', "Evento \"{$evento->nome}\" rejeitado.", $evento);
         return redirect()->back()->with('success', 'Evento "' . $evento->nome . '" foi rejeitado.');
     }
 
@@ -111,23 +122,31 @@ class AdminDashboardController extends Controller
         return view('admin.settings');
     }
 
-    public function updateSettings(\Illuminate\Http\Request $request)
+    public function updateSettings(SettingRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'name_short' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'whatsapp' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'latitude' => ['nullable', 'string', 'max:50'],
-            'longitude' => ['nullable', 'string', 'max:50'],
-            'instagram' => ['nullable', 'url', 'max:255'],
-            'facebook' => ['nullable', 'url', 'max:255'],
-            'description' => ['required', 'string', 'max:1000'],
-        ]);
+        foreach ($request->validated() as $key => $value) {
+            Setting::setValue($key, $value);
+        }
 
-        file_put_contents(storage_path('app/settings.json'), json_encode($validated, JSON_PRETTY_PRINT));
+        Cache::forget('settings_all');
+
+        ActivityLog::log('settings.atualizadas', 'Configurações da associação atualizadas.');
 
         return redirect()->back()->with('success', 'Configurações da Associação atualizadas com sucesso!');
+    }
+
+    public function activityLog(Request $request)
+    {
+        $query = ActivityLog::with('user', 'subject')->latest();
+
+        if ($request->filled('action')) {
+            $query->where('action', $request->action);
+        }
+
+        $logs = $query->paginate(30)->withQueryString();
+
+        $actions = ActivityLog::select('action')->distinct()->pluck('action');
+
+        return view('admin.activity-log', compact('logs', 'actions'));
     }
 }

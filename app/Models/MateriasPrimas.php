@@ -14,6 +14,8 @@ class MateriasPrimas extends Model
 
     public function fornecedores()
     {
-        return $this->belongsToMany(Fornecedores::class, 'compras_materia_prima', 'id_materia', 'id_fornecedor');
+        return $this->belongsToMany(Fornecedores::class, 'compras_materia_prima', 'id_materia', 'id_fornecedor')
+            ->withPivot(['data_compra', 'quantidade', 'preco_unitario', 'valor_total'])
+            ->withTimestamps();
     }
 }

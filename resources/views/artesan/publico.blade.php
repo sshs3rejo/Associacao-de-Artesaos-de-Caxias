@@ -7,8 +7,7 @@
         <div class="w-full lg:w-2/3 text-center mb-5">
             <div class="mb-4">
                 @if($perfil->profile_photo)
-                    <img src="{{ asset('storage/' . $perfil->profile_photo) }}" alt="{{ $user->name }}"
-                         class="rounded-full shadow-sm" style="width: 150px; height: 150px; object-fit: cover;" loading="lazy">
+                    <x-image src="{{ $perfil->profile_photo }}" alt="{{ $user->name }}" class="rounded-full shadow-sm" style="width: 150px; height: 150px; object-fit: cover;" />
                 @else
                     <div class="rounded-full inline-flex items-center justify-center shadow-sm"
                          style="width: 150px; height: 150px; background-color: #F9F7D3;">
@@ -50,8 +49,7 @@
                 <div>
                     <div class="bg-white rounded-xl shadow-sm h-full overflow-hidden">
                         <div class="overflow-hidden" style="height: 180px;">
-                            <img src="{{ $produto->imagem ? asset('storage/' . $produto->imagem) : config('association.placeholder') }}"
-                                 class="w-full h-full" alt="{{ $produto->nome }}" style="object-fit: cover;" loading="lazy">
+                            <x-image src="{{ $produto->imagem }}" alt="{{ $produto->nome }}" fallback="{{ config('association.placeholder') }}" class="w-full h-full" style="object-fit: cover;" />
                         </div>
                         <div class="p-3">
                             <h5 class="font-bold mb-1 text-brand">{{ $produto->nome }}</h5>

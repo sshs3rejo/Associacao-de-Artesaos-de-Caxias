@@ -82,7 +82,7 @@
 
             @if ($evento->imagem)
                 <small class="text-gray-500 block mt-2">Imagem atual:</small>
-                <img src="{{ asset('storage/' . $evento->imagem) }}" alt="Imagem atual do evento" class="img-preview" loading="lazy">
+                <x-image src="{{ $evento->imagem }}" alt="Imagem atual do evento" class="img-preview" />
             @endif
         </div>
 

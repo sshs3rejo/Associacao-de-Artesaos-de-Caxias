@@ -60,7 +60,7 @@
                 <div id="container-imagem-atual" class="mt-4">
                     <small class="text-gray-500 block mb-2">Imagem atual:</small>
                     <div class="relative inline-block mt-2">
-                        <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem atual do produto" class="img-preview mt-0" id="img-atual" loading="lazy">
+                        <x-image src="{{ $produto->imagem }}" alt="Imagem atual do produto" class="img-preview mt-0" id="img-atual" />
 
                         <div id="area-acoes-imagem">
                             <button type="button" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 z-10" onclick="marcarParaRemover()" title="Remover Imagem">

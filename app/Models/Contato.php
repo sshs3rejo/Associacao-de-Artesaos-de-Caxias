@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Contato extends Model
 {
     protected $fillable = ['nome', 'email', 'mensagem', 'lido'];
+
+    protected $casts = [
+        'lido' => 'boolean',
+    ];
 }

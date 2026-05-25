@@ -54,10 +54,10 @@ class CategoriasProdutos extends Model
     {
         return Cache::remember('categorias_hierarchical', 3600, function () {
             $result = [];
-            $parents = self::parents()->orderBy('nome_categoria')->get();
+            $parents = self::parents()->with('children')->orderBy('nome_categoria')->get();
             foreach ($parents as $parent) {
                 $result[$parent->id_categoria] = $parent->nome_categoria;
-                foreach ($parent->children()->orderBy('nome_categoria')->get() as $child) {
+                foreach ($parent->children->sortBy('nome_categoria') as $child) {
                     $result[$child->id_categoria] = '— ' . $child->nome_categoria;
                 }
             }

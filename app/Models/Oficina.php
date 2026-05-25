@@ -12,6 +12,13 @@ class Oficina extends Model
 
     protected $fillable = ['nome', 'descricao', 'carga_horaria', 'id_instrutor', 'data_inicio', 'data_fim', 'horario', 'local', 'vagas'];
 
+    protected $casts = [
+        'data_inicio' => 'datetime',
+        'data_fim' => 'datetime',
+        'carga_horaria' => 'decimal:1',
+        'vagas' => 'integer',
+    ];
+
     public function instrutor()
     {
         return $this->belongsTo(Instrutores::class, 'id_instrutor');

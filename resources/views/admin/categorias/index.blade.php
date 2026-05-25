@@ -33,7 +33,7 @@
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="font-semibold p-3 text-sm">{{ $categoria->nome_categoria }}</td>
                             <td class="p-3 text-sm text-gray-500">
-                                {{ $categoria->parent?->nome_categoria ?? '<span class="text-gray-400">—</span>' }}
+                                                                {{ $categoria->parent?->nome_categoria ?? '—' }}
                             </td>
                             <td class="p-3 text-sm">
                                 @if($categoria->children->count() > 0)

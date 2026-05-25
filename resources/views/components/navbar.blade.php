@@ -4,7 +4,7 @@
         <div class="w-full px-2 sm:px-4">
             <div class="flex items-center justify-between">
                 <a class="flex items-center gap-1 sm:gap-2 no-underline" href="{{ route('home') }}">
-                    <img src="{{ asset(config('association.logo')) }}" alt="Logo" class="h-8 sm:h-10" loading="lazy">
+                    <x-image src="{{ config('association.logo') }}" alt="Logo" class="h-8 sm:h-10" />
                     <span class="font-bold text-sm sm:text-lg text-accent whitespace-nowrap">{{ config('association.name') }}</span>
                 </a>
 
@@ -70,6 +70,7 @@
                                         <li><span class="block px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sistema</span></li>
                                         <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.contatos.index') }}"><x-icon name="envelope" class="w-5 h-5" /> Contatos (submiss&otilde;es)</a></li>
                                         <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.settings') }}"><x-icon name="tools" class="w-5 h-5" /> Configura&ccedil;&otilde;es</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.activity-log') }}"><x-icon name="history" class="w-5 h-5" /> Activity Log</a></li>
                                         <li><hr class="my-1 border-gray-200"></li>
                                         <li>
                                             <form method="POST" action="{{ route('logout') }}" class="m-0">
@@ -153,6 +154,7 @@
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.materias-primas.index') }}"><x-icon name="cubes" class="w-5 h-5" /> Mat&eacute;rias-Primas</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.contatos.index') }}"><x-icon name="envelope" class="w-5 h-5" /> Contatos (submiss&otilde;es)</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.settings') }}"><x-icon name="tools" class="w-5 h-5" /> Configura&ccedil;&otilde;es</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.activity-log') }}"><x-icon name="history" class="w-5 h-5" /> Activity Log</a></li>
                         @elseif(auth()->user()->isArtisan())
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('artesan.dashboard') }}"><x-icon name="dashboard" class="w-5 h-5" /> Dashboard</a></li>
                             <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}"><x-icon name="box-open" class="w-5 h-5" /> Meus Produtos</a></li>

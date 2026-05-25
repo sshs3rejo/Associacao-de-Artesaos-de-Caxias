@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContatoRequest;
 use App\Models\Contato;
-use Illuminate\Http\Request;
 
 class ContatoController extends Controller
 {
-    public function store(Request $request)
+    public function store(ContatoRequest $request)
     {
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'mensagem' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         Contato::create($validated);
 

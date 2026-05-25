@@ -17,6 +17,7 @@ class Produto extends Model
 
     protected $casts = [
         'is_approved' => 'boolean',
+        'preco' => 'decimal:2',
     ];
 
     public function scopeApproved($query)

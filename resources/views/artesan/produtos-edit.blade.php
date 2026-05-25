@@ -45,7 +45,7 @@
             <label for="imagem" class="block font-bold mb-1 text-brand">Imagem do Produto</label>
             @if($produto->imagem)
                 <div class="mb-2">
-                    <img src="{{ asset('storage/' . $produto->imagem) }}" alt="Imagem atual" class="rounded shadow-sm" style="max-height: 120px; object-fit: cover;" loading="lazy">
+                    <x-image src="{{ $produto->imagem }}" alt="Imagem atual" class="rounded shadow-sm" style="max-height: 120px; object-fit: cover;" />
                     <div class="flex items-center mt-1">
                         <input class="w-4 h-4 text-brand border-gray-300 rounded focus:ring-brand-light" type="checkbox" id="remover_imagem" name="remover_imagem" value="1">
                         <label class="ml-2 text-red-600 text-sm" for="remover_imagem">Remover imagem atual</label>

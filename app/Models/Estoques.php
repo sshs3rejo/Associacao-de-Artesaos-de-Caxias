@@ -14,6 +14,10 @@ class Estoques extends Model
 
     protected $fillable = ['id_produto', 'quantidade'];
 
+    protected $casts = [
+        'quantidade' => 'integer',
+    ];
+
     public function produto()
     {
         return $this->belongsTo(Produto::class, 'id_produto');

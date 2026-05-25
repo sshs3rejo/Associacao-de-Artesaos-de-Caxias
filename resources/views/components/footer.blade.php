@@ -5,7 +5,7 @@
         <div class="flex flex-col md:grid md:grid-cols-4 gap-5 md:gap-8">
             <div class="md:col-span-1 text-center md:text-left">
                 <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
-                    <img src="{{ asset(config('association.logo')) }}" alt="Logo" class="h-10 md:h-12" loading="lazy">
+                    <x-image src="{{ config('association.logo') }}" alt="Logo" class="h-10 md:h-12" />
                     <h3 class="text-sm md:text-lg font-bold mb-0" style="color: #F2EB85;">{{ config('association.name_short') }}</h3>
                 </div>
                 <p class="text-xs md:text-sm text-accent/70 leading-relaxed hidden md:block">
