@@ -1,5 +1,5 @@
 <header>
-    <nav class="sticky top-0 z-50 py-2 bg-brand shadow-sm transition-all duration-300"
+    <nav class="sticky top-0 z-50 py-2 bg-brand transition-all duration-300"
          id="navbar-root">
         <div class="w-full px-2 sm:px-4">
             <div class="flex items-center justify-between">

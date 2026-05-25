@@ -6,6 +6,14 @@
     <title>Login - {{ config('association.name') }}</title>
 
     <style>
+        @font-face {
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 300 700;
+            font-display: swap;
+            src: url('/fonts/outfit-latin.woff2') format('woff2');
+        }
+
         :root {
             --primary-color: #7a2f1f;
             --accent-color: #F9F7D3;
@@ -17,7 +25,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Outfit', system-ui, -apple-system, sans-serif;
         }
 
         body {

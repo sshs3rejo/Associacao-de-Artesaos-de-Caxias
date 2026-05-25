@@ -94,6 +94,21 @@ document.addEventListener('click', function (e) {
     }
 });
 
+/* ======================== NAVBAR SCROLL EFFECT ======================== */
+(function () {
+    var navbar = document.getElementById('navbar-root');
+    if (!navbar) return;
+    var ticking = false;
+    function updateNavbar() {
+        navbar.classList.toggle('scrolled', window.scrollY > 80);
+        ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+        if (!ticking) { requestAnimationFrame(updateNavbar); ticking = true; }
+    });
+    updateNavbar();
+})();
+
 /* ======================== PAGE LOADED ======================== */
 document.addEventListener('DOMContentLoaded', function () {
     var mainContent = document.querySelector('.layout-main');
