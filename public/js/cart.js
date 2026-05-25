@@ -108,13 +108,14 @@ window.abrirCarrinho = function() {
               + '<div class="flex justify-between"><span>Frete:</span><span class="text-green-600">Gr\u00e1tis</span></div>'
               + '<div class="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-300 text-brand-light">Total: <span>' + formatarPreco(total) + '</span></div>'
               + '</div>'
-              + '<div class="flex gap-2 mt-3">'
-              + '<button class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer bg-white" onclick="hideModal(\'modal-carrinho\')">Fechar</button>'
-              + '</div>';
-        conteudo.innerHTML = html;
-    }
-    showModal('modal-carrinho');
-};
+               + '<div class="flex gap-2 mt-3">'
+               + '<button class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer bg-white" onclick="hideModal(\'modal-carrinho\')">Fechar</button>'
+               + '<button class="flex-1 px-4 py-3 rounded-lg text-white font-bold cursor-pointer border-0" style="background-color:#7a2f1f;" onclick="finalizarPedido()">Finalizar Pedido</button>'
+               + '</div>';
+         conteudo.innerHTML = html;
+     }
+     showModal('modal-carrinho');
+ };
 
 window.alterarQtd = function(id, delta) {
     var item = window.carrinho.find(function(i) { return i.id === id; });
@@ -131,6 +132,45 @@ window.removerItem = function(id) {
     window.carrinho = window.carrinho.filter(function(i) { return i.id !== id; });
     window.atualizarBadge();
     window.abrirCarrinho();
+};
+
+window.finalizarPedido = function() {
+    if (!window.Laravel || !window.Laravel.auth) {
+        window.location.href = '/login';
+        return;
+    }
+
+    if (window.carrinho.length === 0) {
+        mostrarToast('Carrinho vazio!');
+        return;
+    }
+
+    var itens = window.carrinho.map(function(item) {
+        return { id: item.id, quantidade: item.quantidade };
+    });
+
+    fetch('/carrinho/finalizar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': window.Laravel.csrfToken,
+        },
+        body: JSON.stringify({ itens: itens }),
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.success) {
+            window.carrinho = [];
+            window.atualizarBadge();
+            hideModal('modal-carrinho');
+            mostrarToast(data.message);
+        } else {
+            mostrarToast(data.error || 'Erro ao processar pedido.');
+        }
+    })
+    .catch(function() {
+        mostrarToast('Erro de conexão. Tente novamente.');
+    });
 };
 
 document.addEventListener("DOMContentLoaded", function() {

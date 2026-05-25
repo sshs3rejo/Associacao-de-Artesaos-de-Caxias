@@ -38,6 +38,7 @@ class CategoriaProdutoController extends Controller
 
         Cache::forget('categorias_produtos');
         Cache::forget('categorias_produtos_ordered');
+        Cache::forget('categorias_hierarchical');
 
         return redirect()->route('admin.categorias.index')
             ->with('success', 'Categoria criada com sucesso!');
@@ -64,6 +65,7 @@ class CategoriaProdutoController extends Controller
 
         Cache::forget('categorias_produtos');
         Cache::forget('categorias_produtos_ordered');
+        Cache::forget('categorias_hierarchical');
 
         return redirect()->route('admin.categorias.index')
             ->with('success', 'Categoria atualizada com sucesso!');
@@ -83,6 +85,7 @@ class CategoriaProdutoController extends Controller
 
         Cache::forget('categorias_produtos');
         Cache::forget('categorias_produtos_ordered');
+        Cache::forget('categorias_hierarchical');
 
         return back()->with('success', 'Categoria excluída com sucesso!');
     }

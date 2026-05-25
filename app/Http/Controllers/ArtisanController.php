@@ -145,7 +145,7 @@ class ArtisanController extends Controller
             abort(404);
         }
 
-        $produtos = Produto::where('id_artesan', $user->id)->with('categoria')->get();
+        $produtos = Produto::where('id_artesan', $user->id)->approved()->with('categoria')->get();
         return view('artesan.publico', compact('user', 'perfil', 'produtos'));
     }
 

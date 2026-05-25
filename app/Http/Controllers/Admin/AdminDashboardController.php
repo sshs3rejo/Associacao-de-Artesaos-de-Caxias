@@ -39,14 +39,14 @@ class AdminDashboardController extends Controller
             ];
         });
 
-        $vendas = Vendas::with(['cliente'])->orderBy('data_venda', 'desc')->paginate(10);
+        $vendas = Vendas::with(['cliente', 'itens.produto'])->orderBy('data_venda', 'desc')->paginate(10);
 
         $categorias = CategoriasProdutos::getOrderedCached();
         $instrutores = Instrutores::orderBy('nome')->get();
         $tiposEvento = ['feira', 'exposicao', 'workshop', 'lancamento', 'palestra', 'outro'];
         $statusEvento = ['planejado', 'confirmado', 'em_andamento', 'concluido', 'cancelado'];
 
-        $produtosPendentes = Produto::where('is_approved', false)->with('artisan')->paginate(10);
+        $produtosPendentes = Produto::where('is_approved', false)->with('artisan', 'categoria', 'estoque')->paginate(10);
         $eventosPendentes = Eventos::where('is_approved', false)->with('artisan')->paginate(10);
 
         return view('admin.dashboard', [

@@ -48,6 +48,7 @@ Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
 Route::middleware(['auth'])->group(function () {
     Route::post('/eventos/{evento}/inscrever', [InscricaoController::class, 'store'])->name('eventos.inscrever');
     Route::delete('/eventos/{evento}/cancelar-inscricao', [InscricaoController::class, 'destroy'])->name('eventos.cancelar-inscricao');
+    Route::post('/carrinho/finalizar', [ProdutoController::class, 'checkout'])->name('carrinho.finalizar');
 });
 
 // Tornar-se artesão via perfil

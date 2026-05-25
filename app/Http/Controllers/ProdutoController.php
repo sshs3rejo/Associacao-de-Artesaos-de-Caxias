@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\CategoriasProdutos;
+use App\Models\Cliente;
+use App\Models\ItensVenda;
 use App\Models\Produto;
+use App\Models\Vendas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
@@ -141,5 +145,67 @@ class ProdutoController extends Controller
         $produto->delete();
 
         return redirect()->route('produtos')->with('success', 'Produto removido com sucesso!');
+    }
+
+    public function checkout(Request $request)
+    {
+        $user = auth()->user();
+        $cliente = Cliente::where('user_id', $user->id)->first();
+
+        if (!$cliente) {
+            return response()->json(['error' => 'Cliente não encontrado. Complete seu cadastro primeiro.'], 400);
+        }
+
+        $validated = $request->validate([
+            'itens' => 'required|array|min:1',
+            'itens.*.id' => 'required|exists:produto,id_produto',
+            'itens.*.quantidade' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $venda = DB::transaction(function () use ($validated, $cliente) {
+                $venda = Vendas::create([
+                    'id_cliente' => $cliente->id_cliente,
+                    'data_venda' => now(),
+                    'valor_total' => 0,
+                    'status_pagamento' => 'pending',
+                ]);
+
+                $total = 0;
+                foreach ($validated['itens'] as $item) {
+                    $produto = Produto::findOrFail($item['id']);
+
+                    $estoque = $produto->estoque;
+                    if (!$estoque || $estoque->quantidade < $item['quantidade']) {
+                        throw new \RuntimeException("Estoque insuficiente para \"{$produto->nome}\".");
+                    }
+
+                    $subtotal = $produto->preco * $item['quantidade'];
+                    $total += $subtotal;
+
+                    ItensVenda::create([
+                        'id_venda' => $venda->id_venda,
+                        'id_produto' => $produto->id_produto,
+                        'quantidade' => $item['quantidade'],
+                        'preco_unitario' => $produto->preco,
+                    ]);
+
+                    $estoque->decrement('quantidade', $item['quantidade']);
+                }
+
+                $venda->update(['valor_total' => $total]);
+
+                return $venda;
+            });
+        } catch (\RuntimeException $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => 'Erro ao processar pedido.'], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pedido #' . $venda->id_venda . ' realizado com sucesso!',
+        ]);
     }
 }
