@@ -192,10 +192,6 @@
                     <span class="text-sm text-gray-500 font-bold bg-white px-3 py-2 rounded-full shadow-sm whitespace-nowrap">
                         <x-icon name="box" class="w-4 h-4 mr-1" /> {{ $produtos->count() }} itens
                     </span>
-                    <button class="text-white font-bold px-3 py-2 rounded-full shadow-sm relative cursor-pointer border-0" style="background-color: #7a2f1f;" onclick="abrirCarrinho()" title="Carrinho">
-                        <x-icon name="cart" class="w-5 h-5" />
-                        <span id="badge-carrinho" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full" style="display: none;">0</span>
-                    </button>
                 </div>
             </div>
 
@@ -294,17 +290,6 @@
         </div>
     </div>
 
-    <div id="modal-carrinho" class="modal-overlay" onclick="if(event.target===this)hideModal('modal-carrinho')">
-        <div>
-            <div class="flex items-center justify-between px-6 pt-6 pb-0">
-                <h5 class="text-xl font-bold text-brand m-0">Meu Carrinho</h5>
-                <button onclick="fecharCarrinho()" class="text-3xl text-gray-400 hover:text-gray-600 leading-none bg-transparent border-0 cursor-pointer">&times;</button>
-            </div>
-            <div class="p-6" id="carrinho-conteudo"></div>
-        </div>
-    </div>
-
-
     @endsection
 
     @section('scripts')
@@ -318,11 +303,6 @@
             const menu = document.getElementById('cat-menu');
             if (dd && menu && !dd.contains(e.target)) menu.style.display = 'none';
         });
-        window.Laravel = {
-            auth: {{ auth()->check() ? 'true' : 'false' }},
-            csrfToken: '{{ csrf_token() }}'
-        };
     </script>
-    <script src="{{ asset('js/cart.js') }}"></script>
     @endsection
 @endif

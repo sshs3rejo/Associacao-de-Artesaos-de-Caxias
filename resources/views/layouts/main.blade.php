@@ -44,7 +44,6 @@
                         </ul>
                     </div>
                 @endif
-            @endif
 
         @yield('content')
     </main>
@@ -54,6 +53,16 @@
     <x-floating-whatsapp />
 
     @yield('modals')
+
+    <div id="modal-carrinho" class="modal-overlay" onclick="if(event.target===this)hideModal('modal-carrinho')">
+        <div>
+            <div class="flex items-center justify-between px-6 pt-6 pb-0">
+                <h5 class="text-xl font-bold text-brand m-0">Meu Carrinho</h5>
+                <button onclick="fecharCarrinho()" class="text-3xl text-gray-400 hover:text-gray-600 leading-none bg-transparent border-0 cursor-pointer">&times;</button>
+            </div>
+            <div class="p-6" id="carrinho-conteudo"></div>
+        </div>
+    </div>
 
     <div id="modal-confirm" class="modal-overlay">
         <div class="modal-content max-w-sm w-full mx-4 bg-white rounded-2xl shadow-2xl p-6 text-center">
@@ -72,5 +81,14 @@
     <script src="{{ asset('js/app.js') }}"></script>
 
     @yield('scripts')
+
+    <script>
+        window.Laravel = {
+            auth: {{ auth()->check() ? 'true' : 'false' }},
+            csrfToken: '{{ csrf_token() }}',
+            whatsapp: '{{ preg_replace("/\D/", "", config("association.whatsapp")) }}'
+        };
+    </script>
+    <script src="{{ asset('js/cart.js') }}"></script>
 </body>
 </html>

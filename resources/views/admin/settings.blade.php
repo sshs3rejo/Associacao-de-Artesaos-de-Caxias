@@ -35,7 +35,7 @@
                                 <x-input name="email" label="E-mail de Contato" type="email" value="{{ old('email', config('association.email')) }}" required />
                             </div>
                             <div class="md:col-span-6 col-span-12">
-                                <x-input name="whatsapp" label="Número do WhatsApp (DDD+Número)" type="text" value="{{ old('whatsapp', config('association.whatsapp')) }}" required />
+                                <x-input name="whatsapp" label="Número do WhatsApp (DDD+Número)" type="tel" value="{{ old('whatsapp', config('association.whatsapp')) }}" required maxlength="13" />
                             </div>
                             <div class="col-span-12">
                                 <x-input name="address" label="Endereço" type="text" value="{{ old('address', config('association.address')) }}" required />

@@ -27,13 +27,13 @@
                                 <x-input name="name" label="Nome" :value="$user->name" required />
                             </div>
                             <div>
-                                <x-input name="phone" label="Telefone" :value="$perfil->phone" placeholder="(99) 99999-9999" />
+                                <x-input name="phone" label="Telefone" :value="$perfil->phone" placeholder="(99) 99999-9999" type="tel" oninput="mascaraTelefone(this)" maxlength="15" />
                             </div>
                             <div>
                                 <x-input name="specialty" label="Especialidade" :value="$perfil->specialty" placeholder="Ex: Cerâmica, Bordado, Palha..." />
                             </div>
                             <div>
-                                <x-input name="whatsapp" label="WhatsApp" :value="$perfil->whatsapp" placeholder="(99) 99999-9999" />
+                                <x-input name="whatsapp" label="WhatsApp" :value="$perfil->whatsapp" placeholder="(99) 99999-9999" type="tel" oninput="mascaraTelefone(this)" maxlength="15" />
                             </div>
                             <div>
                                 <x-input name="instagram" label="Instagram" :value="$perfil->instagram" placeholder="@usuario" />

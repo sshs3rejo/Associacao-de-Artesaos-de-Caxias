@@ -46,7 +46,7 @@
                                 </div>
                                 <div>
                                     <label for="telefone" class="block font-bold mb-1">Telefone <span class="text-red-500">*</span></label>
-                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('telefone') border-red-500 @enderror" id="telefone" name="telefone" value="{{ old('telefone') }}" placeholder="(11) 99999-9999" maxlength="20" required>
+                                    <input type="tel" class="w-full border border-gray-300 rounded-lg px-4 py-3 @error('telefone') border-red-500 @enderror" id="telefone" name="telefone" value="{{ old('telefone') }}" placeholder="(11) 99999-9999" maxlength="15" required oninput="mascaraTelefone(this)">
                                     @error('telefone')<div class="text-red-500 text-sm mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="md:col-span-2">

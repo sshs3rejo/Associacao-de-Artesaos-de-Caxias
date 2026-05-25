@@ -240,3 +240,21 @@ img { max-width: 100%; height: auto; }
 #navbar-root { transition: background-color 0.3s, box-shadow 0.3s; }
 #navbar-root:not(.scrolled) { background-color: rgba(122, 47, 31, 0.88); backdrop-filter: blur(8px); }
 #navbar-root.scrolled { background-color: #6a281a; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+
+/* ======================== TOAST NOTIFICATION ======================== */
+.toast-notification {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+    padding: 1rem 1.5rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.875rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.4s ease-out; pointer-events: none;
+}
+.toast-notification.toast-show {
+    transform: translateY(0); opacity: 1;
+}
+.toast-notification.toast-success {
+    background: #065f46; color: white;
+}
+.toast-notification.toast-error {
+    background: #991b1b; color: white;
+}

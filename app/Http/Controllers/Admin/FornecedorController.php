@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Fornecedores;
 use Illuminate\Http\Request;
+use LaravelLegends\PtBrValidator\Rules\CelularComDdd;
 
 class FornecedorController extends Controller
 {
@@ -28,8 +29,10 @@ class FornecedorController extends Controller
             'nome' => 'required|string|max:255',
             'contato' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
-            'telefone' => 'nullable|string|max:20',
+            'telefone' => ['nullable', new CelularComDdd],
             'endereco' => 'nullable|string',
+        ], [
+            'telefone.celular_com_ddd' => 'Telefone inválido. Use o formato (XX) XXXXX-XXXX apenas com números.',
         ]);
 
         Fornecedores::create($validated);
@@ -49,8 +52,10 @@ class FornecedorController extends Controller
             'nome' => 'required|string|max:255',
             'contato' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
-            'telefone' => 'nullable|string|max:20',
+            'telefone' => ['nullable', new CelularComDdd],
             'endereco' => 'nullable|string',
+        ], [
+            'telefone.celular_com_ddd' => 'Telefone inválido. Use o formato (XX) XXXXX-XXXX apenas com números.',
         ]);
 
         $fornecedore->update($validated);

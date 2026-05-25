@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Instrutores;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use LaravelLegends\PtBrValidator\Rules\CelularComDdd;
 
 class InstrutorController extends Controller
 {
@@ -27,11 +28,13 @@ class InstrutorController extends Controller
     {
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
-            'telefone' => 'nullable|string|max:20',
+            'telefone' => ['nullable', new CelularComDdd],
             'email' => 'required|email|max:255|unique:instrutores,email',
             'especialidade' => 'required|string|max:255',
             'biografia' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'telefone.celular_com_ddd' => 'Telefone inválido. Use o formato (XX) XXXXX-XXXX apenas com números.',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -53,11 +56,13 @@ class InstrutorController extends Controller
     {
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
-            'telefone' => 'nullable|string|max:20',
+            'telefone' => ['nullable', new CelularComDdd],
             'email' => 'required|email|max:255|unique:instrutores,email,' . $instrutor->id_instrutor . ',id_instrutor',
             'especialidade' => 'required|string|max:255',
             'biografia' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'telefone.celular_com_ddd' => 'Telefone inválido. Use o formato (XX) XXXXX-XXXX apenas com números.',
         ]);
 
         if ($request->hasFile('foto')) {

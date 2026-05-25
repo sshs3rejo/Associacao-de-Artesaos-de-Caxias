@@ -23,6 +23,13 @@
                         <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('produtos') }}">Produtos</a></li>
                         <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('contato') }}">Contato</a></li>
 
+                        <li class="flex items-center">
+                            <button class="text-white font-bold px-3 py-2 rounded-full relative cursor-pointer border-0 bg-transparent hover:bg-brand-dark/30 transition" onclick="abrirCarrinho()" title="Carrinho">
+                                <x-icon name="cart" class="w-5 h-5" />
+                                <span class="badge-carrinho absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full" style="display: none;">0</span>
+                            </button>
+                        </li>
+
                         @guest
                             <li class="lg:mt-0">
                                 <a class="block text-center px-4 py-2 text-accent font-semibold no-underline rounded-full border border-accent/30 hover:bg-accent hover:text-brand transition" href="{{ route('login.form') }}">Entrar</a>
@@ -125,6 +132,14 @@
                     <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('evento') }}">Eventos</a></li>
                     <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}">Produtos</a></li>
                     <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('contato') }}">Contato</a></li>
+
+                    <li>
+                        <button class="flex items-center gap-2 w-full px-4 py-3 text-accent font-semibold no-underline rounded-lg hover:bg-brand-dark/30 cursor-pointer border-0 bg-transparent" onclick="abrirCarrinho()">
+                            <x-icon name="cart" class="w-5 h-5" />
+                            Carrinho
+                            <span class="badge-carrinho inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full" style="display: none;">0</span>
+                        </button>
+                    </li>
 
                     @guest
                         <li class="mt-2">

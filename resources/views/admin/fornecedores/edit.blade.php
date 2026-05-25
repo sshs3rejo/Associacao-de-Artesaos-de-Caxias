@@ -31,7 +31,7 @@
 
         <x-input name="email" label="Email" type="email" value="{{ $fornecedore->email }}" />
 
-        <x-input name="telefone" label="Telefone" value="{{ $fornecedore->telefone }}" />
+        <x-input name="telefone" label="Telefone" value="{{ $fornecedore->telefone }}" type="tel" oninput="mascaraTelefone(this)" maxlength="15" />
 
         <x-textarea name="endereco" label="Endereço" value="{{ $fornecedore->endereco }}" rows="3" />
 

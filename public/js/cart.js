@@ -98,10 +98,11 @@ window.adicionarRapido = function(botao) {
 };
 
 window.atualizarBadge = function() {
-    var badge = document.getElementById("badge-carrinho");
     var total = window.carrinho.reduce(function (s, i) { return s + i.quantidade; }, 0);
-    badge.textContent = total;
-    badge.style.display = total > 0 ? 'inline' : 'none';
+    document.querySelectorAll(".badge-carrinho").forEach(function(el) {
+        el.textContent = total;
+        el.style.display = total > 0 ? 'inline' : 'none';
+    });
 };
 
 window.abrirCarrinho = function() {
@@ -136,7 +137,7 @@ window.abrirCarrinho = function() {
               + '</div>'
               + '<div class="flex gap-2 mt-3">'
               + '<button class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer bg-white" onclick="hideModal(\'modal-carrinho\')">Fechar</button>'
-              + '<button id="btn-finalizar" class="flex-1 px-4 py-3 rounded-lg text-white font-bold cursor-pointer border-0" style="background-color:#7a2f1f;" onclick="finalizarPedido()">Finalizar Pedido</button>'
+               + '<button id="btn-finalizar" class="flex-1 px-4 py-3 rounded-lg text-white font-bold cursor-pointer border-0" style="background-color:#25d366;" onclick="finalizarPedido()"><i class="fab fa-whatsapp me-1"></i> Consultar via WhatsApp</button>'
               + '</div>';
          conteudo.innerHTML = html;
      }
@@ -164,7 +165,10 @@ window.removerItem = function(id) {
 
 window.finalizarPedido = function() {
     if (!window.Laravel || !window.Laravel.auth) {
-        window.location.href = '/login';
+        mostrarToast('Fa\u00e7a login para consultar via WhatsApp.');
+        setTimeout(function() {
+            window.location.href = '/login';
+        }, 2000);
         return;
     }
 
@@ -175,38 +179,27 @@ window.finalizarPedido = function() {
 
     var btn = document.getElementById('btn-finalizar');
     if (btn && btn.disabled) return;
-    if (btn) { btn.disabled = true; btn.textContent = 'Processando...'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Abrindo WhatsApp...'; }
 
-    var itens = window.carrinho.map(function(item) {
-        return { id: item.id, quantidade: item.quantidade };
+    var total = 0;
+    var itensTexto = '';
+    window.carrinho.forEach(function(item, index) {
+        var subtotal = item.preco * item.quantidade;
+        total += subtotal;
+        itensTexto += (index + 1) + '. ' + item.nome + ' - ' + formatarPreco(item.preco) + ' (x' + item.quantidade + ') = ' + formatarPreco(subtotal) + '\n';
     });
 
-    fetch('/carrinho/finalizar', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': window.Laravel.csrfToken,
-        },
-        body: JSON.stringify({ itens: itens }),
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-        if (data.success) {
-            window.carrinho = [];
-            window.salvarCarrinho();
-            window.atualizarBadge();
-            hideModal('modal-carrinho');
-            mostrarToast(data.message);
-        } else {
-            mostrarToast(data.error || 'Erro ao processar pedido.');
-        }
-    })
-    .catch(function() {
-        mostrarToast('Erro de conex\u00e3o. Tente novamente.');
-    })
-    .finally(function() {
-        if (btn) { btn.disabled = false; btn.textContent = 'Finalizar Pedido'; }
-    });
+    var mensagem = 'Ol\u00e1! Gostaria de saber mais sobre os seguintes produtos:\n\n' + itensTexto + '\nTotal: ' + formatarPreco(total);
+    var whatsappUrl = 'https://wa.me/' + window.Laravel.whatsapp + '?text=' + encodeURIComponent(mensagem);
+
+    window.open(whatsappUrl, '_blank');
+
+    window.carrinho = [];
+    window.salvarCarrinho();
+    window.atualizarBadge();
+    hideModal('modal-carrinho');
+
+    if (btn) { btn.disabled = false; btn.textContent = 'Consultar via WhatsApp'; }
 };
 
 document.addEventListener("DOMContentLoaded", function() {

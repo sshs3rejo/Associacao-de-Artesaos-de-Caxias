@@ -196,9 +196,14 @@ class ProdutoController extends Controller
 
         ActivityLog::log('venda.realizada', "Pedido #{$venda->id_venda} realizado por {$cliente->nome}.", $venda);
 
+        $whatsapp = preg_replace('/\D/', '', config('association.whatsapp'));
+        $mensagem = "Olá! Pedido #{$venda->id_venda} no valor de R$ " . number_format($venda->valor_total, 2, ',', '.') . ". Meu nome: {$cliente->nome}.";
+        $whatsappUrl = "https://wa.me/{$whatsapp}?text=" . urlencode($mensagem);
+
         return response()->json([
             'success' => true,
             'message' => 'Pedido #' . $venda->id_venda . ' realizado com sucesso!',
+            'whatsapp_url' => $whatsappUrl,
         ]);
     }
 }

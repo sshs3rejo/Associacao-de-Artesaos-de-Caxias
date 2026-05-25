@@ -26,7 +26,7 @@
 
         <x-input name="nome" label="Nome Completo" placeholder="Ex: João Silva" required />
 
-        <x-input name="telefone" label="Telefone" placeholder="Ex: (11) 99999-9999" type="tel" />
+        <x-input name="telefone" label="Telefone" placeholder="Ex: (11) 99999-9999" type="tel" oninput="mascaraTelefone(this)" maxlength="15" />
 
         <x-input name="email" label="E-mail" placeholder="Ex: joao@exemplo.com" type="email" required />
 

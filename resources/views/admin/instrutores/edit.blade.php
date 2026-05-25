@@ -27,7 +27,7 @@
 
         <x-input name="nome" label="Nome Completo" value="{{ $instrutor->nome }}" required />
 
-        <x-input name="telefone" label="Telefone" value="{{ $instrutor->telefone }}" type="tel" placeholder="Ex: (11) 99999-9999" />
+        <x-input name="telefone" label="Telefone" value="{{ $instrutor->telefone }}" type="tel" placeholder="Ex: (11) 99999-9999" oninput="mascaraTelefone(this)" maxlength="15" />
 
         <x-input name="email" label="E-mail" value="{{ $instrutor->email }}" type="email" required />
 

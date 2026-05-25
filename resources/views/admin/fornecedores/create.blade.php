@@ -30,7 +30,7 @@
 
         <x-input name="email" label="Email" type="email" placeholder="Ex: contato@fornecedor.com" />
 
-        <x-input name="telefone" label="Telefone" placeholder="Ex: (11) 99999-8888" />
+        <x-input name="telefone" label="Telefone" placeholder="Ex: (11) 99999-8888" type="tel" oninput="mascaraTelefone(this)" maxlength="15" />
 
         <x-textarea name="endereco" label="Endereço" placeholder="Ex: Rua das Flores, 123, Centro" rows="3" />
 
