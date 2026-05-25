@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\CategoriasProdutos;
+use App\Models\User;
 use App\Observers\CategoriaProdutosObserver;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
@@ -38,5 +40,15 @@ class AppServiceProvider extends ServiceProvider
         }
 
         CategoriasProdutos::observe(CategoriaProdutosObserver::class);
+
+        if (Schema::hasTable('users') && !User::where('role', 'admin')->exists()) {
+            User::create([
+                'name' => config('admin.name'),
+                'email' => config('admin.email'),
+                'password' => Hash::make(config('admin.password')),
+                'role' => 'admin',
+                'is_active' => true,
+            ]);
+        }
     }
 }
