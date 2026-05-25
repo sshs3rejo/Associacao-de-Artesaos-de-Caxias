@@ -12,7 +12,7 @@ class Vendas extends Model
 
     protected $primaryKey = 'id_venda';
 
-    protected $fillable = ['id_cliente', 'data_venda', 'valor_total', 'mp_preference_id', 'mp_payment_id', 'mp_status'];
+    protected $fillable = ['id_cliente', 'data_venda', 'valor_total', 'status_pagamento'];
 
     public function cliente()
     {

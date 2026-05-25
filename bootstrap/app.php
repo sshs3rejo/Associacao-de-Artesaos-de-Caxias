@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'artisan' => \App\Http\Middleware\CheckArtisan::class,
         ]);
 
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         $middleware->validateCsrfTokens(except: [
             'login',
         ]);

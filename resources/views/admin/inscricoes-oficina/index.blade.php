@@ -12,7 +12,7 @@
 
     @if($inscricoes->isEmpty())
         <div class="text-center py-5">
-            <i class="fas fa-user-plus text-5xl text-gray-500 mb-3 block"></i>
+            <x-icon name="user-friends" class="w-12 h-12 text-gray-500 mb-3 mx-auto block" />
             <p class="text-gray-500 text-lg">Nenhuma inscrição encontrada.</p>
         </div>
     @else
@@ -36,8 +36,8 @@
                                 <form action="{{ route('admin.inscricoes-oficina.destroy', $inscricao->id) }}" method="POST" class="m-0">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="return confirm('Tem certeza de que deseja cancelar esta inscrição?')">
-                                        <i class="fa fa-trash"></i> Excluir
+                                    <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="var f=this.closest('form'); showConfirm('Tem certeza de que deseja cancelar esta inscrição?',function(){f.submit();}); return false;">
+                                        <x-icon name="trash" class="w-4 h-4" /> Excluir
                                     </button>
                                 </form>
                             </td>

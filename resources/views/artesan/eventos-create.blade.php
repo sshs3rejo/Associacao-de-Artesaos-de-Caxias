@@ -8,16 +8,16 @@
     <h1 class="text-2xl font-bold text-brand mb-6">Propor Novo Evento / Oficina</h1>
 
     <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
-        <i class="fas fa-info-circle text-lg"></i>
+        <x-icon name="info" class="w-5 h-5" />
         <div>
             <strong>Revisão de Eventos:</strong> Ao cadastrar, o evento iniciará como **"Aguardando Aprovação"**. O administrador revisará os dados do local, data e instrutor antes de incluí-lo na agenda oficial da Associação.
         </div>
     </div>
 
     @if ($errors->any())
-        <div x-data="{ show: true }" x-show="show" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative">
-            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" @click="show = false">
-                <i class="fas fa-times"></i>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative" id="err-box">
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-700 hover:text-red-900 cursor-pointer border-0 bg-transparent">
+                <x-icon name="times" class="w-4 h-4" />
             </button>
             <strong class="font-bold">Ops!</strong> Corrija os erros abaixo:
             <ul class="mt-2 mb-0">
@@ -71,7 +71,7 @@
         {{-- Botões --}}
         <div class="flex justify-between items-center">
             <x-back-button :route="route('evento')" label="Voltar" />
-            <button type="submit" class="px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200">Propor Evento</button>
+            <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200"><x-icon name="check-circle" class="w-4 h-4" /> Propor Evento</button>
         </div>
     </form>
 </div>

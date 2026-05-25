@@ -6,14 +6,18 @@
     <meta name="format-detection" content="telephone=no">
     <title>@yield('titulo', config('association.name'))</title>
 
+    <meta name="description" content="@yield('descricao', config('association.description'))">
+    <meta property="og:title" content="@yield('titulo', config('association.name'))">
+    <meta property="og:description" content="@yield('descricao', config('association.description'))">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset(config('association.logo')) }}">
+    <meta name="twitter:card" content="summary">
+
     <link rel="icon" type="image/png" href="{{ asset(config('association.logo')) }}">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="preload" as="image" href="{{ asset('imagens/artesanato_alunos/back-logo.webp') }}" fetchpriority="high">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     @yield('style')
 </head>
@@ -26,12 +30,11 @@
             <div class="max-w-7xl mx-auto px-4 mt-3">
                 <x-alert type="success" :message="session('success')" />
                 @if($errors->any())
-                    <div x-data="{ show: true }" x-show="show" x-transition.duration.300ms
-                         class="bg-red-100 text-red-800 px-4 py-3 rounded-lg border border-red-200 mb-4" role="alert">
+                    <div class="bg-red-100 text-red-800 px-4 py-3 rounded-lg border border-red-200 mb-4" role="alert" id="error-alert">
                         <div class="flex items-center gap-2 mb-1">
-                            <i class="fas fa-exclamation-circle"></i>
+                            <x-icon name="exclamation" class="w-5 h-5" />
                             <span class="font-semibold">Erro</span>
-                            <button @click="show = false" class="ml-auto text-red-600 hover:text-red-900 text-xl leading-none">&times;</button>
+                            <button onclick="this.closest('#error-alert').remove()" class="ml-auto text-red-600 hover:text-red-900 text-xl leading-none cursor-pointer border-0 bg-transparent">&times;</button>
                         </div>
                         <ul class="ml-6 list-disc text-sm">
                             @foreach($errors->all() as $error)
@@ -51,6 +54,22 @@
     <x-floating-whatsapp />
 
     @yield('modals')
+
+    <div id="modal-confirm" class="modal-overlay">
+        <div class="modal-content max-w-sm w-full mx-4 bg-white rounded-2xl shadow-2xl p-6 text-center">
+            <x-icon name="alert-triangle" class="w-12 h-12 mx-auto text-amber-500 mb-3" />
+            <h3 id="confirm-title" class="text-lg font-bold text-brand mb-2">Tem certeza?</h3>
+            <p id="confirm-message" class="text-sm text-gray-600 mb-6">Esta ação não poderá ser desfeita!</p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="hideModal('modal-confirm')" class="px-5 py-2 rounded-full border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 cursor-pointer transition">Cancelar</button>
+                <button id="confirm-btn-yes" class="px-5 py-2 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700 cursor-pointer transition">Sim, excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-loader" class="page-loader"></div>
+
+    <script src="{{ asset('js/app.js') }}"></script>
 
     @yield('scripts')
 </body>

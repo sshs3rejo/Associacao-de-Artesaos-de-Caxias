@@ -9,7 +9,7 @@
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-bold text-brand">{{ $cliente->nome }}</h1>
             <a href="{{ route('admin.clientes.index') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors">
-                <i class="fas fa-arrow-left"></i> Voltar
+                <x-icon name="arrow-left" class="w-4 h-4" /> Voltar
             </a>
         </div>
 
@@ -65,9 +65,9 @@
                                 <td class="px-4 py-3 text-sm">{{ $v->itensVenda->count() }}</td>
                                 <td class="px-4 py-3 text-sm font-semibold">R$ {{ number_format($v->valor_total, 2, ',', '.') }}</td>
                                 <td class="px-4 py-3 text-sm">
-                                    @if($v->mp_status === 'approved')
+                                    @if($v->status_pagamento === 'approved')
                                         <x-badge type="success">Pago</x-badge>
-                                    @elseif($v->mp_status === 'rejected')
+                                    @elseif($v->status_pagamento === 'rejected')
                                         <x-badge type="danger">Rejeitado</x-badge>
                                     @else
                                         <x-badge type="pending">Pendente</x-badge>

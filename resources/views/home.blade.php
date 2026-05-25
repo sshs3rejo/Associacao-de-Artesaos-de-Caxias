@@ -5,13 +5,13 @@
 @section('content')
     <section class="hero-section py-5 flex items-center min-h-[50vh] md:min-h-[85vh]" style="background: linear-gradient(rgba(249, 247, 211, 0.85), rgba(249, 247, 211, 0.85)), url('{{ asset('imagens/artesanato_alunos/back-logo.webp') }}') no-repeat center/contain;">
         <div class="max-w-7xl mx-auto px-4 text-center fade-in">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-brand leading-tight">Aqui, o simples ganha forma, o barro respira, a palha canta e as mãos viram poesia.</h1>
+            <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-brand leading-tight">Aqui, o simples ganha forma, o barro respira, a palha canta e as mãos viram poesia.</h1>
             <p class="text-lg md:text-xl text-gray-500 mb-6 max-w-3xl mx-auto leading-relaxed">A Associação dos Artesãos de Caxias é um espaço onde a arte popular se encontra com o empreendedorismo criativo. Nosso propósito é conectar quem cria com quem valoriza o feito à mão.</p>
 
             <div class="flex flex-wrap justify-center gap-3" style="position: relative; z-index: 1;">
                 <a href="{{ route('sobrenos') }}" class="btn-modern text-accent shadow-md hover:shadow-lg" style="background-color: #7a2f1f;">
                     <span>Conhecer a Associação</span>
-                    <i class="fa fa-arrow-right text-sm"></i>
+                    <x-icon name="arrow-right" class="w-4 h-4" />
                 </a>
                 <a href="{{ route('produtos') }}" class="btn-modern text-accent shadow-md hover:shadow-lg" style="background-color: #7a2f1f;">
                     Ver Produtos
@@ -43,7 +43,7 @@
                             <div class="p-5 flex flex-col flex-1">
                                 <h3 class="text-lg font-bold text-brand mb-1">{{ $evento->nome }}</h3>
                                 <p class="text-sm text-gray-500 mb-4">
-                                    <i class="fas fa-calendar-alt mr-2"></i>
+                                    <x-icon name="calendar" class="w-4 h-4 mr-2" />
                                     {{ $evento->data_inicio ? $evento->data_inicio->format('d/m/Y H:i') : 'Data a definir' }}
                                 </p>
                                 <div class="mt-auto">
@@ -91,7 +91,7 @@
                 <button id="galleryCloseBtn" class="text-3xl text-brand hover:opacity-70 transition cursor-pointer bg-transparent border-0 leading-none">&times;</button>
             </div>
             <div class="text-center">
-                <img id="modalImage" src="" alt="" class="max-w-full max-h-[60vh] rounded-xl shadow-md mb-4 mx-auto">
+                <img id="modalImage" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" class="max-w-full max-h-[60vh] rounded-xl shadow-md mb-4 mx-auto">
                 <p id="modalDescription" class="text-gray-600 text-base">Descrição</p>
             </div>
         </div>

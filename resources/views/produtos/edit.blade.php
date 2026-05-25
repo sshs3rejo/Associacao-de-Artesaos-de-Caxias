@@ -8,9 +8,9 @@
     <h1 class="text-2xl font-bold text-brand mb-6">Editar Produto</h1>
 
     @if ($errors->any())
-        <div x-data="{ show: true }" x-show="show" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative">
-            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" @click="show = false">
-                <i class="fas fa-times"></i>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative" id="err-edit-produto">
+            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" onclick="this.parentElement.remove()">
+                <x-icon name="times" class="w-4 h-4" />
             </button>
             <strong class="font-bold">Ops!</strong> Corrija os campos abaixo:
             <ul class="mt-2">
@@ -48,7 +48,7 @@
             <div class="flex gap-2 mb-2">
                 <input class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none @error('imagem') border-red-500 @enderror" type="file" id="imagem" name="imagem" accept="image/*" capture="environment" onchange="previewImagem(this)">
                 <button type="button" class="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-600" onclick="document.getElementById('imagem').click()" title="Tirar Foto">
-                    <i class="fas fa-camera"></i>
+                    <x-icon name="camera" class="w-4 h-4" />
                 </button>
             </div>
             <div id="preview-imagem" class="mt-2" style="display:none;">
@@ -64,7 +64,7 @@
 
                         <div id="area-acoes-imagem">
                             <button type="button" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 z-10" onclick="marcarParaRemover()" title="Remover Imagem">
-                                <i class="fas fa-trash"></i>
+                                <x-icon name="trash" class="w-4 h-4" />
                             </button>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                     <input type="hidden" name="remover_imagem" id="input-remover-imagem" value="0">
 
                     <div id="aviso-remocao" class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 mt-2 rounded-lg hidden text-sm max-w-[250px] flex items-center gap-1">
-                        <i class="fas fa-exclamation-triangle mr-1"></i> Será removida ao salvar.
+                        <x-icon name="warning" class="w-4 h-4 mr-1" /> Será removida ao salvar.
                         <button type="button" class="underline font-bold ml-1 hover:text-yellow-900" onclick="desfazerRemocao()">Desfazer</button>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
         {{-- Botões --}}
         <div class="flex justify-between items-center">
             <x-back-button :route="route('produtos')" label="Voltar" />
-            <button type="submit" class="px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200">Atualizar Produto</button>
+            <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200"><x-icon name="check-circle" class="w-4 h-4" /> Atualizar Produto</button>
         </div>
     </form>
 </div>

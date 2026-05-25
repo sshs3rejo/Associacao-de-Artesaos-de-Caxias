@@ -8,7 +8,7 @@
 
     @if($inscricoes->isEmpty())
         <div class="text-center py-5">
-            <i class="fas fa-book-open text-5xl text-gray-500 mb-3 block"></i>
+            <x-icon name="book-open" class="w-12 h-12 text-gray-500 mb-3 block" />
             <p class="text-gray-500 text-lg">Nenhuma inscrição realizada ainda.</p>
         </div>
     @else
@@ -20,6 +20,7 @@
                         <th class="p-3 text-left text-sm font-semibold">Cliente</th>
                         <th class="p-3 text-left text-sm font-semibold">Data Inscrição</th>
                         <th class="p-3 text-left text-sm font-semibold">Pagamento</th>
+                        <th class="p-3 text-center text-sm font-semibold">Ações</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -30,6 +31,15 @@
                             <td class="p-3 text-sm">{{ $inscricao->data_inscricao?->format('d/m/Y H:i') ?? '-' }}</td>
                             <td class="p-3 text-sm">
                                 <x-badge type="{{ $inscricao->isPago() ? 'success' : ($inscricao->isPendente() ? 'pending' : 'danger') }}">{{ $inscricao->status_pagamento }}</x-badge>
+                            </td>
+                            <td class="p-3 text-center">
+                                <form action="{{ route('admin.inscricoes.destroy', $inscricao) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="text-red-600 hover:text-red-800 text-sm" title="Cancelar inscrição" onclick="var f=this.closest('form'); showConfirm('Tem certeza que deseja cancelar esta inscrição?',function(){f.submit();}); return false;">
+                                        <x-icon name="trash" class="w-4 h-4" />
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach

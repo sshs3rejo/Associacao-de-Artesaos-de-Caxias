@@ -26,7 +26,7 @@ class VendaController extends Controller
 
     public function destroy(Vendas $venda)
     {
-        if ($venda->mp_status === 'approved') {
+        if ($venda->status_pagamento === 'approved') {
             return back()->withErrors(['msg' => 'Não é possível excluir uma venda com pagamento aprovado.']);
         }
 

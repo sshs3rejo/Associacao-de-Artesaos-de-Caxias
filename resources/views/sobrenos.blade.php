@@ -21,26 +21,26 @@
 
 <div class="max-w-7xl mx-auto px-4 mb-5">
     <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-        <i class="fas fa-arrow-left text-xs"></i> Voltar
+                    <x-icon name="arrow-left" class="w-3 h-3" /> Voltar
     </a>
     <div class="flex justify-center">
         <div class="w-full max-w-4xl">
             <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-                <h2><i class="fas fa-users me-2"></i> Nossa Missão</h2>
+                <h2><x-icon name="users" class="w-5 h-5 me-2" /> Nossa Missão</h2>
                 <p>
                     A Associação dos Artesãos de Caxias tem como missão fortalecer, divulgar e valorizar o trabalho dos artesãos locais. Conectamos produtores, comunidade e novos públicos, promovendo o artesanato como expressão cultural e fonte de renda sustentável.
                 </p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-                <h2><i class="fas fa-book me-2"></i> Nossa História</h2>
+                <h2><x-icon name="book" class="w-5 h-5 me-2" /> Nossa História</h2>
                 <p>
                     Nascemos da união de artesãos apaixonados pela cultura maranhense e estudantes de tecnologia da UniFacema. Nosso objetivo inicial era criar uma ponte digital para organizar e divulgar as atividades artesanais, facilitando a gestão e a comunicação entre os membros.
                 </p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-                <h2><i class="fas fa-hand-holding-heart me-2"></i> Nossa Equipe</h2>
+                <h2><x-icon name="hand-holding-heart" class="w-5 h-5 me-2" /> Nossa Equipe</h2>
                 <p>
                     Nossa equipe é formada por mestres artesãos, voluntários engajados e estudantes dedicados. Cada integrante contribui com um talento único — seja na técnica ancestral do barro, na delicadeza do bordado ou no desenvolvimento de soluções que impulsionam a economia criativa de Caxias.
                 </p>

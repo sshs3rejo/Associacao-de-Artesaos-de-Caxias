@@ -15,7 +15,6 @@ use App\Http\Controllers\Admin\InstrutorController;
 use App\Http\Controllers\Admin\OficinaController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\InscricaoController;
 
@@ -50,11 +49,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/eventos/{evento}/inscrever', [InscricaoController::class, 'store'])->name('eventos.inscrever');
     Route::delete('/eventos/{evento}/cancelar-inscricao', [InscricaoController::class, 'destroy'])->name('eventos.cancelar-inscricao');
 });
-
-// Checkout com Mercado Pago
-Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-Route::get('/checkout/{venda}/success', [CheckoutController::class, 'success'])->name('checkout.success');
-Route::get('/checkout/{venda}/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 
 // Tornar-se artesão via perfil
 Route::middleware(['auth'])->group(function () {
@@ -106,6 +100,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Gestão de Inscrições
     Route::get('/admin/inscricoes', [AdminDashboardController::class, 'inscricoes'])->name('admin.inscricoes');
+    Route::delete('/admin/inscricoes/{inscricao}', [AdminDashboardController::class, 'destroyInscricao'])->name('admin.inscricoes.destroy');
     
     // Gestão de Vendas (Confirmar Pagamento do WhatsApp/Pix)
     Route::post('/admin/vendas/{venda}/aprovar', [AdminDashboardController::class, 'aprovarVenda'])->name('admin.vendas.aprovar');
@@ -147,6 +142,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/categorias/{categoria}/edit', [CategoriaProdutoController::class, 'edit'])->name('admin.categorias.edit');
     Route::put('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'update'])->name('admin.categorias.update');
     Route::delete('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'destroy'])->name('admin.categorias.destroy');
+
+    // Gestão de Fornecedores
+    Route::get('/admin/fornecedores', [FornecedorController::class, 'index'])->name('admin.fornecedores.index');
+    Route::get('/admin/fornecedores/create', [FornecedorController::class, 'create'])->name('admin.fornecedores.create');
+    Route::post('/admin/fornecedores', [FornecedorController::class, 'store'])->name('admin.fornecedores.store');
+    Route::get('/admin/fornecedores/{fornecedore}/edit', [FornecedorController::class, 'edit'])->name('admin.fornecedores.edit');
+    Route::put('/admin/fornecedores/{fornecedore}', [FornecedorController::class, 'update'])->name('admin.fornecedores.update');
+    Route::delete('/admin/fornecedores/{fornecedore}', [FornecedorController::class, 'destroy'])->name('admin.fornecedores.destroy');
 
     // Gestão de Matérias-Primas
     Route::get('/admin/materias-primas', [MateriaPrimaController::class, 'index'])->name('admin.materias-primas.index');

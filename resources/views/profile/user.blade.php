@@ -5,14 +5,14 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-5">
     <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-        <i class="fas fa-arrow-left text-xs"></i> Voltar
+        <x-icon name="arrow-left" class="w-3 h-3" /> Voltar
     </a>
     <div class="flex justify-center">
         <div class="w-full lg:w-2/3">
             <div class="bg-white rounded-xl shadow-sm">
                 <div class="p-4">
                     <h3 class="font-bold mb-4 text-brand">
-                        <i class="fas fa-user-circle me-2"></i>Meu Perfil
+                        <x-icon name="user-circle" class="w-5 h-5 me-2" />Meu Perfil
                     </h3>
 
                     <div class="mb-4">
@@ -25,14 +25,14 @@
 
                     @if($user->isArtisan() && $profile && !$profile->isApproved())
                         <div class="flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-3 rounded-lg border border-blue-200 mb-4">
-                            <i class="fas fa-hourglass-half me-2"></i>
+                            <x-icon name="hourglass" class="w-5 h-5 me-2" />
                             Sua solicitação para se tornar artesão está aguardando aprovação do administrador.
                             Você receberá uma notificação quando for aprovado.
                         </div>
                     @elseif(!$user->isArtisan())
                         <hr>
                         <h5 class="font-bold mb-3 text-brand">
-                            <i class="fas fa-hammer me-2"></i>Quero ser artesão
+                            <x-icon name="hammer" class="w-5 h-5 me-2" />Quero ser artesão
                         </h5>
                         <p class="text-gray-500 mb-3">Preencha os dados abaixo para solicitar seu cadastro como artesão na associação.</p>
 
@@ -63,7 +63,7 @@
                             </div>
                             <div class="mt-4">
                                 <button type="submit" class="inline-block px-4 py-2 rounded-lg font-semibold text-lg px-5 font-bold rounded-full bg-brand text-accent">
-                                    <i class="fas fa-paper-plane me-2"></i>Fazer Cadastro
+                                    <x-icon name="paper-plane" class="w-5 h-5 me-2" />Fazer Cadastro
                                 </button>
                             </div>
                         </form>

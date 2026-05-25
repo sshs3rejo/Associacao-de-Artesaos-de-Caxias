@@ -7,13 +7,13 @@
     <div class="flex items-center justify-between mb-4">
         <h1 class="font-bold text-2xl text-brand">Usuários do Sistema</h1>
         <a href="{{ route('admin.usuarios.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold text-sm transition no-underline">
-            <i class="fas fa-plus"></i> Novo Usuário
+            <x-icon name="plus" class="w-4 h-4" /> Novo Usuário
         </a>
     </div>
 
     @if($usuarios->isEmpty())
         <div class="text-center py-5">
-            <i class="fas fa-users text-5xl text-gray-500 mb-3 block"></i>
+            <x-icon name="users" class="w-12 h-12 text-gray-500 mb-3 mx-auto block" />
             <p class="text-gray-500 text-lg">Nenhum usuário encontrado.</p>
         </div>
     @else
@@ -70,11 +70,11 @@
                                         @csrf
                                         @if($u->isActive())
                                             <button type="submit" class="inline-block px-3 py-1 rounded-full font-semibold text-center no-underline border border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-sm" title="Bloquear Usuário">
-                                                <i class="fas fa-ban"></i> Bloquear
+                                                <x-icon name="times" class="w-4 h-4" /> Bloquear
                                             </button>
                                         @else
                                             <button type="submit" class="inline-block px-3 py-1 rounded-full font-semibold text-center no-underline border border-green-500 text-green-600 hover:bg-green-50 text-sm" title="Reativar Usuário">
-                                                <i class="fas fa-check-circle"></i> Ativar
+                                                <x-icon name="check-circle" class="w-4 h-4" /> Ativar
                                             </button>
                                         @endif
                                     </form>
@@ -82,8 +82,8 @@
                                     <form action="{{ route('admin.usuarios.destroy', $u->id) }}" method="POST" class="m-0">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="inline-block px-3 py-1 rounded-full font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="return confirm('Tem certeza de que deseja excluir permanentemente o usuário {{ $u->name }} do sistema?')" title="Excluir Usuário">
-                                            <i class="fas fa-trash"></i> Excluir
+                                        <button type="button" class="inline-block px-3 py-1 rounded-full font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="var f=this.closest('form'); showConfirm('Tem certeza de que deseja excluir permanentemente o usuário {{ $u->name }} do sistema?',function(){f.submit();}); return false;" title="Excluir Usuário">
+                                            <x-icon name="trash" class="w-4 h-4" /> Excluir
                                         </button>
                                     </form>
                                 </div>

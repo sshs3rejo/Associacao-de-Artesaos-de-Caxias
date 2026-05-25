@@ -3,25 +3,23 @@
         <div class="flex justify-center gap-2 flex-1 sm:hidden">
             @if ($paginator->onFirstPage())
                 <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-400 bg-white border border-gray-200 cursor-default leading-5 rounded-lg">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    Anterior
+                    <x-icon name="chevron-left" class="w-4 h-4 mr-1" /> Anterior
                 </span>
             @else
                 <a href="{{ $paginator->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-accent bg-brand border border-brand leading-5 rounded-lg hover:bg-brand-dark transition ease-in-out duration-150">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    Anterior
+                    <x-icon name="chevron-left" class="w-4 h-4 mr-1" /> Anterior
                 </a>
             @endif
 
             @if ($paginator->hasMorePages())
                 <a href="{{ $paginator->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-accent bg-brand border border-brand leading-5 rounded-lg hover:bg-brand-dark transition ease-in-out duration-150">
                     Próximo
-                    <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                    <x-icon name="chevron-right" class="w-4 h-4 ml-1" />
                 </a>
             @else
                 <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-400 bg-white border border-gray-200 cursor-default leading-5 rounded-lg">
                     Próximo
-                    <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                    <x-icon name="chevron-right" class="w-4 h-4 ml-1" />
                 </span>
             @endif
         </div>
@@ -49,16 +47,12 @@
                     @if ($paginator->onFirstPage())
                         <span aria-disabled="true" aria-label="{{ __('pagination.previous') }}">
                             <span class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 bg-white cursor-default leading-5" aria-hidden="true">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
+                                <x-icon name="chevron-left" class="w-4 h-4" />
                             </span>
                         </span>
                     @else
                         <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-brand bg-white leading-5 hover:text-brand-light hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-2 focus:ring-brand/30 transition ease-in-out duration-150" aria-label="{{ __('pagination.previous') }}">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                            </svg>
+                            <x-icon name="chevron-left" class="w-4 h-4" />
                         </a>
                     @endif
 
@@ -90,16 +84,12 @@
                     {{-- Next Page Link --}}
                     @if ($paginator->hasMorePages())
                         <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-brand bg-white leading-5 hover:text-brand-light hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-2 focus:ring-brand/30 transition ease-in-out duration-150" aria-label="{{ __('pagination.next') }}">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                            </svg>
+                            <x-icon name="chevron-right" class="w-4 h-4" />
                         </a>
                     @else
                         <span aria-disabled="true" aria-label="{{ __('pagination.next') }}">
                             <span class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-gray-300 bg-white border-l border-gray-200 cursor-default leading-5" aria-hidden="true">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                </svg>
+                                <x-icon name="chevron-right" class="w-4 h-4" />
                             </span>
                         </span>
                     @endif

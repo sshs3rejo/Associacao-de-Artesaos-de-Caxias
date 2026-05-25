@@ -204,7 +204,7 @@ Armazena o cabeçalho dos pedidos registrados no sistema.
 - `id_cliente` (BIGINT, FK): Cliente que efetuou a compra (vinculado a `_cliente`).
 - `data_venda` (TIMESTAMP): Data e horário exato do fechamento do pedido.
 - `valor_total` (DECIMAL, 10,2): Total do pedido.
-- `mp_status` (VARCHAR, 50): Status administrativo do pedido (`pending` para pendente, `approved` para confirmado).
+- `status_pagamento` (VARCHAR, 50): Status administrativo do pedido (`pending` para pendente, `approved` para confirmado).
 
 ### Tabela: `itens_venda`
 Pivot que associa produtos, quantidades e preços a um pedido.

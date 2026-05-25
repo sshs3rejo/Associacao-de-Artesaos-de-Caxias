@@ -1,27 +1,24 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
     content: [
-        './resources/**/*.blade.php',
-        './resources/**/*.js',
+        './resources/views/**/*.blade.php',
+        './resources/js/**/*.js',
     ],
     theme: {
         extend: {
             colors: {
-                brand: {
-                    DEFAULT: '#7a2f1f',
-                    light: '#8b5a3c',
-                    dark: '#6a281a',
-                },
-                accent: {
-                    DEFAULT: '#F9F7D3',
-                    hover: '#F2EB85',
-                },
+                brand: '#7a2f1f',
+                'brand-light': '#8b5a3c',
+                'brand-dark': '#6a281a',
+                accent: '#F9F7D3',
+                'accent-hover': '#f0eeb0',
                 price: '#c85a3a',
-            },
-            fontFamily: {
-                sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', 'Arial', 'sans-serif'],
             },
         },
     },
+    safelist: [
+        'min-w-[44px]',
+        'min-h-[44px]',
+    ],
     plugins: [],
-};
+}

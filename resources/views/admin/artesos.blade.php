@@ -8,7 +8,7 @@
 
     @if($artesos->isEmpty())
         <div class="text-center py-5">
-            <i class="fas fa-users text-5xl text-gray-500 mb-3 block"></i>
+            <x-icon name="users" class="w-12 h-12 text-gray-500 mb-3 mx-auto block" />
             <p class="text-gray-500 text-lg">Nenhum artesão cadastrado ainda.</p>
         </div>
     @else
@@ -51,8 +51,8 @@
                                     @if(!$artesao->artisanProfile?->isApproved())
                                         <form action="{{ route('admin.artesao.aprovar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="return confirm('Aprovar {{ $artesao->name }}?')">
-                                                <i class="fas fa-check"></i> Aprovar
+                                            <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="var f=this.closest('form'); showConfirm('Aprovar {{ $artesao->name }}?',function(){f.submit();},'Aprovar artesão')">
+                                                <x-icon name="check" class="w-4 h-4" /> Aprovar
                                             </button>
                                         </form>
                                     @endif
@@ -60,14 +60,14 @@
                                         <form action="{{ route('admin.artesao.rejeitar', $artesao) }}" method="POST">
                                             @csrf
                                             <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="confirmarExclusao(this)">
-                                                <i class="fas fa-times"></i> Desativar
+                                                <x-icon name="times" class="w-4 h-4" /> Desativar
                                             </button>
                                         </form>
                                     @else
                                         <form action="{{ route('admin.artesao.ativar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="return confirm('Reativar este artesão?')">
-                                                <i class="fas fa-check"></i> Ativar
+                                            <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="var f=this.closest('form'); showConfirm('Reativar este artesão?',function(){f.submit();},'Reativar artesão')">
+                                                <x-icon name="check" class="w-4 h-4" /> Ativar
                                             </button>
                                         </form>
                                     @endif
@@ -80,12 +80,4 @@
         </div>
     @endif
 </div>
-
-<script>
-    function confirmarExclusao(button) {
-        if (confirm('Tem certeza de que deseja desativar este artesão? Os produtos dele continuarão salvos mas marcados como inativos.')) {
-            button.closest('form').submit();
-        }
-    }
-</script>
 @endsection

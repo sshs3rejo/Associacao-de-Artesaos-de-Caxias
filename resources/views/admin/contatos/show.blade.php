@@ -33,9 +33,9 @@
             <label class="block text-sm font-semibold text-gray-600 mb-1">Status</label>
             <p class="text-gray-900">
                 @if($contato->lido)
-                    <span class="text-green-600"><i class="fas fa-check-circle"></i> Lido</span>
+                    <span class="text-green-600"><x-icon name="check-circle" class="w-4 h-4" /> Lido</span>
                 @else
-                    <span class="text-yellow-600"><i class="fas fa-envelope"></i> Novo</span>
+                    <span class="text-yellow-600"><x-icon name="envelope" class="w-4 h-4" /> Novo</span>
                 @endif
             </p>
         </div>
@@ -57,8 +57,8 @@
             <form action="{{ route('admin.contatos.destroy', $contato->id) }}" method="POST" class="m-0">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition duration-200" onclick="return confirm('Tem certeza de que deseja excluir esta mensagem?')">
-                    <i class="fas fa-trash"></i> Excluir Mensagem
+                <button type="button" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition duration-200" onclick="var f=this.closest('form'); showConfirm('Tem certeza de que deseja excluir esta mensagem?',function(){f.submit();}); return false;">
+                    <x-icon name="trash" class="w-4 h-4" /> Excluir Mensagem
                 </button>
             </form>
         </div>

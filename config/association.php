@@ -13,5 +13,5 @@ return [
     'logo' => env('ASSOC_LOGO', 'imagens/artesanato_alunos/logo-artesaos.webp'),
     'description' => env('ASSOC_DESCRIPTION', 'Preservando a cultura maranhense através das mãos talentosas dos nossos artesãos. Qualidade, tradição e amor em cada peça.'),
     'tagline' => env('ASSOC_TAGLINE', 'Desenvolvido com carinho para a cultura local.'),
-    'placeholder' => env('ASSOC_PLACEHOLDER', 'https://placehold.co/300x200/F9F7D3/7a2f1f?text=Sem+Imagem'),
+    'placeholder' => env('ASSOC_PLACEHOLDER', 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23F9F7D3%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%22150%22 y=%22110%22 text-anchor=%22middle%22 fill=%22%237a2f1f%22 font-size=%2216%22 font-family=%22sans-serif%22%3ESem Imagem%3C/text%3E%3C/svg%3E'),
 ];

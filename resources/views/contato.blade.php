@@ -21,7 +21,7 @@
 
     <div class="max-w-7xl mx-auto px-4 mb-12">
         <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-            <i class="fas fa-arrow-left text-xs"></i> Voltar
+            <x-icon name="arrow-left" class="w-3 h-3" /> Voltar
         </a>
         <x-alert type="success" :message="session('success')" />
 
@@ -32,13 +32,13 @@
                     <h2 class="text-xl font-bold mb-6" style="color: #7a2f1f;">Contato Imediato</h2>
                     <div class="flex flex-col gap-3">
                         <a class="border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition px-6 py-3 text-lg animacao flex items-center justify-center gap-2 rounded-lg" href="{{ config('association.instagram') }}" target="_blank">
-                            <i class="fab fa-instagram"></i> Instagram
+                            <x-icon name="instagram" class="w-5 h-5" /> Instagram
                         </a>
                         <a class="border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition px-6 py-3 text-lg animacao flex items-center justify-center gap-2 rounded-lg" href="mailto:{{ config('association.email') }}">
-                            <i class="fas fa-envelope"></i> E-mail
+                            <x-icon name="envelope" class="w-5 h-5" /> E-mail
                         </a>
                         <a class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-lg animacao flex items-center justify-center gap-2 rounded-lg transition" href="https://wa.me/{{ config('association.whatsapp') }}" target="_blank">
-                            <i class="fab fa-whatsapp"></i> WhatsApp
+                            <x-icon name="whatsapp" class="w-5 h-5" /> WhatsApp
                         </a>
                     </div>
                 </div>
@@ -64,8 +64,8 @@
                     </div>
                     <a href="https://www.google.com/maps/dir/?api=1&destination={{ config('association.latitude') }},{{ config('association.longitude') }}"
                        target="_blank"
-                       class="border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition px-4 py-2 text-sm rounded-full mt-4 w-full inline-block text-center animacao">
-                        <i class="fas fa-directions mr-1"></i> Abrir no Google Maps
+                       class="inline-flex items-center justify-center gap-2 border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition px-4 py-2 text-sm rounded-full mt-4 w-full animacao no-underline">
+                        <x-icon name="directions" class="w-4 h-4" /> Abrir no Google Maps
                     </a>
                 </div>
 
@@ -95,7 +95,7 @@
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="w-full text-lg font-bold px-6 py-3 rounded-lg inline-block text-center transition" style="background-color: #7a2f1f; color: #F9F7D3;">Enviar Mensagem</button>
+                        <button type="submit" class="inline-flex items-center justify-center gap-2 w-full text-lg font-bold px-6 py-3 rounded-lg bg-brand text-accent hover:bg-brand-light transition"><x-icon name="check-circle" class="w-5 h-5" /> Enviar Mensagem</button>
                     </form>
                 </div>
             </div>

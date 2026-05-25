@@ -6,12 +6,12 @@
         @section('content')
         <div class="w-full px-4 py-5">
             <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-                <i class="fas fa-arrow-left text-xs"></i> Voltar ao Painel
+                <x-icon name="arrow-left" class="w-3 h-3" /> Voltar ao Painel
             </a>
             <div class="flex items-center justify-between mb-4">
                 <h1 class="font-bold mb-0 text-brand text-2xl">Gerenciar Eventos</h1>
-                <a href="{{ route('eventos.create') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
-                    <i class="fa fa-plus mr-2"></i> Novo Evento
+                <a href="{{ route('eventos.create') }}" class="inline-flex items-center gap-2 text-white font-bold px-4 py-2 rounded-full shadow-sm bg-brand hover:bg-brand-dark transition no-underline">
+                    <x-icon name="plus" class="w-4 h-4" /> Novo Evento
                 </a>
             </div>
 
@@ -19,7 +19,7 @@
 
             @if($eventos->isEmpty())
                 <div class="text-center py-5">
-                    <i class="fa fa-calendar-alt text-6xl text-gray-400 mb-3 block"></i>
+                    <x-icon name="calendar" class="w-14 h-14 text-gray-400 mb-3 block" />
                     <p class="text-gray-500 text-xl">Nenhum evento cadastrado.</p>
                 </div>
             @else
@@ -60,13 +60,13 @@
                                     <td class="p-3 text-right">
                                         <div class="flex justify-end gap-2">
                                             <a href="{{ route('eventos.edit', $evento->id_evento) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-yellow-400 text-yellow-600 rounded-lg hover:bg-yellow-400 hover:text-white transition no-underline">
-                                                <i class="fa fa-pencil"></i> Editar
+                                                <x-icon name="pencil" class="w-4 h-4" /> Editar
                                             </a>
                                             <form action="{{ route('eventos.destroy', $evento->id_evento) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-red-400 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition" onclick="return confirm('Remover evento {{ $evento->nome }} permanentemente?')">
-                                                    <i class="fa fa-trash"></i> Excluir
+                                                <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-red-400 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition" onclick="var f=this.closest('form'); showConfirm('Remover evento {{ $evento->nome }} permanentemente?',function(){f.submit();}); return false;">
+                                                    <x-icon name="trash" class="w-4 h-4" /> Excluir
                                                 </button>
                                             </form>
                                         </div>
@@ -87,31 +87,31 @@
         @section('content')
         <div class="max-w-7xl mx-auto px-4 py-5">
             <a href="{{ route('artesan.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-                <i class="fas fa-arrow-left text-xs"></i> Voltar ao Painel
+                <x-icon name="arrow-left" class="w-3 h-3" /> Voltar ao Painel
             </a>
             <div class="flex items-center justify-between mb-4">
                 <h1 class="font-bold mb-0 text-brand text-2xl">Meus Eventos</h1>
-                <a href="{{ route('artesan.eventos.criar') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
-                    <i class="fa fa-plus mr-2"></i> Propor Novo Evento
+                <a href="{{ route('artesan.eventos.criar') }}" class="inline-flex items-center gap-2 text-white font-bold px-4 py-2 rounded-full shadow-sm bg-brand hover:bg-brand-dark transition no-underline">
+                    <x-icon name="plus" class="w-4 h-4" /> Propor Novo Evento
                 </a>
             </div>
 
             <x-alert type="success" :message="session('success')" />
 
-            <div x-data="{ tab: 'propostas' }">
+            <div>
                 <div class="flex gap-2 mb-4 border-b border-gray-200 pb-2">
-                    <button @click="tab = 'propostas'" :class="tab === 'propostas' ? 'bg-brand text-accent' : 'bg-transparent text-brand border border-brand hover:bg-gray-100'" class="rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer">
+                    <button id="evt-tab-propostas" onclick="switchEventoTab('propostas')" class="rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer bg-brand text-accent">
                         Minhas Propostas de Eventos
                     </button>
-                    <button @click="tab = 'inscricoes'" :class="tab === 'inscricoes' ? 'bg-brand text-accent' : 'bg-transparent text-brand border border-brand hover:bg-gray-100'" class="rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer">
+                    <button id="evt-tab-inscricoes" onclick="switchEventoTab('inscricoes')" class="rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer bg-transparent text-brand border border-brand hover:bg-gray-100">
                         Eventos que Vou Participar
                     </button>
                 </div>
 
-                <div x-show="tab === 'propostas'" x-transition.duration.200ms>
+                <div id="evt-content-propostas">
                     @if($eventosPropostos->isEmpty())
                         <div class="text-center py-5">
-                            <i class="fa fa-calendar-alt text-6xl text-gray-400 mb-3 block"></i>
+                            <x-icon name="calendar" class="w-14 h-14 text-gray-400 mb-3 block" />
                             <p class="text-gray-500 text-xl">Você ainda não propôs nenhum evento ou oficina.</p>
                             <p class="text-gray-400">Clique no botão "+ Propor Novo Evento" para começar!</p>
                         </div>
@@ -132,11 +132,11 @@
                                             @endif
                                         </div>
                                         <div class="text-sm text-gray-500 mb-2">
-                                            <i class="fa fa-calendar mr-1"></i>
+                                            <x-icon name="calendar" class="w-4 h-4 mr-1" />
                                             {{ $evento->data_inicio?->format('d/m/Y H:i') ?? 'Data a definir' }}
                                         </div>
                                         <div class="text-sm text-gray-500 mb-3">
-                                            <i class="fa fa-map-marker-alt mr-1"></i>
+                                            <x-icon name="map-marker" class="w-4 h-4 mr-1" />
                                             {{ $evento->local }}
                                         </div>
                                         <div class="flex justify-between items-center mt-3 pt-2 border-t border-gray-200">
@@ -155,10 +155,10 @@
                     @endif
                 </div>
 
-                <div x-show="tab === 'inscricoes'" x-transition.duration.200ms>
+                <div id="evt-content-inscricoes" style="display: none;">
                     @if($inscricoes->isEmpty())
                         <div class="text-center py-5">
-                            <i class="fa fa-calendar-times text-6xl text-gray-400 mb-3 block"></i>
+                            <x-icon name="times-circle" class="w-14 h-14 text-gray-400 mb-3 block" />
                             <p class="text-gray-500 text-xl">Você não está inscrito em nenhum evento.</p>
                             <a href="{{ route('evento') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
                                 Ver Eventos Disponíveis
@@ -171,7 +171,7 @@
                                     <div class="p-4 flex flex-col flex-1">
                                         <h5 class="font-bold mb-2 text-brand">{{ $inscricao->evento->nome }}</h5>
                                         <div class="text-sm text-gray-500 mb-3">
-                                            <i class="fa fa-calendar mr-1"></i>
+                                            <x-icon name="calendar" class="w-4 h-4 mr-1" />
                                             {{ $inscricao->evento->data_inicio?->format('d/m/Y H:i') ?? 'Data a definir' }}
                                         </div>
                                         <x-badge type="{{ $inscricao->isPago() ? 'success' : 'pending' }}">{{ $inscricao->status_pagamento }}</x-badge>
@@ -183,6 +183,28 @@
                     @endif
                 </div>
             </div>
+
+            <script>
+                function switchEventoTab(tab) {
+                    const btnP = document.getElementById('evt-tab-propostas');
+                    const btnI = document.getElementById('evt-tab-inscricoes');
+                    const contentP = document.getElementById('evt-content-propostas');
+                    const contentI = document.getElementById('evt-content-inscricoes');
+                    const active = 'bg-brand text-accent';
+                    const inactive = 'bg-transparent text-brand border border-brand hover:bg-gray-100';
+                    if (tab === 'propostas') {
+                        btnP.className = 'rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer ' + active;
+                        btnI.className = 'rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer ' + inactive;
+                        contentP.style.display = 'block';
+                        contentI.style.display = 'none';
+                    } else {
+                        btnP.className = 'rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer ' + inactive;
+                        btnI.className = 'rounded-full font-bold px-4 py-2 text-sm transition cursor-pointer ' + active;
+                        contentP.style.display = 'none';
+                        contentI.style.display = 'block';
+                    }
+                }
+            </script>
         </div>
         @endsection
 
@@ -193,7 +215,7 @@
     @section('content')
     <div class="w-full px-4 lg:px-5 py-5">
         <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-            <i class="fas fa-arrow-left text-xs"></i> Voltar
+            <x-icon name="arrow-left" class="w-3 h-3" /> Voltar
         </a>
         <div class="mb-5">
             <div class="text-center">
@@ -209,7 +231,7 @@
             <div class="w-full max-w-7xl">
                 @if($eventos->isEmpty())
                     <div class="text-center py-5 bg-white rounded-xl shadow-sm" style="border: 1px dashed rgba(122, 47, 31, 0.2);">
-                        <i class="fa fa-calendar-times text-6xl mb-3" style="color: #d1b8a4;"></i>
+                        <x-icon name="times-circle" class="w-14 h-14 mb-3" style="color: #d1b8a4;" />
                         <h3 class="font-semibold text-brand">Nenhum evento no momento</h3>
                         <p class="text-gray-500 text-xl">Fique de olho! Em breve teremos novidades.</p>
                     </div>
@@ -222,7 +244,7 @@
                                         <img src="{{ asset('storage/' . $evento->imagem) }}" alt="{{$evento->nome}}" class="w-full h-full object-cover" loading="lazy">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
-                                            <i class="fa fa-calendar-alt text-5xl" style="color: #d1b8a4;"></i>
+                                            <x-icon name="calendar" class="w-12 h-12" style="color: #d1b8a4;" />
                                         </div>
                                     @endif
                                     <div class="absolute top-0 right-0 m-3">
@@ -239,7 +261,7 @@
                                     <div class="mt-auto flex flex-col items-center gap-2">
                                         <div class="text-lg font-bold text-price">
                                             @if($evento->isGratuito())
-                                                <i class="fa fa-tag mr-1"></i> Gratuito
+                                                <x-icon name="tag" class="w-4 h-4 mr-1" /> Gratuito
                                             @else
                                                 R$ {{ number_format($evento->valor_inscricao, 2, ',', '.') }}
                                             @endif

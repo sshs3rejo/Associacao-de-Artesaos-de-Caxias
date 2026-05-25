@@ -12,13 +12,13 @@
                 @else
                     <div class="rounded-full inline-flex items-center justify-center shadow-sm"
                          style="width: 150px; height: 150px; background-color: #F9F7D3;">
-                        <i class="fas fa-user text-4xl text-brand"></i>
+                        <x-icon name="user" class="w-10 h-10 text-brand" />
                     </div>
                 @endif
             </div>
             <h1 class="font-bold mb-2 text-brand">{{ $user->name }}</h1>
             @if($perfil->specialty)
-                <p class="text-lg text-gray-500 mb-3"><i class="fas fa-star me-2"></i>{{ $perfil->specialty }}</p>
+                <p class="text-lg text-gray-500 mb-3"><x-icon name="star" class="w-4 h-4 me-2" />{{ $perfil->specialty }}</p>
             @endif
             @if($perfil->bio)
                 <p class="text-xl text-gray-600" style="max-width: 600px; margin: 0 auto;">{{ $perfil->bio }}</p>
@@ -26,17 +26,17 @@
             <div class="flex justify-center gap-3 mt-4">
                 @if($perfil->instagram)
                     <a href="https://instagram.com/{{ ltrim($perfil->instagram, '@') }}" target="_blank" class="inline-block px-4 py-2 rounded-lg font-semibold border-2 border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition rounded-full">
-                        <i class="fab fa-instagram me-1"></i> Instagram
+                        <x-icon name="instagram" class="w-4 h-4 me-1" /> Instagram
                     </a>
                 @endif
                 @if($perfil->facebook)
                     <a href="{{ $perfil->facebook }}" target="_blank" class="inline-block px-4 py-2 rounded-lg font-semibold border-2 border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition rounded-full">
-                        <i class="fab fa-facebook me-1"></i> Facebook
+                        <x-icon name="facebook" class="w-4 h-4 me-1" /> Facebook
                     </a>
                 @endif
                 @if($perfil->whatsapp)
                     <a href="https://wa.me/{{ preg_replace('/\D/', '', $perfil->whatsapp) }}" target="_blank" class="inline-block px-4 py-2 rounded-lg font-semibold bg-green-500 text-white hover:bg-green-600 transition rounded-full">
-                        <i class="fab fa-whatsapp me-1"></i> WhatsApp
+                        <x-icon name="whatsapp" class="w-4 h-4 me-1" /> WhatsApp
                     </a>
                 @endif
             </div>

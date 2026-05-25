@@ -4,7 +4,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 mt-4 mb-5">
     <a href="{{ route('evento') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-        <i class="fas fa-arrow-left text-xs"></i> Voltar para Eventos
+        <x-icon name="arrow-left" class="w-3 h-3" /> Voltar para Eventos
     </a>
     <div class="shadow border p-4 bg-white rounded">
     <div class="flex flex-wrap justify-center">
@@ -48,24 +48,24 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="inline-block px-4 py-2 rounded-lg font-semibold w-full py-2 mt-2 font-bold border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
-                            <i class="fas fa-times-circle me-1"></i> Cancelar Inscrição
+                            <x-icon name="times-circle" class="w-4 h-4 me-1" /> Cancelar Inscrição
                         </button>
                     </form>
                 @elseif($evento->isLotado())
                     <button class="inline-block px-4 py-2 rounded-lg font-semibold w-full py-2 mt-2 font-bold bg-gray-400 text-white cursor-not-allowed" disabled>
-                        <i class="fas fa-exclamation-circle me-1"></i> Evento Lotado
+                        <x-icon name="info" class="w-4 h-4 me-1" /> Evento Lotado
                     </button>
                 @else
                     <form action="{{ route('eventos.inscrever', $evento->id_evento) }}" method="POST">
                         @csrf
                         <button type="submit" class="inline-block px-4 py-2 rounded-lg font-semibold w-full py-2 mt-2 font-bold bg-green-500 text-white hover:bg-green-600 transition">
-                            <i class="fas fa-check-circle me-1"></i> Inscrever-se
+                            <x-icon name="check-circle" class="w-4 h-4 me-1" /> Inscrever-se
                         </button>
                     </form>
                 @endif
             @else
                 <a href="{{ route('login.form') }}" class="inline-block px-4 py-2 rounded-lg font-semibold w-full py-2 mt-2 font-bold bg-green-500 text-white hover:bg-green-600 transition">
-                    <i class="fas fa-sign-in-alt me-1"></i> Faça login para se inscrever
+                    <x-icon name="sign-in" class="w-4 h-4 me-1" /> Faça login para se inscrever
                 </a>
             @endauth
         </div>

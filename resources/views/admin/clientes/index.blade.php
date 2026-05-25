@@ -8,7 +8,7 @@
 
     @if($clientes->isEmpty())
         <div class="text-center py-5">
-            <i class="fas fa-users text-5xl text-gray-500 mb-3 block"></i>
+            <x-icon name="users" class="w-12 h-12 text-gray-500 mb-3 mx-auto block" />
             <p class="text-gray-500 text-lg">Nenhum cliente encontrado.</p>
         </div>
     @else
@@ -42,7 +42,7 @@
                             <td class="p-3 text-sm text-gray-500">{{ $c->created_at->format('d/m/Y') }}</td>
                             <td class="p-3 text-sm text-right">
                                 <a href="{{ route('admin.clientes.show', $c->id_cliente) }}" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-blue-400 text-blue-600 hover:bg-blue-50 text-sm">
-                                    <i class="fas fa-eye"></i> Ver
+                                    <x-icon name="eye" class="w-4 h-4" /> Ver
                                 </a>
                             </td>
                         </tr>

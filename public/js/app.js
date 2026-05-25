@@ -1,0 +1,134 @@
+/* ======================== MODAIS ======================== */
+window.showModal = function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('modal-active');
+    document.body.classList.add('overflow-hidden');
+};
+
+window.hideModal = function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('modal-active');
+    document.body.classList.remove('overflow-hidden');
+};
+
+/* ======================== CONFIRMAÇÃO CUSTOMIZADA ======================== */
+var confirmCallback = null;
+
+window.showConfirm = function (message, callback, title) {
+    title = title || 'Tem certeza?';
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-message').textContent = message;
+    confirmCallback = callback;
+    showModal('modal-confirm');
+};
+
+var confirmBtn = document.getElementById('confirm-btn-yes');
+if (confirmBtn) {
+    confirmBtn.addEventListener('click', function () {
+        hideModal('modal-confirm');
+        if (typeof confirmCallback === 'function') {
+            confirmCallback();
+            confirmCallback = null;
+        }
+    });
+}
+
+window.confirmarExclusao = function (button) {
+    var form = button.closest('form');
+    showConfirm('Tem certeza? Esta ação não poderá ser desfeita!', function () {
+        if (form) form.submit();
+    });
+};
+
+/* ======================== TOAST ======================== */
+window.mostrarToast = function (mensagem, tipo) {
+    tipo = tipo || 'success';
+    var toast = document.getElementById('toast-notification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-notification';
+        toast.className = 'toast-notification';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = mensagem;
+    toast.className = 'toast-notification toast-' + tipo + ' toast-show';
+    setTimeout(function () { toast.className = 'toast-notification toast-' + tipo; }, 3000);
+};
+
+/* ======================== NAVBAR MOBILE ======================== */
+window.toggleMobileMenu = function () {
+    var menu = document.getElementById('mobile-menu');
+    var root = document.getElementById('navbar-root');
+    var hamburger = document.getElementById('hamburger-icon');
+    var closeIcon = document.getElementById('close-icon');
+    if (menu) {
+        menu.classList.toggle('hidden');
+        menu.classList.toggle('block');
+    }
+    if (hamburger && closeIcon) {
+        hamburger.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
+    }
+    if (root) {
+        root.classList.toggle('menu-open');
+        document.body.classList.toggle('overflow-hidden');
+    }
+};
+
+/* ======================== ADMIN/USER DROPDOWN ======================== */
+window.toggleDropdown = function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var isOpen = el.style.display !== 'none';
+    document.querySelectorAll('.admin-dropdown').forEach(function (d) { d.style.display = 'none'; });
+    el.style.display = isOpen ? 'none' : 'block';
+};
+
+document.addEventListener('click', function (e) {
+    if (!e.target.closest) return;
+    var dd = e.target.closest('.admin-dropdown-wrap');
+    if (!dd) {
+        document.querySelectorAll('.admin-dropdown').forEach(function (d) { d.style.display = 'none'; });
+    }
+});
+
+/* ======================== PAGE LOADED ======================== */
+document.addEventListener('DOMContentLoaded', function () {
+    var mainContent = document.querySelector('.layout-main');
+    if (mainContent) mainContent.classList.add('page-loaded');
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted && mainContent) mainContent.classList.add('page-loaded');
+    });
+});
+
+/* ======================== MOBILE MENU ESCAPE KEY ======================== */
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        var menu = document.getElementById('mobile-menu');
+        if (menu && !menu.classList.contains('hidden')) {
+            toggleMobileMenu();
+        }
+    }
+});
+
+/* ======================== PAGE LOADER (navigation) ======================== */
+window.showPageLoader = function () {
+    var loader = document.getElementById('page-loader');
+    if (loader) loader.classList.add('active');
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a:not([data-no-loader])').forEach(function (a) {
+        var href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('javascript') || href.startsWith('http') || a.hasAttribute('data-no-loader')) return;
+        a.addEventListener('click', function (e) {
+            if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+            var loader = document.getElementById('page-loader');
+            if (loader) loader.classList.add('active');
+        });
+    });
+    var loader = document.getElementById('page-loader');
+    if (loader) loader.classList.remove('active');
+});

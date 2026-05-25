@@ -9,9 +9,9 @@
 
     {{-- Exibe erros de validação --}}
     @if ($errors->any())
-        <div x-data="{ show: true }" x-show="show" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative">
-            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" @click="show = false">
-                <i class="fas fa-times"></i>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative" id="err-edit-evento">
+            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" onclick="this.parentElement.remove()">
+                <x-icon name="times" class="w-4 h-4" />
             </button>
             <strong class="font-bold">Ops!</strong> Verifique os campos abaixo:
             <ul class="mt-2">
@@ -89,8 +89,8 @@
         {{-- Botões --}}
         <div class="flex justify-between items-center">
             <x-back-button :route="route('evento')" label="Voltar" />
-            <button type="submit" class="px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200">
-                <i class="fas fa-check-circle"></i> Atualizar Evento
+            <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200">
+                <x-icon name="check-circle" class="w-4 h-4" /> Atualizar Evento
             </button>
         </div>
     </form>

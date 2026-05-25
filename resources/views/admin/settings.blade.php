@@ -19,7 +19,7 @@
         <div class="lg:col-span-8 col-span-12">
             <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div class="bg-white py-3 border-b px-4">
-                    <h5 class="font-bold mb-0" style="color: #7a2f1f;"><i class="fas fa-cog me-2"></i> Informações Gerais da Associação</h5>
+                    <h5 class="font-bold mb-0" style="color: #7a2f1f;"><x-icon name="cog" class="w-4 h-4 me-2" /> Informações Gerais da Associação</h5>
                 </div>
                 <div class="p-4">
                     <form action="{{ route('admin.settings.update') }}" method="POST">
@@ -58,7 +58,7 @@
                         </div>
                         <div class="mt-4 pt-3 border-t flex justify-end">
                             <button type="submit" class="inline-block px-4 py-2 rounded-full font-semibold text-center no-underline text-white shadow-sm" style="background-color: #7a2f1f;">
-                                <i class="fas fa-save me-1"></i> Salvar Alterações
+                                <x-icon name="check" class="w-4 h-4 me-1" /> Salvar Alterações
                             </button>
                         </div>
                     </form>
@@ -70,20 +70,20 @@
         <div class="lg:col-span-4 col-span-12">
             <div class="bg-white rounded-xl shadow-sm mb-4">
                 <div class="p-4">
-                    <h5 class="font-bold mb-3" style="color: #7a2f1f;"><i class="fas fa-users-cog me-2"></i> Usuários & Permissões</h5>
+                    <h5 class="font-bold mb-3" style="color: #7a2f1f;"><x-icon name="user-cog" class="w-4 h-4 me-2" /> Usuários & Permissões</h5>
                     <p class="text-gray-500 text-sm">Gerencie o cadastro de administradores do sistema e visualize quem tem acesso à área protegida.</p>
                     <a href="{{ route('admin.usuarios') }}" class="inline-block px-4 py-2 rounded-full font-semibold text-center no-underline text-white w-full" style="background-color: #5C3A2C;">
-                        <i class="fas fa-external-link-alt me-1"></i> Gerenciar Usuários
+                        <x-icon name="sign-out" class="w-4 h-4 me-1" /> Gerenciar Usuários
                     </a>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm mb-4">
                 <div class="p-4">
-                    <h5 class="font-bold mb-3" style="color: #7a2f1f;"><i class="fas fa-database me-2"></i> Backup do Sistema</h5>
+                    <h5 class="font-bold mb-3" style="color: #7a2f1f;"><x-icon name="cubes" class="w-4 h-4 me-2" /> Backup do Sistema</h5>
                     <p class="text-gray-500 text-sm">Realize o backup completo de todas as tabelas e arquivos armazenados localmente de forma simples.</p>
                     <button class="inline-block px-4 py-2 rounded-full font-semibold text-center no-underline w-full border border-gray-400 text-gray-600 hover:bg-gray-50" disabled>
-                        <i class="fas fa-lock me-1"></i> Módulo Seguro (Em breve)
+                        <x-icon name="check-circle" class="w-4 h-4 me-1" /> Módulo Seguro (Em breve)
                     </button>
                 </div>
             </div>

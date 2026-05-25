@@ -8,7 +8,7 @@
 
     @if($vendas->isEmpty())
         <div class="text-center py-5">
-            <i class="fas fa-shopping-cart text-5xl text-gray-500 mb-3 block"></i>
+            <x-icon name="cart" class="w-12 h-12 text-gray-500 mb-3 block" />
             <p class="text-gray-500 text-lg">Nenhuma venda encontrada.</p>
         </div>
     @else
@@ -31,9 +31,9 @@
                             <td class="p-3 text-sm">{{ $v->cliente?->nome ?? 'N/A' }}</td>
                             <td class="p-3 text-sm font-semibold">R$ {{ number_format($v->valor_total, 2, ',', '.') }}</td>
                             <td class="p-3 text-sm">
-                                @if($v->mp_status === 'approved')
+                                @if($v->status_pagamento === 'approved')
                                     <x-badge type="success">Pago</x-badge>
-                                @elseif($v->mp_status === 'rejected')
+                                @elseif($v->status_pagamento === 'rejected')
                                     <x-badge type="danger">Rejeitado</x-badge>
                                 @else
                                     <x-badge type="pending">Pendente</x-badge>
@@ -43,14 +43,14 @@
                             <td class="p-3 text-sm text-right">
                                 <div class="flex justify-end gap-2">
                                     <a href="{{ route('admin.vendas.show', $v->id_venda) }}" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-blue-400 text-blue-600 hover:bg-blue-50 text-sm">
-                                        <i class="fas fa-eye"></i> Ver
+                                        <x-icon name="eye" class="w-4 h-4" /> Ver
                                     </a>
-                                    @if($v->mp_status !== 'approved')
+                                    @if($v->status_pagamento !== 'approved')
                                         <form action="{{ route('admin.vendas.destroy', $v->id_venda) }}" method="POST" class="m-0">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="return confirm('Tem certeza de que deseja excluir a venda #{{ $v->id_venda }}?')">
-                                                <i class="fas fa-trash"></i> Excluir
+                                            <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="var f=this.closest('form'); showConfirm('Tem certeza de que deseja excluir a venda #{{ $v->id_venda }}?',function(){f.submit();}); return false;">
+                                                <x-icon name="trash" class="w-4 h-4" /> Excluir
                                             </button>
                                         </form>
                                     @endif

@@ -6,12 +6,12 @@
         @section('content')
         <div class="w-full px-4 py-5">
             <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-                <i class="fas fa-arrow-left text-xs"></i> Voltar ao Painel
+                <x-icon name="arrow-left" class="w-3 h-3" /> Voltar ao Painel
             </a>
             <div class="flex items-center justify-between mb-4">
                 <h1 class="font-bold mb-0 text-brand text-2xl">Gerenciar Produtos</h1>
-                <a href="{{ route('produtos.create') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
-                    <i class="fa fa-plus mr-2"></i> Novo Produto
+                <a href="{{ route('produtos.create') }}" class="inline-flex items-center gap-2 text-white font-bold px-4 py-2 rounded-full shadow-sm bg-brand hover:bg-brand-dark transition no-underline">
+                    <x-icon name="plus" class="w-4 h-4" /> Novo Produto
                 </a>
             </div>
 
@@ -19,7 +19,7 @@
 
             @if($produtos->isEmpty())
                 <div class="text-center py-5">
-                    <i class="fa fa-box text-5xl text-gray-400 mb-3 block"></i>
+                    <x-icon name="box" class="w-12 h-12 text-gray-400 mb-3 block" />
                     <p class="text-gray-500 text-xl">Nenhum produto cadastrado.</p>
                 </div>
             @else
@@ -62,13 +62,13 @@
                                     <td class="p-3 text-right">
                                         <div class="flex justify-end gap-2">
                                             <a href="{{ route('produtos.edit', $produto->id_produto) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-yellow-400 text-yellow-600 rounded-lg hover:bg-yellow-400 hover:text-white transition no-underline">
-                                                <i class="fa fa-pencil"></i> Editar
+                                                <x-icon name="pencil" class="w-4 h-4" /> Editar
                                             </a>
                                             <form action="{{ route('produtos.destroy', $produto->id_produto) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 text-sm border border-red-400 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition" onclick="confirmarExclusao(this)">
-                                                    <i class="fa fa-trash"></i> Excluir
+                                                    <x-icon name="trash" class="w-4 h-4" /> Excluir
                                                 </button>
                                             </form>
                                         </div>
@@ -88,12 +88,12 @@
         @section('content')
         <div class="max-w-7xl mx-auto px-4 py-5">
             <a href="{{ route('artesan.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-                <i class="fas fa-arrow-left text-xs"></i> Voltar ao Painel
+                <x-icon name="arrow-left" class="w-3 h-3" /> Voltar ao Painel
             </a>
             <div class="flex items-center justify-between mb-4">
                 <h1 class="font-bold mb-0 text-brand text-2xl">Meus Produtos</h1>
-                <a href="{{ route('artesan.produtos.criar') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
-                    <i class="fa fa-plus mr-2"></i> Propor Novo Produto
+                <a href="{{ route('artesan.produtos.criar') }}" class="inline-flex items-center gap-2 text-white font-bold px-4 py-2 rounded-full shadow-sm bg-brand hover:bg-brand-dark transition no-underline">
+                    <x-icon name="plus" class="w-4 h-4" /> Propor Novo Produto
                 </a>
             </div>
 
@@ -101,7 +101,7 @@
 
             @if($produtos->isEmpty())
                 <div class="text-center py-5">
-                    <i class="fa fa-box text-5xl text-gray-400 mb-3 block"></i>
+                    <x-icon name="box" class="w-12 h-12 text-gray-400 mb-3 block" />
                     <p class="text-gray-500 text-xl">Você ainda não cadastrou ou propôs produtos.</p>
                     <p class="text-gray-400">Clique no botão acima para propor o seu primeiro produto de artesanato!</p>
                 </div>
@@ -145,7 +145,7 @@
     <div class="w-full px-3 py-2">
         <div class="max-w-7xl mx-auto">
             <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-2">
-                <i class="fas fa-arrow-left text-xs"></i> Voltar
+                <x-icon name="arrow-left" class="w-3 h-3" /> Voltar
             </a>
             <div class="flex flex-col lg:flex-row gap-3 mb-2 items-center relative" style="z-index: 40;">
                 <div class="flex-1 w-full lg:w-auto">
@@ -154,18 +154,18 @@
                             @if(request('categoria'))
                                 <input type="hidden" name="categoria" value="{{ request('categoria') }}">
                             @endif
-                            <div class="relative" x-data="{ catOpen: false }">
-                                <button type="button" @click.prevent="catOpen = !catOpen" @click.away="catOpen = false"
+                            <div class="relative" id="cat-dropdown">
+                                <button type="button" onclick="toggleCatDropdown()"
                                         class="flex items-center gap-2 px-4 py-3 text-sm font-bold text-brand rounded-l-full border-0 cursor-pointer" style="background-color: #f0eecf;">
-                                    <i class="fa fa-filter"></i>
+                                    <x-icon name="filter" class="w-4 h-4" />
                                     <span class="hidden sm:inline font-bold">Categorias</span>
                                 </button>
-                                <ul x-show="catOpen" x-transition
+                                <ul id="cat-menu"
                                     class="absolute left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 list-none p-2"
                                     style="display: none; min-width: 250px;">
                                     <li>
                                         <a class="block px-3 py-2 text-sm rounded-lg {{ !request('categoria') ? 'bg-gray-100 font-bold' : '' }} text-brand no-underline hover:bg-gray-100" href="{{ route('produtos', ['busca' => request('busca')]) }}">
-                                            <i class="fa fa-th-large mr-2 text-gray-400"></i> Todas as Categorias
+                                            <x-icon name="grid" class="w-4 h-4 mr-2 text-gray-400" /> Todas as Categorias
                                         </a>
                                     </li>
                                     <li><hr class="my-1 border-gray-200"></li>
@@ -183,17 +183,17 @@
                                    class="flex-1 border-0 px-4 py-3 text-base outline-none bg-transparent"
                                    placeholder="Buscar artesanatos..." value="{{ request('busca') }}">
                             <button type="submit" class="px-4 text-white rounded-r-full cursor-pointer border-0" style="background-color: #7a2f1f;">
-                                <i class="fa fa-search"></i>
+                                <x-icon name="search" class="w-4 h-4" />
                             </button>
                         </form>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
                     <span class="text-sm text-gray-500 font-bold bg-white px-3 py-2 rounded-full shadow-sm whitespace-nowrap">
-                        <i class="fa fa-box mr-1"></i> {{ $produtos->count() }} itens
+                        <x-icon name="box" class="w-4 h-4 mr-1" /> {{ $produtos->count() }} itens
                     </span>
                     <button class="text-white font-bold px-3 py-2 rounded-full shadow-sm relative cursor-pointer border-0" style="background-color: #7a2f1f;" onclick="abrirCarrinho()" title="Carrinho">
-                        <i class="fa fa-shopping-cart"></i>
+                        <x-icon name="cart" class="w-5 h-5" />
                         <span id="badge-carrinho" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full" style="display: none;">0</span>
                     </button>
                 </div>
@@ -201,7 +201,7 @@
 
             @if($produtos->isEmpty())
                 <div class="text-center py-5">
-                    <i class="fa fa-search text-5xl text-gray-400 mb-3 block"></i>
+                    <x-icon name="search" class="w-12 h-12 text-gray-400 mb-3 block" />
                     <p class="text-gray-500 text-xl">Nenhum produto cadastrado nesta categoria.</p>
                     <a href="{{ route('produtos') }}" class="mt-2 inline-block px-4 py-2 border border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100 no-underline">Ver tudo</a>
                 </div>
@@ -244,12 +244,12 @@
                         <div class="flex items-center justify-between mt-auto">
                             <span class="font-bold text-price text-lg">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
                             <div class="flex gap-1">
-                                <button class="w-7 h-7 flex items-center justify-center text-sm border border-brand-light text-brand-light rounded hover:bg-brand-light hover:text-white transition cursor-pointer" onclick="abrirDetalhes(this)" title="Ver Detalhes">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                                <button class="w-7 h-7 flex items-center justify-center text-sm text-white rounded cursor-pointer border-0" onclick="adicionarRapido(this)" title="Adicionar" style="background-color: #7a2f1f;">
-                                    <i class="fa fa-shopping-cart"></i>
-                                </button>
+                                 <button class="min-w-[44px] min-h-[44px] flex items-center justify-center text-sm border border-brand-light text-brand-light rounded hover:bg-brand-light hover:text-white transition cursor-pointer" onclick="abrirDetalhes(this)" title="Ver Detalhes">
+                                     <x-icon name="eye" class="w-4 h-4" />
+                                 </button>
+                                 <button class="min-w-[44px] min-h-[44px] flex items-center justify-center text-sm text-white rounded cursor-pointer border-0" onclick="adicionarRapido(this)" title="Adicionar" style="background-color: #7a2f1f;">
+                                     <x-icon name="cart" class="w-4 h-4" />
+                                 </button>
                             </div>
                         </div>
                     </div>
@@ -273,8 +273,8 @@
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="rounded-xl overflow-hidden shadow-sm h-80" style="background-color: #f8f9fa;">
-                        <img id="modal-img" src="" alt="" class="w-full h-full object-cover">
+                    <div class="rounded-xl overflow-hidden shadow-sm h-48 sm:h-64 md:h-80" style="background-color: #f8f9fa;">
+                        <img id="modal-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" class="w-full h-full object-cover">
                     </div>
                     <div class="flex flex-col">
                         <div class="text-2xl font-bold text-price mb-3" id="modal-preco"></div>
@@ -286,7 +286,7 @@
                                 <input type="number" id="modal-quantidade" class="w-20 text-center border border-gray-300 rounded-lg px-3 py-2" value="1" min="1">
                             </div>
                             <button class="w-full text-white font-bold px-4 py-3 rounded-lg cursor-pointer border-0 text-lg" style="background-color: #7a2f1f;" onclick="adicionarAoCarrinho()">
-                                <i class="fa fa-shopping-cart mr-2"></i> Adicionar
+                                <x-icon name="cart" class="w-5 h-5 mr-2" /> Adicionar
                             </button>
                         </div>
                     </div>
@@ -305,45 +305,25 @@
         </div>
     </div>
 
-    <div id="modal-guest-checkout" class="modal-overlay" onclick="if(event.target===this)hideModal('modal-guest-checkout')">
-        <div>
-            <div class="flex items-center justify-between px-6 pt-6 pb-0">
-                <h5 class="text-xl font-bold text-brand m-0">Finalizar Compra</h5>
-                <button onclick="hideModal('modal-guest-checkout')" class="text-3xl text-gray-400 hover:text-gray-600 leading-none bg-transparent border-0 cursor-pointer">&times;</button>
-            </div>
-            <div class="p-6">
-                <p class="text-gray-500 mb-3">Informe seus dados para finalizar o pedido:</p>
-                <div class="mb-3">
-                    <label for="guest_name" class="block font-semibold mb-1 text-sm">Nome Completo</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base" id="guest_name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="guest_email" class="block font-semibold mb-1 text-sm">E-mail</label>
-                    <input type="email" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base" id="guest_email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="guest_phone" class="block font-semibold mb-1 text-sm">Telefone (opcional)</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base" id="guest_phone" placeholder="(99) 99999-9999">
-                </div>
-                <div class="flex gap-2 mt-3">
-                    <button class="flex-1 text-white font-bold px-4 py-3 rounded-lg cursor-pointer border-0" style="background-color: #7a2f1f;" onclick="enviarCheckoutGuest()">
-                        <i class="fa fa-check-circle mr-1"></i> Confirmar Pedido
-                    </button>
-                    <button class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer bg-white" onclick="hideModal('modal-guest-checkout')">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     @endsection
 
     @section('scripts')
     <script>
+        function toggleCatDropdown() {
+            const menu = document.getElementById('cat-menu');
+            if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('cat-dropdown');
+            const menu = document.getElementById('cat-menu');
+            if (dd && menu && !dd.contains(e.target)) menu.style.display = 'none';
+        });
         window.Laravel = {
             auth: {{ auth()->check() ? 'true' : 'false' }},
-            checkoutUrl: '{{ route("checkout.store") }}',
             csrfToken: '{{ csrf_token() }}'
         };
     </script>
-    @vite('resources/js/cart.js')
+    <script src="{{ asset('js/cart.js') }}"></script>
     @endsection
 @endif

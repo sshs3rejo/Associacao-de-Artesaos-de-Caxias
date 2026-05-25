@@ -1,29 +1,24 @@
 <header>
-    <nav class="sticky top-0 z-50 py-2 transition-all duration-300"
-         :class="scrolled ? 'bg-brand shadow-lg' : 'bg-brand shadow-sm'"
-         x-data="{ open: false, scrolled: false }"
-         x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 40 }, { passive: true })">
+    <nav class="sticky top-0 z-50 py-2 bg-brand shadow-sm transition-all duration-300"
+         id="navbar-root">
         <div class="w-full px-2 sm:px-4">
             <div class="flex items-center justify-between">
                 <a class="flex items-center gap-1 sm:gap-2 no-underline" href="{{ route('home') }}">
                     <img src="{{ asset(config('association.logo')) }}" alt="Logo" class="h-8 sm:h-10" loading="lazy">
-                    <span class="font-bold text-sm sm:text-lg whitespace-nowrap text-accent">{{ config('association.name') }}</span>
+                    <span class="font-bold text-sm sm:text-lg text-accent whitespace-nowrap">{{ config('association.name') }}</span>
                 </a>
 
-                <button @click="open = !open" :aria-expanded="open"
-                        class="lg:hidden p-2 text-accent hover:text-accent-hover focus:outline-none">
-                    <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <svg x-show="open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+                <button onclick="toggleMobileMenu()"
+                         class="lg:hidden p-3 text-accent hover:text-accent-hover focus:outline-none cursor-pointer border-0 bg-transparent"
+                        aria-label="Menu">
+                    <x-icon name="menu" class="w-6 h-6" id="hamburger-icon" />
+                    <x-icon name="x" class="w-6 h-6 hidden" id="close-icon" />
                 </button>
 
                 <div class="hidden lg:flex lg:items-center lg:gap-2 xl:gap-4" id="navbarNav">
                     <ul class="flex flex-col lg:flex-row lg:items-center gap-1 lg:gap-2 xl:gap-4 ml-auto list-none m-0 p-0">
                         <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('home') }}">Home</a></li>
-                        <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('sobrenos') }}">Sobre nós</a></li>
+                        <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('sobrenos') }}">Sobre n&oacute;s</a></li>
                         <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('evento') }}">Eventos</a></li>
                         <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('produtos') }}">Produtos</a></li>
                         <li><a class="block px-5 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg lg:hover:bg-brand-dark/30" href="{{ route('contato') }}">Contato</a></li>
@@ -36,61 +31,81 @@
 
                         @auth
                             @if(auth()->user()->isAdmin())
-                                <li class="lg:mt-0 relative" x-data="{ adminOpen: false }">
-                                    <a href="#" @click.prevent="adminOpen = !adminOpen" @click.away="adminOpen = false"
-                                       class="flex items-center justify-center gap-2 px-3 py-2 rounded-full text-brand bg-accent font-semibold no-underline hover:bg-accent-hover transition">
-                                        <i class="fas fa-user-shield"></i>
+                                <li class="lg:mt-0 relative admin-dropdown-wrap">
+                                    <a href="#" onclick="toggleDropdown('admin-dropdown-menu'); return false;"
+                                       class="flex items-center justify-center gap-2 px-3 py-2 rounded-full text-brand bg-accent font-semibold no-underline hover:bg-accent-hover transition"
+                                       id="admin-toggle" aria-label="Menu do Administrador">
+                                        <x-icon name="user-shield" class="w-4 h-4" />
                                         <span class="font-bold hidden lg:inline">Admin</span>
-                                        <i class="fas fa-cog"></i>
+                                        <x-icon name="cog" class="w-4 h-4" />
                                     </a>
-                                    <ul x-show="adminOpen" x-transition
-                                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 list-none p-2"
+                                    <ul id="admin-dropdown-menu" class="admin-dropdown absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 list-none p-2"
                                         style="display: none;">
-                                        <li><span class="block px-3 py-2 text-sm font-bold text-brand text-center">Olá, {{ auth()->user()->name }}</span></li>
+                                        <li><span class="block px-3 py-2 text-sm font-bold text-brand text-center">Ol&aacute;, {{ auth()->user()->name }}</span></li>
                                         <li><hr class="my-1 border-gray-200"></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt w-5"></i> Dashboard Admin</a></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('produtos') }}"><i class="fas fa-box w-5"></i> Produtos</a></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('evento') }}"><i class="fas fa-calendar-alt w-5"></i> Eventos</a></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.artesao') }}"><i class="fas fa-users w-5"></i> Gerir Artesãos</a></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.usuarios') }}"><i class="fas fa-user-friends w-5"></i> Usuários</a></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.inscricoes') }}"><i class="fas fa-clipboard-list w-5"></i> Inscrições</a></li>
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.settings') }}"><i class="fas fa-tools w-5"></i> Configurações</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.dashboard') }}"><x-icon name="dashboard" class="w-5 h-5" /> Dashboard Admin</a></li>
+                                        <li><hr class="my-1 border-gray-200"></li>
+                                        <li><span class="block px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Gest&atilde;o</span></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('produtos') }}"><x-icon name="box" class="w-5 h-5" /> Produtos</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.categorias.index') }}"><x-icon name="tags" class="w-5 h-5" /> Categorias</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('evento') }}"><x-icon name="calendar" class="w-5 h-5" /> Eventos</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.oficinas.index') }}"><x-icon name="chalkboard" class="w-5 h-5" /> Oficinas</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.instrutores.index') }}"><x-icon name="user-tie" class="w-5 h-5" /> Instrutores</a></li>
+                                        <li><hr class="my-1 border-gray-200"></li>
+                                        <li><span class="block px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pessoas</span></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.artesao') }}"><x-icon name="users" class="w-5 h-5" /> Artes&atilde;os</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.usuarios') }}"><x-icon name="user-friends" class="w-5 h-5" /> Usu&aacute;rios</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.clientes.index') }}"><x-icon name="address-book" class="w-5 h-5" /> Clientes</a></li>
+                                        <li><hr class="my-1 border-gray-200"></li>
+                                        <li><span class="block px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Vendas &amp; Compras</span></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.vendas.index') }}"><x-icon name="cart" class="w-5 h-5" /> Vendas</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.inscricoes') }}"><x-icon name="clipboard-list" class="w-5 h-5" /> Inscri&ccedil;&otilde;es</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.inscricoes-oficina.index') }}"><x-icon name="clipboard-check" class="w-5 h-5" /> Insc. Oficinas</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.compras-materia-prima.index') }}"><x-icon name="truck" class="w-5 h-5" /> Compras Mat.-Prima</a></li>
+                                        <li><hr class="my-1 border-gray-200"></li>
+                                        <li><span class="block px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Suprimentos</span></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.fornecedores.index') }}"><x-icon name="handshake" class="w-5 h-5" /> Fornecedores</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.materias-primas.index') }}"><x-icon name="cubes" class="w-5 h-5" /> Mat&eacute;rias-Primas</a></li>
+                                        <li><hr class="my-1 border-gray-200"></li>
+                                        <li><span class="block px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sistema</span></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.contatos.index') }}"><x-icon name="envelope" class="w-5 h-5" /> Contatos (submiss&otilde;es)</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('admin.settings') }}"><x-icon name="tools" class="w-5 h-5" /> Configura&ccedil;&otilde;es</a></li>
                                         <li><hr class="my-1 border-gray-200"></li>
                                         <li>
                                             <form method="POST" action="{{ route('logout') }}" class="m-0">
                                                 @csrf
-                                                <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 font-bold rounded-lg hover:bg-red-50">
-                                                    <i class="fas fa-sign-out-alt w-5"></i> Sair
+                                                <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 font-bold rounded-lg hover:bg-red-50 cursor-pointer border-0 bg-transparent text-left">
+                                                    <x-icon name="sign-out" class="w-5 h-5" /> Sair
                                                 </button>
                                             </form>
                                         </li>
                                     </ul>
                                 </li>
                             @else
-                                <li class="lg:mt-0 relative" x-data="{ userOpen: false }">
-                                    <a href="#" @click.prevent="userOpen = !userOpen" @click.away="userOpen = false"
-                                       class="flex items-center justify-center gap-2 px-3 py-2 rounded-full text-brand bg-accent font-semibold no-underline hover:bg-accent-hover transition">
-                                        <i class="fas fa-user"></i>
+                                <li class="lg:mt-0 relative admin-dropdown-wrap">
+                                    <a href="#" onclick="toggleDropdown('user-dropdown-menu'); return false;"
+                                       class="flex items-center justify-center gap-2 px-3 py-2 rounded-full text-brand bg-accent font-semibold no-underline hover:bg-accent-hover transition"
+                                       id="user-toggle" aria-label="Menu do Usuário">
+                                        <x-icon name="user" class="w-4 h-4" />
                                         <span class="font-bold hidden lg:inline">Menu</span>
-                                        <i class="fas fa-chevron-down"></i>
+                                        <x-icon name="chevron-down" class="w-4 h-4" />
                                     </a>
-                                    <ul x-show="userOpen" x-transition
-                                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 list-none p-2"
+                                    <ul id="user-dropdown-menu" class="admin-dropdown absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 list-none p-2"
                                         style="display: none;">
-                                        <li><span class="block px-3 py-2 text-sm font-bold text-brand text-center">Olá, {{ auth()->user()->name }}</span></li>
+                                        <li><span class="block px-3 py-2 text-sm font-bold text-brand text-center">Ol&aacute;, {{ auth()->user()->name }}</span></li>
                                         <li><hr class="my-1 border-gray-200"></li>
                                         @if(auth()->user()->isArtisan())
-                                            <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('artesan.dashboard') }}"><i class="fas fa-tachometer-alt w-5"></i> Dashboard Artesão</a></li>
-                                            <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('produtos') }}"><i class="fas fa-box-open w-5"></i> Meus Produtos</a></li>
-                                            <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('evento') }}"><i class="fas fa-calendar-alt w-5"></i> Meus Eventos</a></li>
+                                            <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('artesan.dashboard') }}"><x-icon name="dashboard" class="w-5 h-5" /> Dashboard Artes&atilde;o</a></li>
+                                            <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('produtos') }}"><x-icon name="box-open" class="w-5 h-5" /> Meus Produtos</a></li>
+                                            <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('evento') }}"><x-icon name="calendar" class="w-5 h-5" /> Meus Eventos</a></li>
                                         @endif
-                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('user.perfil') }}"><i class="fas fa-id-card w-5"></i> Meu Perfil</a></li>
+                                        <li><a class="flex items-center gap-2 px-3 py-2 text-sm text-brand rounded-lg hover:bg-gray-100 no-underline" href="{{ route('user.perfil') }}"><x-icon name="id-card" class="w-5 h-5" /> Meu Perfil</a></li>
                                         <li><hr class="my-1 border-gray-200"></li>
                                         <li>
                                             <form method="POST" action="{{ route('logout') }}" class="m-0">
                                                 @csrf
-                                                <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 font-bold rounded-lg hover:bg-red-50">
-                                                    <i class="fas fa-sign-out-alt w-5"></i> Sair
+                                                <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 font-bold rounded-lg hover:bg-red-50 cursor-pointer border-0 bg-transparent text-left">
+                                                    <x-icon name="sign-out" class="w-5 h-5" /> Sair
                                                 </button>
                                             </form>
                                         </li>
@@ -102,13 +117,13 @@
                 </div>
             </div>
 
-            <div x-show="open" x-transition class="lg:hidden mt-2 bg-brand-dark/30 rounded-xl p-4">
+            <div id="mobile-menu" class="lg:hidden mt-2 bg-brand-dark/30 rounded-xl p-4 hidden mobile-menu-scroll">
                 <ul class="flex flex-col gap-1 list-none m-0 p-0">
-                    <li><a class="block px-4 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('home') }}">Home</a></li>
-                    <li><a class="block px-4 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('sobrenos') }}">Sobre nós</a></li>
-                    <li><a class="block px-4 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('evento') }}">Eventos</a></li>
-                    <li><a class="block px-4 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}">Produtos</a></li>
-                    <li><a class="block px-4 py-2.5 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('contato') }}">Contato</a></li>
+                    <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('home') }}">Home</a></li>
+                    <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('sobrenos') }}">Sobre n&oacute;s</a></li>
+                    <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('evento') }}">Eventos</a></li>
+                    <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}">Produtos</a></li>
+                    <li><a class="block px-4 py-3 text-accent font-semibold no-underline hover:text-accent-hover rounded-lg hover:bg-brand-dark/30" href="{{ route('contato') }}">Contato</a></li>
 
                     @guest
                         <li class="mt-2">
@@ -118,25 +133,37 @@
 
                     @auth
                         <li class="mt-3 pt-3 border-t border-accent/20">
-                            <span class="block text-sm text-accent/80 px-4 mb-1">Olá, {{ auth()->user()->name }}</span>
+                            <span class="block text-sm text-accent/80 px-4 mb-1">Ol&aacute;, {{ auth()->user()->name }}</span>
                         </li>
                         @if(auth()->user()->isAdmin())
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a></li>
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.artesao') }}"><i class="fas fa-users w-5"></i> Gerir Artesãos</a></li>
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.usuarios') }}"><i class="fas fa-user-friends w-5"></i> Usuários</a></li>
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.inscricoes') }}"><i class="fas fa-clipboard-list w-5"></i> Inscrições</a></li>
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.settings') }}"><i class="fas fa-tools w-5"></i> Configurações</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.dashboard') }}"><x-icon name="dashboard" class="w-5 h-5" /> Dashboard</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}"><x-icon name="box" class="w-5 h-5" /> Produtos</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.categorias.index') }}"><x-icon name="tags" class="w-5 h-5" /> Categorias</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('evento') }}"><x-icon name="calendar" class="w-5 h-5" /> Eventos</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.oficinas.index') }}"><x-icon name="chalkboard" class="w-5 h-5" /> Oficinas</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.instrutores.index') }}"><x-icon name="user-tie" class="w-5 h-5" /> Instrutores</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.artesao') }}"><x-icon name="users" class="w-5 h-5" /> Artes&atilde;os</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.usuarios') }}"><x-icon name="user-friends" class="w-5 h-5" /> Usu&aacute;rios</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.clientes.index') }}"><x-icon name="address-book" class="w-5 h-5" /> Clientes</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.vendas.index') }}"><x-icon name="cart" class="w-5 h-5" /> Vendas</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.inscricoes') }}"><x-icon name="clipboard-list" class="w-5 h-5" /> Inscri&ccedil;&otilde;es</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.inscricoes-oficina.index') }}"><x-icon name="clipboard-check" class="w-5 h-5" /> Insc. Oficinas</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.compras-materia-prima.index') }}"><x-icon name="truck" class="w-5 h-5" /> Compras Mat.-Prima</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.fornecedores.index') }}"><x-icon name="handshake" class="w-5 h-5" /> Fornecedores</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.materias-primas.index') }}"><x-icon name="cubes" class="w-5 h-5" /> Mat&eacute;rias-Primas</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.contatos.index') }}"><x-icon name="envelope" class="w-5 h-5" /> Contatos (submiss&otilde;es)</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('admin.settings') }}"><x-icon name="tools" class="w-5 h-5" /> Configura&ccedil;&otilde;es</a></li>
                         @elseif(auth()->user()->isArtisan())
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('artesan.dashboard') }}"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a></li>
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}"><i class="fas fa-box-open w-5"></i> Meus Produtos</a></li>
-                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('evento') }}"><i class="fas fa-calendar-alt w-5"></i> Meus Eventos</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('artesan.dashboard') }}"><x-icon name="dashboard" class="w-5 h-5" /> Dashboard</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('produtos') }}"><x-icon name="box-open" class="w-5 h-5" /> Meus Produtos</a></li>
+                            <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('evento') }}"><x-icon name="calendar" class="w-5 h-5" /> Meus Eventos</a></li>
                         @endif
-                        <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('user.perfil') }}"><i class="fas fa-id-card w-5"></i> Meu Perfil</a></li>
+                        <li><a class="flex items-center gap-2 px-4 py-2 text-accent no-underline rounded-lg hover:bg-brand-dark/30" href="{{ route('user.perfil') }}"><x-icon name="id-card" class="w-5 h-5" /> Meu Perfil</a></li>
                         <li class="mt-2 pt-2 border-t border-accent/20">
                             <form method="POST" action="{{ route('logout') }}" class="m-0">
                                 @csrf
-                                <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 text-red-300 font-bold rounded-lg hover:bg-brand-dark/30 text-left">
-                                    <i class="fas fa-sign-out-alt w-5"></i> Sair
+                                <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 text-red-300 font-bold rounded-lg hover:bg-brand-dark/30 text-left cursor-pointer border-0 bg-transparent">
+                                    <x-icon name="sign-out" class="w-5 h-5" /> Sair
                                 </button>
                             </form>
                         </li>

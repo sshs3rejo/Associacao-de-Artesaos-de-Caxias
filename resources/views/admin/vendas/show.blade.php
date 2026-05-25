@@ -9,7 +9,7 @@
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-bold text-brand">Venda #{{ $venda->id_venda }}</h1>
             <a href="{{ route('admin.vendas.index') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors">
-                <i class="fas fa-arrow-left"></i> Voltar
+                <x-icon name="arrow-left" class="w-4 h-4" /> Voltar
             </a>
         </div>
 
@@ -28,9 +28,9 @@
             <div>
                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Status do Pagamento</h3>
                 <p class="mt-1">
-                    @if($venda->mp_status === 'approved')
+                    @if($venda->status_pagamento === 'approved')
                         <x-badge type="success">Aprovado</x-badge>
-                    @elseif($venda->mp_status === 'rejected')
+                    @elseif($venda->status_pagamento === 'rejected')
                         <x-badge type="danger">Rejeitado</x-badge>
                     @else
                         <x-badge type="pending">Pendente</x-badge>
@@ -41,14 +41,7 @@
                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Data</h3>
                 <p class="text-gray-800">{{ \Carbon\Carbon::parse($venda->created_at)->format('d/m/Y H:i') }}</p>
             </div>
-            <div>
-                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">MP Preference ID</h3>
-                <p class="text-gray-800 text-sm">{{ $venda->mp_preference_id ?? '—' }}</p>
-            </div>
-            <div>
-                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">MP Payment ID</h3>
-                <p class="text-gray-800 text-sm">{{ $venda->mp_payment_id ?? '—' }}</p>
-            </div>
+
         </div>
     </div>
 

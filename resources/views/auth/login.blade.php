@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - {{ config('association.name') }}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -19,7 +17,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         body {
@@ -33,7 +31,7 @@
         }
 
         .container {
-            width: 100vw;
+            width: 100%;
             height: 100vh;
             display: flex;
             position: relative;
@@ -194,17 +192,16 @@
             body {
                 background: linear-gradient(135deg, #7a2f1f 0%, #4a1d13 100%);
                 padding: 0;
-                overflow: hidden;
-                height: 100dvh;
+                overflow-y: auto;
             }
             .container {
                 height: 100dvh;
                 flex-direction: column;
                 background: transparent;
                 width: 100%;
-                overflow: hidden;
+                overflow-y: auto;
             }
-            .foto { display: none !important; }
+            .foto { display: none; }
             .esquerda, .direita {
                 width: 100%;
                 height: 100dvh;

@@ -4,24 +4,40 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CategoriasProdutos;
+use App\Models\Cliente;
+use App\Models\Contato;
 use App\Models\Eventos;
+use App\Models\Fornecedores;
 use App\Models\InscricoesEvento;
 use App\Models\Instrutores;
+use App\Models\MateriasPrimas;
+use App\Models\Oficina;
 use App\Models\Produto;
 use App\Models\User;
 use App\Models\Vendas;
+use Illuminate\Support\Facades\Cache;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $stats = [
-            'produtos' => Produto::count(),
-            'eventos' => Eventos::count(),
-            'categorias' => CategoriasProdutos::count(),
-            'usuariosAdmin' => User::where('role', 'admin')->count(),
-            'usuariosAtivos' => User::where('is_active', true)->count(),
-        ];
+        $stats = Cache::remember('dashboard_stats', 60, function () {
+            return [
+                'produtos' => Produto::count(),
+                'eventos' => Eventos::count(),
+                'categorias' => CategoriasProdutos::count(),
+                'usuariosAdmin' => User::where('role', 'admin')->count(),
+                'usuariosAtivos' => User::where('is_active', true)->count(),
+                'artesos' => User::where('role', 'artisan')->count(),
+                'clientes' => Cliente::count(),
+                'vendas' => Vendas::count(),
+                'oficinas' => Oficina::count(),
+                'instrutores' => Instrutores::count(),
+                'fornecedores' => Fornecedores::count(),
+                'materiasPrimas' => MateriasPrimas::count(),
+                'contatos' => Contato::count(),
+            ];
+        });
 
         $vendas = Vendas::with(['cliente'])->orderBy('data_venda', 'desc')->paginate(10);
 
@@ -54,9 +70,15 @@ class AdminDashboardController extends Controller
         return view('admin.inscricoes', compact('inscricoes'));
     }
 
+    public function destroyInscricao(InscricoesEvento $inscricao)
+    {
+        $inscricao->delete();
+        return redirect()->back()->with('success', 'Inscrição cancelada com sucesso.');
+    }
+
     public function aprovarVenda(Vendas $venda)
     {
-        $venda->update(['mp_status' => 'approved']);
+        $venda->update(['status_pagamento' => 'approved']);
         return redirect()->back()->with('success', 'Pagamento do pedido #' . $venda->id_venda . ' confirmado com sucesso!');
     }
 

@@ -8,9 +8,9 @@
     <h1 class="text-2xl font-bold text-brand mb-6">Nova Oficina</h1>
 
     @if ($errors->any())
-        <div x-data="{ show: true }" x-show="show" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative">
-            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" @click="show = false">
-                <i class="fas fa-times"></i>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative" id="err-box">
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-700 hover:text-red-900 cursor-pointer border-0 bg-transparent">
+                <x-icon name="times" class="w-4 h-4" />
             </button>
             <strong class="font-bold">Ops!</strong> Corrija os campos abaixo:
             <ul class="mt-2">
@@ -45,7 +45,7 @@
 
         <div class="flex justify-between items-center">
             <x-back-button :route="route('admin.oficinas.index')" label="Cancelar" />
-            <button type="submit" class="px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200">Salvar Oficina</button>
+            <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200"><x-icon name="check-circle" class="w-4 h-4" /> Salvar Oficina</button>
         </div>
     </form>
 </div>

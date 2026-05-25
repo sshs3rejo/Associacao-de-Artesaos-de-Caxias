@@ -8,16 +8,16 @@
     <h1 class="text-2xl font-bold text-brand mb-6">Propor Novo Produto</h1>
 
     <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
-        <i class="fas fa-info-circle text-lg"></i>
+        <x-icon name="info" class="w-5 h-5" />
         <div>
             <strong>Nota de Aprovação:</strong> Ao salvar, seu produto será cadastrado como **"Aguardando Aprovação"**. O administrador da Associação revisará os dados e imagem antes de torná-lo público na vitrine.
         </div>
     </div>
 
     @if ($errors->any())
-        <div x-data="{ show: true }" x-show="show" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative">
-            <button type="button" class="absolute top-2 right-2 text-red-700 hover:text-red-900" @click="show = false">
-                <i class="fas fa-times"></i>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 relative" id="err-box">
+            <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-700 hover:text-red-900 cursor-pointer border-0 bg-transparent">
+                <x-icon name="times" class="w-4 h-4" />
             </button>
             <strong class="font-bold">Ops!</strong> Corrija os erros abaixo:
             <ul class="mt-2 mb-0">
@@ -54,7 +54,7 @@
             <div class="flex gap-2 mb-2">
                 <input class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none @error('imagem') border-red-500 @enderror" type="file" id="imagem" name="imagem" accept="image/*" capture="environment" onchange="previewImagem(this)">
                 <button type="button" class="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-600" onclick="document.getElementById('imagem').click()" title="Tirar Foto">
-                    <i class="fas fa-camera"></i>
+                    <x-icon name="camera" class="w-5 h-5" />
                 </button>
             </div>
             <div id="preview-imagem" class="mt-2" style="display:none;">
@@ -66,7 +66,7 @@
         {{-- Botões --}}
         <div class="flex justify-between items-center">
             <x-back-button :route="route('produtos')" label="Voltar" />
-            <button type="submit" class="px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200">Propor Produto</button>
+            <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold transition duration-200"><x-icon name="check-circle" class="w-4 h-4" /> Propor Produto</button>
         </div>
     </form>
 </div>

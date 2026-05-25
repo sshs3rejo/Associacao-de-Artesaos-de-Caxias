@@ -6,6 +6,7 @@ use App\Models\Eventos;
 use App\Models\InscricoesEvento;
 use App\Models\Instrutores;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class EventoController extends Controller
@@ -26,10 +27,12 @@ class EventoController extends Controller
             return view('eventos', compact('inscricoes', 'eventosPropostos'));
         }
 
-        $eventos = Eventos::approved()->where('status', '!=', 'cancelado')
-            ->where('data_inicio', '>=', now())
-            ->orderBy('data_inicio', 'asc')
-            ->get();
+        $eventos = Cache::remember('eventos_publicos', 300, function () {
+            return Eventos::approved()->where('status', '!=', 'cancelado')
+                ->where('data_inicio', '>=', now())
+                ->orderBy('data_inicio', 'asc')
+                ->get();
+        });
 
         return view('eventos', ['eventos' => $eventos]);
     }

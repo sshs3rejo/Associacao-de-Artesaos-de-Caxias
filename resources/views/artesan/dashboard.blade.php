@@ -7,7 +7,7 @@
     <x-breadcrumb :items="[['Home', route('home')], ['Dashboard Artesão']]" />
     <div class="flex items-center gap-3 mb-5">
         <div class="rounded-full p-3 shadow-sm" style="background-color: #F9F7D3;">
-            <i class="fas fa-user-tie text-3xl" style="color: #7a2f1f;"></i>
+            <x-icon name="user-tie" class="w-8 h-8" style="color: #7a2f1f;" />
         </div>
         <div>
             <h1 class="font-bold mb-1 text-2xl" style="color: #7a2f1f;">Olá, {{ $user->name }}!</h1>
@@ -25,7 +25,7 @@
         <div class="md:col-span-4 col-span-12">
             <div class="bg-white rounded-xl shadow-sm h-full">
                 <div class="text-center p-4">
-                    <i class="fas fa-box-open text-5xl mb-3" style="color: #7a2f1f;"></i>
+                    <x-icon name="box-open" class="w-12 h-12 mb-3" style="color: #7a2f1f;" />
                     <h3 class="text-base font-bold">{{ $totalProdutos }}</h3>
                     <p class="text-gray-500 text-sm mb-0">Meus Produtos</p>
                 </div>
@@ -34,7 +34,7 @@
         <div class="md:col-span-4 col-span-12">
             <div class="bg-white rounded-xl shadow-sm h-full">
                 <div class="text-center p-4">
-                    <i class="fas fa-calendar-check text-5xl mb-3" style="color: #7a2f1f;"></i>
+                    <x-icon name="calendar-check" class="w-12 h-12 mb-3" style="color: #7a2f1f;" />
                     <h3 class="text-base font-bold">{{ $eventosInscritos }}</h3>
                     <p class="text-gray-500 text-sm mb-0">Eventos Inscritos</p>
                 </div>
@@ -43,7 +43,7 @@
         <div class="md:col-span-4 col-span-12">
             <div class="bg-white rounded-xl shadow-sm h-full">
                 <div class="text-center p-4">
-                    <i class="fas fa-star text-5xl mb-3" style="color: #7a2f1f;"></i>
+                    <x-icon name="star" class="w-12 h-12 mb-3" style="color: #7a2f1f;" />
                     <h3 class="text-base font-bold">{{ $perfil && $perfil->is_public ? 'Público' : 'Privado' }}</h3>
                     <p class="text-gray-500 text-sm mb-0">Status do Perfil</p>
                 </div>
@@ -57,7 +57,7 @@
                 <div class="bg-white rounded-xl shadow-sm h-full transition duration-200 hover:-translate-y-1 hover:shadow-md">
                     <div class="p-4">
                         <div class="flex items-center gap-3">
-                            <i class="fas fa-boxes text-4xl" style="color: #7a2f1f;"></i>
+                            <x-icon name="boxes" class="w-10 h-10" style="color: #7a2f1f;" />
                             <div>
                                 <h4 class="text-sm font-bold mb-1" style="color: #7a2f1f;">Meus Produtos</h4>
                                 <p class="text-gray-500 text-sm mb-0">Gerenciar produtos</p>
@@ -72,7 +72,7 @@
                 <div class="bg-white rounded-xl shadow-sm h-full transition duration-200 hover:-translate-y-1 hover:shadow-md">
                     <div class="p-4">
                         <div class="flex items-center gap-3">
-                            <i class="fas fa-calendar-alt text-4xl" style="color: #7a2f1f;"></i>
+                            <x-icon name="calendar" class="w-10 h-10" style="color: #7a2f1f;" />
                             <div>
                                 <h4 class="text-sm font-bold mb-1" style="color: #7a2f1f;">Meus Eventos</h4>
                                 <p class="text-gray-500 text-sm mb-0">Inscrições em eventos</p>
@@ -87,7 +87,7 @@
                 <div class="bg-white rounded-xl shadow-sm h-full transition duration-200 hover:-translate-y-1 hover:shadow-md">
                     <div class="p-4">
                         <div class="flex items-center gap-3">
-                            <i class="fas fa-user-cog text-4xl" style="color: #7a2f1f;"></i>
+                            <x-icon name="user-cog" class="w-10 h-10" style="color: #7a2f1f;" />
                             <div>
                                 <h4 class="text-sm font-bold mb-1" style="color: #7a2f1f;">Meu Perfil</h4>
                                 <p class="text-gray-500 text-sm mb-0">Editar perfil público</p>
@@ -104,7 +104,7 @@
         <div class="col-span-12">
             <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div class="bg-white py-3 border-b px-4">
-                    <h5 class="font-bold mb-0" style="color: #7a2f1f;"><i class="fas fa-receipt me-2"></i> Registro de Vendas dos Meus Produtos</h5>
+                    <h5 class="font-bold mb-0" style="color: #7a2f1f;"><x-icon name="receipt" class="w-5 h-5 me-2" /> Registro de Vendas dos Meus Produtos</h5>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -133,14 +133,14 @@
                                 <td class="px-4 py-3 text-sm">
                                     @if($itemVenda->venda->cliente && $itemVenda->venda->cliente->telefone)
                                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $itemVenda->venda->cliente->telefone) }}" target="_blank" class="inline-block px-2 py-0 rounded-full font-semibold text-center no-underline border border-green-500 text-green-600 hover:bg-green-50 text-xs">
-                                            <i class="fab fa-whatsapp"></i> WhatsApp
+                                            <x-icon name="whatsapp" class="w-4 h-4" /> WhatsApp
                                         </a>
                                     @else
                                         <span class="text-gray-500 text-sm">N/A</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-sm">
-                                    @if($itemVenda->venda->mp_status === 'approved')
+                                    @if($itemVenda->venda->status_pagamento === 'approved')
                                         <x-badge type="success">Pago</x-badge>
                                     @else
                                         <x-badge type="pending">Aguardando</x-badge>

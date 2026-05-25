@@ -4,7 +4,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-5">
     <a href="{{ route('artesan.dashboard') }}" class="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-medium transition-colors mb-3">
-        <i class="fas fa-arrow-left text-xs"></i> Voltar ao Painel
+        <x-icon name="arrow-left" class="w-3 h-3" /> Voltar ao Painel
     </a>
     <div class="flex justify-center">
         <div class="w-full lg:w-2/3">
@@ -67,7 +67,7 @@
 
                         <div class="mt-4">
                             <button type="submit" class="inline-block px-4 py-2 rounded-lg font-semibold px-5 font-bold bg-brand text-accent">
-                                <i class="fas fa-check me-2"></i>Salvar Perfil
+                                <x-icon name="check" class="w-4 h-4 me-2" />Salvar Perfil
                             </button>
                         </div>
                     </form>

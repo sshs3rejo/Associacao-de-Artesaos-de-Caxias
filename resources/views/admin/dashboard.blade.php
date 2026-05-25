@@ -28,8 +28,28 @@
             </a>
         </article>
         <article class="dashboard-card">
-            <h3>Categorias de produtos</h3>
-            <strong>{{ $stats['categorias'] }}</strong>
+            <a href="{{ route('admin.categorias.index') }}">
+                <h3>Categorias de produtos</h3>
+                <strong>{{ $stats['categorias'] }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.vendas.index') }}">
+                <h3>Vendas</h3>
+                <strong>{{ $stats['vendas'] }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.clientes.index') }}">
+                <h3>Clientes</h3>
+                <strong>{{ $stats['clientes'] ?? 0 }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.artesao') }}">
+                <h3>Artesãos</h3>
+                <strong>{{ $stats['artesos'] }}</strong>
+            </a>
         </article>
         <article class="dashboard-card">
             <a href="{{ route('admin.usuarios') }}">
@@ -41,6 +61,36 @@
             <a href="{{ route('admin.usuarios') }}">
                 <h3>Usuários ativos</h3>
                 <strong>{{ $stats['usuariosAtivos'] }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.oficinas.index') }}">
+                <h3>Oficinas</h3>
+                <strong>{{ $stats['oficinas'] ?? 0 }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.instrutores.index') }}">
+                <h3>Instrutores</h3>
+                <strong>{{ $stats['instrutores'] }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.fornecedores.index') }}">
+                <h3>Fornecedores</h3>
+                <strong>{{ $stats['fornecedores'] ?? 0 }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.materias-primas.index') }}">
+                <h3>Matérias-Primas</h3>
+                <strong>{{ $stats['materiasPrimas'] ?? 0 }}</strong>
+            </a>
+        </article>
+        <article class="dashboard-card">
+            <a href="{{ route('admin.contatos.index') }}">
+                <h3>Contatos</h3>
+                <strong>{{ $stats['contatos'] ?? 0 }}</strong>
             </a>
         </article>
     </section>
@@ -72,7 +122,7 @@
                                 <td class="px-4 py-3 text-sm">{{ \Carbon\Carbon::parse($venda->data_venda)->format('d/m/Y') }}</td>
                                 <td class="px-4 py-3 text-sm">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
                                 <td class="px-4 py-3 text-sm">
-                                    @if($venda->mp_status === 'approved')
+                                    @if($venda->status_pagamento === 'approved')
                                         <x-badge type="success">Pago</x-badge>
                                     @else
                                         <x-badge type="pending">Pendente</x-badge>
@@ -80,16 +130,16 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm text-right">
                                     <div class="flex justify-end items-center gap-2">
-                                        @if($venda->mp_status !== 'approved')
+                                        @if($venda->status_pagamento !== 'approved')
                                         <form action="{{ route('admin.vendas.aprovar', $venda->id_venda) }}" method="POST" class="inline m-0 p-0">
                                             @csrf
                                             <button type="submit" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg font-semibold text-white shadow-sm bg-green-500 hover:bg-green-600 no-underline text-center" style="font-size: 0.75rem; border: none;">
-                                                <i class="fas fa-check"></i> Aprovar Pix
+                                                <x-icon name="check" class="w-4 h-4" /> Aprovar Pix
                                             </button>
                                         </form>
                                         @endif
                                         <button class="inline-flex items-center justify-center p-0 border border-gray-400 text-gray-600 hover:bg-gray-50 rounded-lg no-underline text-center font-semibold" title="Itens do Pedido: @foreach($venda->itens as $item) {{ $item->produto->nome }} x{{ $item->quantidade }}; @endforeach" style="width: 28px; height: 28px;">
-                                            <i class="fas fa-info-circle"></i>
+                                            <x-icon name="info" class="w-4 h-4" />
                                         </button>
                                     </div>
                                 </td>
@@ -115,7 +165,7 @@
         <div class="col-span-12">
             <div class="data-table p-0">
                 <div class="p-4 border-b flex items-center justify-between">
-                    <h2 class="text-lg mb-0 font-bold" style="color: #7a2f1f;"><i class="fas fa-boxes me-2"></i> Propostas de Produtos Pendentes</h2>
+                    <h2 class="text-lg mb-0 font-bold" style="color: #7a2f1f;"><x-icon name="boxes" class="w-5 h-5 me-2" /> Propostas de Produtos Pendentes</h2>
                     <x-badge type="pending" size="md">{{ $produtosPendentes->total() }} aguardando</x-badge>
                 </div>
                 <div class="overflow-x-auto">
@@ -166,7 +216,7 @@
         <div class="col-span-12">
             <div class="data-table p-0">
                 <div class="p-4 border-b flex items-center justify-between">
-                    <h2 class="text-lg mb-0 font-bold" style="color: #7a2f1f;"><i class="fas fa-calendar-alt me-2"></i> Propostas de Eventos Pendentes</h2>
+                    <h2 class="text-lg mb-0 font-bold" style="color: #7a2f1f;"><x-icon name="calendar" class="w-5 h-5 me-2" /> Propostas de Eventos Pendentes</h2>
                     <x-badge type="pending" size="md">{{ $eventosPendentes->total() }} aguardando</x-badge>
                 </div>
                 <div class="overflow-x-auto">

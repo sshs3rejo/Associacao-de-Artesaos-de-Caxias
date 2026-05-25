@@ -12,7 +12,7 @@
 
     @if($contatos->isEmpty())
         <div class="text-center py-5">
-            <i class="fas fa-envelope text-5xl text-gray-500 mb-3 block"></i>
+            <x-icon name="envelope" class="w-12 h-12 text-gray-500 mb-3 mx-auto block" />
             <p class="text-gray-500 text-lg">Nenhuma mensagem recebida ainda.</p>
         </div>
     @else
@@ -33,9 +33,9 @@
                         <tr class="hover:bg-gray-50 transition-colors {{ $contato->lido ? '' : 'font-semibold' }}">
                             <td class="p-3 text-sm">
                                 @if($contato->lido)
-                                    <span class="text-green-600"><i class="fas fa-check-circle"></i> Lido</span>
+                                    <span class="text-green-600"><x-icon name="check-circle" class="w-4 h-4" /> Lido</span>
                                 @else
-                                    <span class="text-yellow-600"><i class="fas fa-envelope"></i> Novo</span>
+                                    <span class="text-yellow-600"><x-icon name="envelope" class="w-4 h-4" /> Novo</span>
                                 @endif
                             </td>
                             <td class="p-3 text-sm">{{ $contato->nome }}</td>
@@ -45,13 +45,13 @@
                             <td class="p-3 text-sm text-right">
                                 <div class="flex justify-end gap-2">
                                     <a href="{{ route('admin.contatos.show', $contato->id) }}" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-blue-400 text-blue-600 hover:bg-blue-50 text-sm">
-                                        <i class="fa fa-eye"></i> Ver
+                                        <x-icon name="eye" class="w-4 h-4" /> Ver
                                     </a>
                                     <form action="{{ route('admin.contatos.destroy', $contato->id) }}" method="POST" class="m-0">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="return confirm('Tem certeza de que deseja excluir esta mensagem?')">
-                                            <i class="fa fa-trash"></i> Excluir
+                                        <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="var f=this.closest('form'); showConfirm('Tem certeza de que deseja excluir esta mensagem?',function(){f.submit();}); return false;">
+                                            <x-icon name="trash" class="w-4 h-4" /> Excluir
                                         </button>
                                     </form>
                                 </div>
