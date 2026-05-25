@@ -158,7 +158,7 @@
                 <div id="evt-content-inscricoes" style="display: none;">
                     @if($inscricoes->isEmpty())
                         <div class="text-center py-5">
-                            <x-icon name="times-circle" class="w-14 h-14 text-gray-400 mb-3 block" />
+                            <x-icon name="calendar" class="w-14 h-14 text-gray-400 mb-3 block" />
                             <p class="text-gray-500 text-xl">Você não está inscrito em nenhum evento.</p>
                             <a href="{{ route('evento') }}" class="inline-block text-white font-bold px-4 py-2 rounded-full shadow-sm" style="background-color: #7a2f1f;">
                                 Ver Eventos Disponíveis
@@ -231,7 +231,7 @@
             <div class="w-full max-w-7xl">
                 @if($eventos->isEmpty())
                     <div class="text-center py-5 bg-white rounded-xl shadow-sm" style="border: 1px dashed rgba(122, 47, 31, 0.2);">
-                        <x-icon name="times-circle" class="w-14 h-14 mb-3" style="color: #d1b8a4;" />
+                        <x-icon name="calendar" class="w-14 h-14 mb-3" style="color: #d1b8a4;" />
                         <h3 class="font-semibold text-brand">Nenhum evento no momento</h3>
                         <p class="text-gray-500 text-xl">Fique de olho! Em breve teremos novidades.</p>
                     </div>
