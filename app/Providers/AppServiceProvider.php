@@ -19,6 +19,14 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Ensure storage symlink exists (Railway/cloud deploys)
+        $publicStorage = public_path('storage');
+        if (!file_exists($publicStorage)) {
+            try {
+                app('files')->link(storage_path('app/public'), $publicStorage);
+            } catch (\Throwable) {}
+        }
+
         // Force HTTPS URLs in production (except localhost)
         if (config('app.env') === 'production' && !str_starts_with(config('app.url'), 'http://localhost')) {
             URL::forceScheme('https');
