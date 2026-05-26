@@ -23,6 +23,10 @@
 
 @section('titulo', $pageTitle)
 
+@section('style')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" integrity="sha512-8HZ2eQgY1rAI4NcD3B7MNCsWlsPjeVc6sW4Nm3Rw0oAUss/lEZf+UYQQp5bXG9OZqgIh15fHZC/mU4cFok3DQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
 @section('content')
 <div class="max-w-4xl mx-auto my-10 bg-white rounded-2xl shadow-lg px-8 py-10 transition-all duration-300 hover:shadow-xl">
     <h1 class="text-2xl font-bold text-brand mb-2">{{ $pageTitle }}</h1>
@@ -195,13 +199,49 @@
     </div>
 </div>
 
+{{-- Modal Corte de Imagem --}}
+<div id="modal-corte-imagem" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60" style="backdrop-filter: blur(4px);">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-4 relative flex flex-col" style="max-height: 90vh;">
+        <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4 rounded-t-2xl shrink-0">
+            <h3 class="text-lg font-bold text-brand m-0 flex items-center gap-2">
+                <i class="fas fa-crop-alt" style="font-size:18px"></i>
+                 Ajustar Imagem
+            </h3>
+            <button type="button" onclick="fecharModalCorte()" class="text-gray-400 hover:text-gray-700 cursor-pointer border-0 bg-transparent flex items-center p-1">
+                <i class="fas fa-times" style="font-size:20px"></i>
+            </button>
+        </div>
+
+        <div class="p-4 flex-1 overflow-hidden min-h-0 flex flex-col">
+            <p class="text-gray-500 text-sm mb-3">Arraste para reposicionar, use a roda do mouse para zoom.</p>
+            <div class="flex-1 bg-black/5 rounded-xl overflow-hidden relative min-h-0" id="crop-container">
+                <img id="crop-img" class="max-w-full" alt="Imagem para corte">
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 shrink-0">
+            <button type="button" onclick="fecharModalCorte()" class="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-semibold text-sm transition cursor-pointer bg-white">
+                Cancelar
+            </button>
+            <button type="button" onclick="confirmarCorte()" class="px-6 py-2.5 bg-brand hover:bg-brand-light text-white rounded-lg font-bold shadow-sm transition duration-200 cursor-pointer border-0 flex items-center gap-2 text-sm" id="btn-confirmar-corte">
+                <i class="fas fa-check-circle" style="font-size:16px"></i>
+                 Confirmar Corte
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
 </script>
 @endsection
 
 @section('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js" integrity="sha512-7eDe3+E1NzeC5O2XK1lM5U8R4FkxMGBi+xXoRf9TVMWdLkEZTRJ0b4a8GXv6QZwcM4nCj+GB8K2sKmFaBsQLw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+    let cropper = null;
+    let cropFileInput = null;
+
     function marcarParaRemover() {
         const inputRemove = document.getElementById('input-remover-imagem');
         const imgAtual = document.getElementById('img-atual');
@@ -241,46 +281,8 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
     function comprimirEExibir(input) {
         if (!input.files || !input.files[0]) return;
         if (typeof desfazerRemocao === 'function') desfazerRemocao();
-
-        const file = input.files[0];
-        if (file.size <= 1024 * 1024) {
-            previewImagem(input);
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const img = new Image();
-            img.onload = function () {
-                let w = img.width, h = img.height;
-                const maxDim = 1600;
-                if (w > maxDim) { h *= maxDim / w; w = maxDim; }
-                if (h > maxDim) { w *= maxDim / h; h = maxDim; }
-
-                const canvas = document.createElement('canvas');
-                canvas.width = w;
-                canvas.height = h;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, w, h);
-
-                canvas.toBlob(function (blob) {
-                    try {
-                        const name = file.name.replace(/\.[^.]+$/, '.jpg');
-                        const compressed = new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
-                        const dt = new DataTransfer();
-                        dt.items.add(compressed);
-                        input.files = dt.files;
-
-                        const kb = Math.round(blob.size / 1024);
-                        if (window.mostrarToast) {
-                            window.mostrarToast('Imagem comprimida de ' + Math.round(file.size / 1024) + 'KB para ' + kb + 'KB', 'info');
-                        }
-                    } catch (err) {}
-                    previewImagem(input);
-                }, 'image/jpeg', 0.85);
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        cropFileInput = input;
+        abrirModalCorte(input.files[0]);
     }
 
     function previewImagem(input) {
@@ -297,6 +299,99 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
             preview.classList.add('hidden');
             img.src = '';
         }
+    }
+
+    /* ── Modal Corte de Imagem ── */
+
+    function abrirModalCorte(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = document.getElementById('crop-img');
+            img.src = e.target.result;
+            const modal = document.getElementById('modal-corte-imagem');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            if (cropper) cropper.destroy();
+            img.onload = function () {
+                cropper = new Cropper(img, {
+                    aspectRatio: 4 / 3,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    cropBoxResizable: true,
+                    cropBoxMovable: true,
+                    zoomable: true,
+                    wheelZoomRatio: 0.1,
+                    minCropBoxWidth: 200,
+                    minCropBoxHeight: 150,
+                    background: false,
+                });
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function fecharModalCorte() {
+        if (cropper) { cropper.destroy(); cropper = null; }
+        const modal = document.getElementById('modal-corte-imagem');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function confirmarCorte() {
+        if (!cropper || !cropFileInput) return;
+
+        const btn = document.getElementById('btn-confirmar-corte');
+        btn.disabled = true;
+        btn.textContent = 'Processando...';
+
+        const cropData = cropper.getData(true);
+        const img = cropFileInput.files[0];
+        const origReader = new FileReader();
+
+        origReader.onload = function (oe) {
+            const origImg = new Image();
+            origImg.onload = function () {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                let w = cropData.width, h = cropData.height;
+                const maxDim = 1600;
+                if (w > maxDim) { h *= maxDim / w; w = maxDim; }
+                if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+
+                canvas.width = Math.round(w);
+                canvas.height = Math.round(h);
+
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                ctx.drawImage(origImg, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(function (blob) {
+                    try {
+                        const name = img.name.replace(/\.[^.]+$/, '.jpg');
+                        const compressed = new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+                        const dt = new DataTransfer();
+                        dt.items.add(compressed);
+                        cropFileInput.files = dt.files;
+
+                        const kb = Math.round(blob.size / 1024);
+                        if (window.mostrarToast) {
+                            window.mostrarToast('Imagem cortada e comprimida: ' + kb + 'KB', 'info');
+                        }
+                    } catch (err) {
+                        console.warn('DataTransfer fallback', err);
+                    }
+                    previewImagem(cropFileInput);
+                    fecharModalCorte();
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle" style="font-size:16px"></i> Confirmar Corte';
+                }, 'image/jpeg', 0.85);
+            };
+            origImg.src = oe.target.result;
+        };
+        origReader.readAsDataURL(img);
     }
 
     /* ── Modal Categorias ── */
