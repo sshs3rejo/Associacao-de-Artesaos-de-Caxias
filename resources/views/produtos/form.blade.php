@@ -116,17 +116,18 @@
                 @endif
 
                 <div class="flex gap-2">
-                    <input class="w-full border bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm {{ $errors->has('imagem') ? 'border-red-500' : 'border-gray-300' }}" type="file" id="imagem" name="imagem" accept="image/*" onchange="comprimirEExibir(this)">
+                    <input class="w-full border bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm {{ $errors->has('imagem_base64') ? 'border-red-500' : 'border-gray-300' }}" type="file" id="imagem" accept="image/*" onchange="comprimirEExibir(this)">
                     <button type="button" class="px-4 py-2.5 border border-gray-300 bg-white rounded-lg hover:bg-gray-100 text-gray-600 cursor-pointer transition flex items-center justify-center" onclick="document.getElementById('imagem').click()" title="Tirar Foto">
                         <x-icon name="camera" class="w-5 h-5" />
                     </button>
                 </div>
+                <input type="hidden" name="imagem_base64" id="imagem_base64">
 
                 <div id="preview-imagem" class="mt-4 hidden">
                     <small class="text-brand-light block mb-1 font-bold uppercase tracking-wider text-[10px]">Nova Imagem Selecionada:</small>
                     <img id="preview-img" class="rounded-lg border shadow-sm" style="max-height: 180px; max-width: 100%;">
                 </div>
-                @error('imagem') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
+                @error('imagem_base64') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
             </div>
 
             @if(!$isArtisan)
@@ -259,13 +260,17 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
         desfazerRemocao();
 
         const file = input.files[0];
-        if (file.size <= 1024 * 1024) {
-            previewImagem(input);
-            return;
-        }
+        const hiddenInput = document.getElementById('imagem_base64');
+        const compress = file.size > 1024 * 1024;
 
         const reader = new FileReader();
         reader.onload = function (e) {
+            if (!compress) {
+                hiddenInput.value = e.target.result;
+                previewImagem(input);
+                return;
+            }
+
             const img = new Image();
             img.onload = function () {
                 let w = img.width, h = img.height;
@@ -279,22 +284,18 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, w, h);
 
-                canvas.toBlob(function (blob) {
-                    const compressed = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
-                        type: 'image/jpeg',
-                        lastModified: Date.now()
-                    });
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                hiddenInput.value = dataUrl;
 
-                    const dt = new DataTransfer();
-                    dt.items.add(compressed);
-                    input.files = dt.files;
+                const preview = document.getElementById('preview-imagem');
+                const imgEl = document.getElementById('preview-img');
+                imgEl.src = dataUrl;
+                preview.classList.remove('hidden');
 
-                    previewImagem(input);
-
-                    if (window.mostrarToast) {
-                        window.mostrarToast('Imagem comprimida de ' + Math.round(file.size / 1024) + 'KB para ' + Math.round(blob.size / 1024) + 'KB', 'info');
-                    }
-                }, 'image/jpeg', 0.8);
+                if (window.mostrarToast) {
+                    const approxSize = Math.round(dataUrl.length * 0.75);
+                    window.mostrarToast('Imagem comprimida de ' + Math.round(file.size / 1024) + 'KB para ~' + Math.round(approxSize / 1024) + 'KB', 'info');
+                }
             };
             img.src = e.target.result;
         };
