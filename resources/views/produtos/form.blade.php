@@ -116,7 +116,7 @@
                 @endif
 
                 <div class="flex gap-2">
-                    <input class="w-full border bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm {{ $errors->has('imagem') ? 'border-red-500' : 'border-gray-300' }}" type="file" id="imagem" name="imagem" accept="image/*" onchange="window.validarTamanhoImagem(this) && previewImagem(this)">
+                    <input class="w-full border bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm {{ $errors->has('imagem') ? 'border-red-500' : 'border-gray-300' }}" type="file" id="imagem" name="imagem" accept="image/*" onchange="comprimirEExibir(this)">
                     <button type="button" class="px-4 py-2.5 border border-gray-300 bg-white rounded-lg hover:bg-gray-100 text-gray-600 cursor-pointer transition flex items-center justify-center" onclick="document.getElementById('imagem').click()" title="Tirar Foto">
                         <x-icon name="camera" class="w-5 h-5" />
                     </button>
@@ -236,6 +236,51 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
             warning.classList.add('hidden');
             warning.classList.remove('flex');
         }
+    }
+
+    function comprimirEExibir(input) {
+        if (!input.files || !input.files[0]) return;
+        if (typeof desfazerRemocao === 'function') desfazerRemocao();
+
+        const file = input.files[0];
+        if (file.size <= 1024 * 1024) {
+            previewImagem(input);
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                let w = img.width, h = img.height;
+                const maxDim = 1600;
+                if (w > maxDim) { h *= maxDim / w; w = maxDim; }
+                if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+
+                canvas.toBlob(function (blob) {
+                    try {
+                        const name = file.name.replace(/\.[^.]+$/, '.jpg');
+                        const compressed = new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+                        const dt = new DataTransfer();
+                        dt.items.add(compressed);
+                        input.files = dt.files;
+
+                        const kb = Math.round(blob.size / 1024);
+                        if (window.mostrarToast) {
+                            window.mostrarToast('Imagem comprimida de ' + Math.round(file.size / 1024) + 'KB para ' + kb + 'KB', 'info');
+                        }
+                    } catch (err) {}
+                    previewImagem(input);
+                }, 'image/jpeg', 0.85);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 
     function previewImagem(input) {
