@@ -73,7 +73,7 @@
                 <div>
                     <div class="flex items-end gap-2">
                         <div class="flex-1">
-                            <x-select name="id_categoria" label="Categoria" :options="\App\Models\CategoriasProdutos::getHierarchicalList()" value="{{ old('id_categoria', $produto->id_categoria) }}" placeholder="Selecione..." required />
+                            <x-select name="id_categoria" label="Categoria" :options="\App\Models\CategoriasProdutos::getAllCached()->pluck('nome_categoria', 'id_categoria')" value="{{ old('id_categoria', $produto->id_categoria) }}" placeholder="Selecione..." required />
                         </div>
                         <button type="button" onclick="abrirModalCategoria()" class="mb-4 px-3 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-bold shadow-sm transition duration-200 cursor-pointer border-0 flex items-center justify-center" title="Nova Categoria">
                             <i class="fas fa-plus" style="font-size:16px"></i>
@@ -156,16 +156,9 @@
         <div class="p-6">
             <p class="text-gray-500 text-sm mb-5">Crie uma nova categoria para classificar o produto.</p>
             <div id="erro-modal-categoria" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl mb-4 text-sm hidden"></div>
-            <div class="space-y-4">
-                <div>
-                    <label for="modal-categoria-nome" class="block font-bold mb-1 text-brand text-sm">Nome da Categoria</label>
-                    <input type="text" id="modal-categoria-nome" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Ex: Artesanato em Cerâmica" required />
-                </div>
-                <div>
-                    <label for="modal-categoria-parent" class="block font-bold mb-1 text-brand text-sm">ID da Categoria Pai</label>
-                    <input type="text" id="modal-categoria-parent" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Deixe em branco para criar categoria raiz" />
-                    <p class="text-xs text-gray-400 mt-1">Informe o ID da categoria pai (opcional).</p>
-                </div>
+            <div>
+                <label for="modal-categoria-nome" class="block font-bold mb-1 text-brand text-sm">Nome da Categoria</label>
+                <input type="text" id="modal-categoria-nome" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Ex: Artesanato em Cerâmica" required />
             </div>
             <div class="flex justify-end gap-3 mt-6">
                 <button type="button" onclick="fecharModalCategoria()" class="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-semibold text-sm transition cursor-pointer bg-white">
@@ -253,7 +246,6 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
 
     function abrirModalCategoria() {
         document.getElementById('modal-categoria-nome').value = '';
-        document.getElementById('modal-categoria-parent').value = '';
         document.getElementById('erro-modal-categoria').classList.add('hidden');
         const modal = document.getElementById('modal-nova-categoria');
         modal.classList.remove('hidden');
@@ -268,7 +260,6 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
 
     function salvarCategoriaAjax() {
         const nome = document.getElementById('modal-categoria-nome').value.trim();
-        const parentId = document.getElementById('modal-categoria-parent').value;
         const erroDiv = document.getElementById('erro-modal-categoria');
         const btn = document.getElementById('btn-salvar-categoria');
 
@@ -289,7 +280,7 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
                 'Accept': 'application/json',
             },
-            body: JSON.stringify({ nome_categoria: nome, parent_id: parentId || null }),
+            body: JSON.stringify({ nome_categoria: nome }),
         })
         .then(r => r.json())
         .then(data => {

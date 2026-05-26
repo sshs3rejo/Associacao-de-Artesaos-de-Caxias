@@ -22,8 +22,6 @@
                 <thead style="background-color: #7a2f1f; color: #F9F7D3;">
                     <tr>
                         <th class="p-3 text-left text-sm font-semibold">Nome</th>
-                        <th class="p-3 text-left text-sm font-semibold">Categoria Pai</th>
-                        <th class="p-3 text-center text-sm font-semibold">Subcategorias</th>
                         <th class="p-3 text-center text-sm font-semibold">Produtos</th>
                         <th class="p-3 text-right text-sm font-semibold">Ações</th>
                     </tr>
@@ -32,14 +30,6 @@
                     @foreach($categorias as $cat)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="font-semibold p-3 text-sm">{{ $cat->nome_categoria }}</td>
-                            <td class="p-3 text-sm">
-                                @if($cat->parent)
-                                    {{ $cat->parent->nome_categoria }}
-                                @else
-                                    <span class="text-gray-400">—</span>
-                                @endif
-                            </td>
-                            <td class="p-3 text-sm text-center">{{ $cat->children_count }}</td>
                             <td class="p-3 text-sm text-center">{{ $cat->produtos_count }}</td>
                             <td class="p-3 text-sm text-right">
                                 <div class="flex justify-end gap-1">
@@ -51,7 +41,7 @@
                                     <button type="button"
                                             class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-xs cursor-pointer"
                                             title="Editar"
-                                            onclick="editarCategoria({{ $cat->id_categoria }}, '{{ addslashes($cat->nome_categoria) }}', {{ $cat->parent_id ?? 'null' }})">
+                                            onclick="editarCategoria({{ $cat->id_categoria }}, '{{ addslashes($cat->nome_categoria) }}')">
                                         <i class="fas fa-pencil-alt text-xs"></i>
                                     </button>
                                     <form action="{{ route('admin.categorias.destroy', $cat->id_categoria) }}" method="POST" class="inline">
@@ -94,12 +84,7 @@
             <div class="space-y-4">
                 <div>
                     <label for="modal-categoria-nome" class="block font-bold mb-1 text-brand text-sm">Nome da Categoria</label>
-                    <input type="text" id="modal-categoria-nome" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" />
-                </div>
-                <div>
-                    <label for="modal-categoria-parent" class="block font-bold mb-1 text-brand text-sm">ID da Categoria Pai</label>
-                    <input type="text" id="modal-categoria-parent" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Deixe em branco para categoria raiz" />
-                    <p class="text-xs text-gray-400 mt-1" id="modal-categoria-parent-hint">Informe o ID da categoria pai (opcional).</p>
+                    <input type="text" id="modal-categoria-nome" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Ex: Artesanato em Cerâmica" />
                 </div>
             </div>
             <div class="flex justify-end gap-3 mt-6">
@@ -122,7 +107,6 @@ let _categoriaEditId = null;
 
 function abrirModalCategoria() {
     document.getElementById('modal-categoria-nome').value = '';
-    document.getElementById('modal-categoria-parent').value = '';
     document.getElementById('erro-modal-categoria').classList.add('hidden');
     const modal = document.getElementById('modal-categoria');
     modal.classList.remove('hidden');
@@ -142,18 +126,16 @@ function criarCategoria() {
     abrirModalCategoria();
 }
 
-function editarCategoria(id, nome, parentId) {
+function editarCategoria(id, nome) {
     _categoriaEditId = id;
     document.getElementById('modal-categoria-titulo').innerHTML = '<i class="fas fa-edit" style="font-size:18px"></i> Editar Categoria';
     document.getElementById('btn-salvar-categoria').innerHTML = '<i class="fas fa-check-circle" style="font-size:16px"></i> Salvar';
     document.getElementById('modal-categoria-nome').value = nome;
-    document.getElementById('modal-categoria-parent').value = parentId || '';
     abrirModalCategoria();
 }
 
 function salvarCategoria() {
     const nome = document.getElementById('modal-categoria-nome').value.trim();
-    const parentId = document.getElementById('modal-categoria-parent').value;
     const erroDiv = document.getElementById('erro-modal-categoria');
     const btn = document.getElementById('btn-salvar-categoria');
 
@@ -180,7 +162,7 @@ function salvarCategoria() {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
             'Accept': 'application/json',
         },
-        body: JSON.stringify({ nome_categoria: nome, parent_id: parentId || null }),
+        body: JSON.stringify({ nome_categoria: nome }),
     })
     .then(r => r.json())
     .then(data => {

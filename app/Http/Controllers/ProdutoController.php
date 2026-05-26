@@ -30,16 +30,12 @@ class ProdutoController extends Controller
             return view('produtos', compact('produtos'));
         }
 
-        $categorias = CategoriasProdutos::getTreeCached();
+        $categorias = CategoriasProdutos::getAllCached();
 
         $query = Produto::approved()->with(['categoria', 'estoque', 'artisan.artisanProfile']);
 
         if ($request->has('categoria') && $request->categoria != '') {
-            $categoriaId = $request->categoria;
-            $subCategoryIds = CategoriasProdutos::where('parent_id', $categoriaId)->pluck('id_categoria')->toArray();
-            $categoryIds = array_merge([$categoriaId], $subCategoryIds);
-
-            $query->whereIn('id_categoria', $categoryIds);
+            $query->where('id_categoria', $request->categoria);
         }
 
         if ($request->has('busca') && $request->busca != '') {
