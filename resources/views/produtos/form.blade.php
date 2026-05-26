@@ -76,7 +76,7 @@
                             <x-select name="id_categoria" label="Categoria" :options="\App\Models\CategoriasProdutos::getHierarchicalList()" value="{{ old('id_categoria', $produto->id_categoria) }}" placeholder="Selecione..." required />
                         </div>
                         <button type="button" onclick="abrirModalCategoria()" class="mb-4 px-3 py-3 bg-brand hover:bg-brand-light text-white rounded-lg font-bold shadow-sm transition duration-200 cursor-pointer border-0 flex items-center justify-center" title="Nova Categoria">
-                            <x-icon name="plus" class="w-4 h-4" />
+                            <i class="fas fa-plus" style="font-size:16px"></i>
                         </button>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
 
                         <input type="hidden" name="remover_imagem" id="input-remover-imagem" value="0">
 
-                        <div id="aviso-remocao" class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 mt-2 rounded-lg hidden text-xs flex items-center gap-1">
+                        <div id="aviso-remocao" class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 mt-2 rounded-lg hidden text-xs items-center gap-1">
                             <x-icon name="warning" class="w-4 h-4 mr-1 text-yellow-600" /> A imagem atual será removida ao salvar.
                             <button type="button" class="underline font-bold ml-1 hover:text-yellow-950 border-0 bg-transparent cursor-pointer" onclick="desfazerRemocao()">Desfazer</button>
                         </div>
@@ -116,7 +116,7 @@
                 @endif
 
                 <div class="flex gap-2">
-                    <input class="w-full border border-gray-300 bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none @error('imagem') border-red-500 @enderror text-sm" type="file" id="imagem" name="imagem" accept="image/*" capture="environment" onchange="window.validarTamanhoImagem(this) && previewImagem(this)">
+                    <input class="w-full border bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm {{ $errors->has('imagem') ? 'border-red-500' : 'border-gray-300' }}" type="file" id="imagem" name="imagem" accept="image/*" capture="environment" onchange="window.validarTamanhoImagem(this) && previewImagem(this)">
                     <button type="button" class="px-4 py-2.5 border border-gray-300 bg-white rounded-lg hover:bg-gray-100 text-gray-600 cursor-pointer transition flex items-center justify-center" onclick="document.getElementById('imagem').click()" title="Tirar Foto">
                         <x-icon name="camera" class="w-5 h-5" />
                     </button>
@@ -141,14 +141,15 @@
 </div>
 
 {{-- Modal Categorias --}}
-<div id="modal-nova-categoria" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden" style="backdrop-filter: blur(2px);">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 relative">
+<div id="modal-nova-categoria" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50" style="backdrop-filter: blur(2px);">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 relative">
         <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4 rounded-t-2xl">
             <h3 class="text-lg font-bold text-brand m-0 flex items-center gap-2">
-                <x-icon name="plus" class="w-5 h-5 text-brand" /> Criar Nova Categoria
+                <i class="fas fa-plus" style="font-size:18px"></i>
+ Criar Nova Categoria
             </h3>
-            <button type="button" onclick="fecharModalCategoria()" class="text-gray-400 hover:text-gray-700 cursor-pointer border-0 bg-transparent flex items-center">
-                <x-icon name="times" class="w-5 h-5" />
+            <button type="button" onclick="fecharModalCategoria()" class="text-gray-400 hover:text-gray-700 cursor-pointer border-0 bg-transparent flex items-center p-1">
+                <i class="fas fa-times" style="font-size:20px"></i>
             </button>
         </div>
 
@@ -173,7 +174,8 @@
                     Cancelar
                 </button>
                 <button type="button" onclick="salvarCategoriaAjax()" class="px-5 py-2.5 bg-brand hover:bg-brand-light text-white rounded-lg font-bold shadow-sm transition duration-200 cursor-pointer border-0 flex items-center gap-2 text-sm" id="btn-salvar-categoria">
-                    <x-icon name="check-circle" class="w-4 h-4" /> Salvar
+                    <i class="fas fa-check-circle" style="font-size:16px"></i>
+ Salvar
                 </button>
             </div>
         </div>
@@ -181,7 +183,10 @@
 </div>
 
 @php $categoriasTreeJson = $categoriasTree->toArray(); @endphp
-<script>window._categoriasTree = @json($categoriasTreeJson);</script>
+<script>
+window._categoriasTree = @json($categoriasTreeJson);
+window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
+</script>
 @endsection
 
 @section('scripts')
@@ -198,7 +203,10 @@
             imgAtual.style.filter = 'grayscale(100%)';
         }
         if (actions) actions.classList.add('hidden');
-        if (warning) warning.classList.remove('hidden');
+        if (warning) {
+            warning.classList.remove('hidden');
+            warning.classList.add('flex');
+        }
     }
 
     function desfazerRemocao() {
@@ -213,7 +221,10 @@
             imgAtual.style.filter = 'none';
         }
         if (actions) actions.classList.remove('hidden');
-        if (warning) warning.classList.add('hidden');
+        if (warning) {
+            warning.classList.add('hidden');
+            warning.classList.remove('flex');
+        }
     }
 
     // Se selecionar uma nova imagem, cancela a exclusão da atual automaticamente
@@ -258,11 +269,15 @@
         
         document.getElementById('modal-categoria-nome').value = '';
         document.getElementById('erro-modal-categoria').classList.add('hidden');
-        document.getElementById('modal-nova-categoria').classList.remove('hidden');
+        const modal = document.getElementById('modal-nova-categoria');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
     }
 
     function fecharModalCategoria() {
-        document.getElementById('modal-nova-categoria').classList.add('hidden');
+        const modal = document.getElementById('modal-nova-categoria');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 
     function salvarCategoriaAjax() {
@@ -281,11 +296,11 @@
         btn.disabled = true;
         btn.textContent = 'Salvando...';
 
-        fetch('{{ route("admin.categorias.quick-store") }}', {
+        fetch(window._quickStoreUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
                 'Accept': 'application/json',
             },
             body: JSON.stringify({ nome_categoria: nome, parent_id: parentId || null }),
@@ -310,7 +325,7 @@
     }
 
     function csrfToken() {
-        return document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+        return document.querySelector('meta[name="csrf-token"]')?.content || '';
     }
 </script>
 

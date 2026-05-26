@@ -82,6 +82,26 @@ class AdminUserController extends Controller
             ->with('success', 'Usuário criado com sucesso!');
     }
 
+    public function edit(User $user)
+    {
+        return view('admin.usuarios-edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($validated);
+
+        ActivityLog::log('usuario.atualizado', "Usuário {$user->name} atualizado por administrador.", $user);
+
+        return redirect()->route('admin.usuarios')
+            ->with('success', "Usuário {$user->name} atualizado com sucesso!");
+    }
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {

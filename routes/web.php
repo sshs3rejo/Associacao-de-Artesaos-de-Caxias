@@ -98,6 +98,12 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     
     // Gestão de Artesãos
     Route::get('/admin/artesao', [AdminArtisanController::class, 'index'])->name('admin.artesao');
+    Route::get('/admin/artesao/criar', [AdminArtisanController::class, 'create'])->name('admin.artesao.create');
+    Route::post('/admin/artesao', [AdminArtisanController::class, 'store'])->name('admin.artesao.store');
+    Route::get('/admin/artesao/{user}', [AdminArtisanController::class, 'show'])->name('admin.artesao.show');
+    Route::get('/admin/artesao/{user}/editar', [AdminArtisanController::class, 'edit'])->name('admin.artesao.edit');
+    Route::put('/admin/artesao/{user}', [AdminArtisanController::class, 'update'])->name('admin.artesao.update');
+    Route::delete('/admin/artesao/{user}', [AdminArtisanController::class, 'destroy'])->name('admin.artesao.destroy');
     Route::post('/admin/artesao/{user}/aprovar', [AdminArtisanController::class, 'aprovar'])->name('admin.artesao.aprovar');
     Route::post('/admin/artesao/{user}/rejeitar', [AdminArtisanController::class, 'rejeitar'])->name('admin.artesao.rejeitar');
     Route::post('/admin/artesao/{user}/ativar', [AdminArtisanController::class, 'ativar'])->name('admin.artesao.ativar');
@@ -106,6 +112,8 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::get('/admin/usuarios', [AdminUserController::class, 'index'])->name('admin.usuarios');
     Route::get('/admin/usuarios/create', [AdminUserController::class, 'create'])->name('admin.usuarios.create');
     Route::post('/admin/usuarios', [AdminUserController::class, 'store'])->name('admin.usuarios.store');
+    Route::get('/admin/usuarios/{user}/editar', [AdminUserController::class, 'edit'])->name('admin.usuarios.edit');
+    Route::put('/admin/usuarios/{user}', [AdminUserController::class, 'update'])->name('admin.usuarios.update');
     Route::post('/admin/usuarios/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('admin.usuarios.toggle-status');
     Route::post('/admin/usuarios/{user}/change-role', [AdminUserController::class, 'changeRole'])->name('admin.usuarios.change-role');
     Route::delete('/admin/usuarios/{user}', [AdminUserController::class, 'destroy'])->name('admin.usuarios.destroy');
@@ -130,11 +138,20 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
 
     // Gestão de Clientes
     Route::get('/admin/clientes', [ClienteController::class, 'index'])->name('admin.clientes.index');
+    Route::get('/admin/clientes/criar', [ClienteController::class, 'create'])->name('admin.clientes.create');
+    Route::post('/admin/clientes', [ClienteController::class, 'store'])->name('admin.clientes.store');
     Route::get('/admin/clientes/{cliente}', [ClienteController::class, 'show'])->name('admin.clientes.show');
+    Route::get('/admin/clientes/{cliente}/editar', [ClienteController::class, 'edit'])->name('admin.clientes.edit');
+    Route::put('/admin/clientes/{cliente}', [ClienteController::class, 'update'])->name('admin.clientes.update');
+    Route::delete('/admin/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('admin.clientes.destroy');
 
     // Gestão de Vendas
     Route::get('/admin/vendas', [VendaController::class, 'index'])->name('admin.vendas.index');
+    Route::get('/admin/vendas/criar', [VendaController::class, 'create'])->name('admin.vendas.create');
+    Route::post('/admin/vendas', [VendaController::class, 'store'])->name('admin.vendas.store');
     Route::get('/admin/vendas/{venda}', [VendaController::class, 'show'])->name('admin.vendas.show');
+    Route::get('/admin/vendas/{venda}/editar', [VendaController::class, 'edit'])->name('admin.vendas.edit');
+    Route::put('/admin/vendas/{venda}', [VendaController::class, 'update'])->name('admin.vendas.update');
     Route::delete('/admin/vendas/{venda}', [VendaController::class, 'destroy'])->name('admin.vendas.destroy');
 
     // Gestão de Contato (submissões do formulário público)
@@ -151,8 +168,6 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::delete('/admin/instrutores/{instrutor}', [InstrutorController::class, 'destroy'])->name('admin.instrutores.destroy');
 
     // Gestão de categorias (inline no form de produto)
-    Route::get('/admin/categorias', [CategoriaProdutoController::class, 'index'])->name('admin.categorias.index');
-    Route::post('/admin/categorias', [CategoriaProdutoController::class, 'store'])->name('admin.categorias.store');
     Route::post('/admin/categorias/quick-store', [CategoriaProdutoController::class, 'quickStore'])->name('admin.categorias.quick-store');
     Route::put('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'update'])->name('admin.categorias.update');
     Route::delete('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'destroy'])->name('admin.categorias.destroy');
@@ -189,6 +204,7 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::delete('/admin/inscricoes-oficina/{inscricao}', [InscricaoOficinaController::class, 'destroy'])->name('admin.inscricoes-oficina.destroy');
 
     // ✅ Gestão de Produtos (admin)
+    Route::get('/admin/produtos', [ProdutoController::class, 'index'])->name('admin.produtos.index');
     Route::get('/admin/produtos/create', [ProdutoController::class, 'create'])->name('admin.produtos.create');
     Route::post('/admin/produtos', [ProdutoController::class, 'store'])->name('admin.produtos.store');
     Route::get('/admin/produtos/{id}/edit', [ProdutoController::class, 'edit'])->name('admin.produtos.edit');
@@ -196,6 +212,7 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::delete('/admin/produtos/{id}', [ProdutoController::class, 'destroy'])->name('admin.produtos.destroy');
 
     // ✅ Aqui também — “create” precisa vir antes de “{id}”
+    Route::get('/admin/eventos', [EventoController::class, 'index'])->name('admin.eventos.index');
     Route::get('/eventos/create', [EventoController::class, 'create'])->name('eventos.create');
     Route::post('/eventos', [EventoController::class, 'store'])->name('eventos.store');
     Route::get('/eventos/{id}/edit', [EventoController::class, 'edit'])->name('eventos.edit');

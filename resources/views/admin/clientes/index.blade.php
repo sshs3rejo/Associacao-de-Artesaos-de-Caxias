@@ -4,7 +4,12 @@
 @section('content')
 <div class="w-full px-4 py-5">
     <x-breadcrumb :items="[['Home', route('home')], ['Painel', route('admin.dashboard')], ['Clientes']]" />
-    <h1 class="font-bold mb-4 text-2xl text-brand">Clientes</h1>
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="font-bold text-2xl text-brand">Clientes</h1>
+        <a href="{{ route('admin.clientes.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold shadow-sm transition no-underline">
+            <x-icon name="plus" class="w-4 h-4" /> Novo Cliente
+        </a>
+    </div>
 
     @if($clientes->isEmpty())
         <div class="text-center py-5">
@@ -41,9 +46,21 @@
                             <td class="p-3 text-sm">{{ $c->vendas_count }}</td>
                             <td class="p-3 text-sm text-gray-500">{{ $c->created_at->format('d/m/Y') }}</td>
                             <td class="p-3 text-sm text-right">
-                                <a href="{{ route('admin.clientes.show', $c->id_cliente) }}" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-blue-400 text-blue-600 hover:bg-blue-50 text-sm">
-                                    <x-icon name="eye" class="w-4 h-4" /> Ver
-                                </a>
+                                <div class="flex justify-end gap-1">
+                                    <a href="{{ route('admin.clientes.show', $c->id_cliente) }}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-blue-400 text-blue-600 hover:bg-blue-50 text-xs">
+                                        <x-icon name="eye" class="w-3 h-3" />
+                                    </a>
+                                    <a href="{{ route('admin.clientes.edit', $c->id_cliente) }}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-xs">
+                                        <x-icon name="pencil" class="w-3 h-3" />
+                                    </a>
+                                    <form action="{{ route('admin.clientes.destroy', $c->id_cliente) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-red-400 text-red-500 hover:bg-red-50 text-xs" onclick="var f=this.closest('form'); showConfirm('Excluir cliente {{ $c->nome }}?',function(){f.submit();});">
+                                            <x-icon name="trash" class="w-3 h-3" />
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

@@ -4,7 +4,12 @@
 @section('content')
 <div class="w-full px-4 py-5">
     <x-breadcrumb :items="[['Home', route('home')], ['Painel', route('admin.dashboard')], ['Vendas']]" />
-    <h1 class="font-bold mb-4 text-2xl text-brand">Vendas</h1>
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="font-bold text-2xl text-brand">Vendas</h1>
+        <a href="{{ route('admin.vendas.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold shadow-sm transition no-underline">
+            <x-icon name="plus" class="w-4 h-4" /> Nova Venda
+        </a>
+    </div>
 
     @if($vendas->isEmpty())
         <div class="text-center py-5">
@@ -44,6 +49,9 @@
                                 <div class="flex justify-end gap-2">
                                     <a href="{{ route('admin.vendas.show', $v->id_venda) }}" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-blue-400 text-blue-600 hover:bg-blue-50 text-sm">
                                         <x-icon name="eye" class="w-4 h-4" /> Ver
+                                    </a>
+                                    <a href="{{ route('admin.vendas.edit', $v->id_venda) }}" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg font-semibold text-center no-underline border border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-sm">
+                                        <x-icon name="pencil" class="w-4 h-4" /> Editar
                                     </a>
                                     @if($v->status_pagamento !== 'approved')
                                         <form action="{{ route('admin.vendas.destroy', $v->id_venda) }}" method="POST" class="m-0">

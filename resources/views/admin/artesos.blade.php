@@ -4,7 +4,12 @@
 @section('content')
 <div class="w-full px-4 py-5">
     <x-breadcrumb :items="[['Home', route('home')], ['Painel', route('admin.dashboard')], ['Artesãos']]" />
-    <h1 class="font-bold mb-4 text-2xl text-brand">Gerenciar Artesãos</h1>
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="font-bold text-2xl text-brand">Gerenciar Artesãos</h1>
+        <a href="{{ route('admin.artesao.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg font-semibold shadow-sm transition no-underline">
+            <x-icon name="plus" class="w-4 h-4" /> Novo Artesão
+        </a>
+    </div>
 
     @if($artesos->isEmpty())
         <div class="text-center py-5">
@@ -47,27 +52,40 @@
                             </td>
                             <td class="p-3 text-sm text-gray-500">{{ $artesao->created_at->format('d/m/Y') }}</td>
                             <td class="p-3 text-sm">
-                                <div class="flex gap-2">
+                                <div class="flex flex-wrap gap-1">
+                                    <a href="{{ route('admin.artesao.show', $artesao) }}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-blue-400 text-blue-600 hover:bg-blue-50 text-xs" title="Ver">
+                                        <x-icon name="eye" class="w-3 h-3" />
+                                    </a>
+                                    <a href="{{ route('admin.artesao.edit', $artesao) }}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-xs" title="Editar">
+                                        <x-icon name="pencil" class="w-3 h-3" />
+                                    </a>
+                                    <form action="{{ route('admin.artesao.destroy', $artesao) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-red-400 text-red-500 hover:bg-red-50 text-xs" title="Excluir" onclick="var f=this.closest('form'); showConfirm('Remover artesão {{ $artesao->name }} permanentemente?',function(){f.submit();});">
+                                            <x-icon name="trash" class="w-3 h-3" />
+                                        </button>
+                                    </form>
                                     @if(!$artesao->artisanProfile?->isApproved())
                                         <form action="{{ route('admin.artesao.aprovar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="var f=this.closest('form'); showConfirm('Aprovar {{ $artesao->name }}?',function(){f.submit();},'Aprovar artesão')">
-                                                <x-icon name="check" class="w-4 h-4" /> Aprovar
+                                            <button type="button" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-xs" onclick="var f=this.closest('form'); showConfirm('Aprovar {{ $artesao->name }}?',function(){f.submit();},'Aprovar artesão')">
+                                                <x-icon name="check" class="w-3 h-3" />
                                             </button>
                                         </form>
                                     @endif
                                     @if($artesao->isActive())
                                         <form action="{{ route('admin.artesao.rejeitar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-sm" onclick="confirmarExclusao(this)">
-                                                <x-icon name="times" class="w-4 h-4" /> Desativar
+                                            <button type="button" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline border border-red-500 text-red-600 hover:bg-red-50 text-xs" onclick="confirmarExclusao(this)">
+                                                <x-icon name="times" class="w-3 h-3" />
                                             </button>
                                         </form>
                                     @else
                                         <form action="{{ route('admin.artesao.ativar', $artesao) }}" method="POST">
                                             @csrf
-                                            <button type="button" class="inline-block px-3 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-sm" onclick="var f=this.closest('form'); showConfirm('Reativar este artesão?',function(){f.submit();},'Reativar artesão')">
-                                                <x-icon name="check" class="w-4 h-4" /> Ativar
+                                            <button type="button" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg font-semibold text-center no-underline text-white bg-green-500 hover:bg-green-600 text-xs" onclick="var f=this.closest('form'); showConfirm('Reativar este artesão?',function(){f.submit();},'Reativar artesão')">
+                                                <x-icon name="check" class="w-3 h-3" />
                                             </button>
                                         </form>
                                     @endif

@@ -66,6 +66,9 @@
                             <td class="p-3 text-sm text-gray-500">{{ $u->created_at->format('d/m/Y') }}</td>
                             <td class="p-3 text-sm text-right">
                                 <div class="flex justify-end gap-2">
+                                    <a href="{{ route('admin.usuarios.edit', $u) }}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold text-center no-underline border border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-sm" title="Editar">
+                                        <x-icon name="pencil" class="w-4 h-4" /> Editar
+                                    </a>
                                     <form action="{{ route('admin.usuarios.toggle-status', $u->id) }}" method="POST" class="m-0">
                                         @csrf
                                         @if($u->isActive())

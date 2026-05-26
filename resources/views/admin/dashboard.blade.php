@@ -87,12 +87,6 @@
                 <strong>{{ $stats['contatos'] ?? 0 }}</strong>
             </a>
         </article>
-        <article class="dashboard-card">
-            <a href="{{ route('admin.categorias.index') }}">
-                <h3>Categorias</h3>
-                <strong>{{ $stats['categorias'] ?? 0 }}</strong>
-            </a>
-        </article>
     </section>
 
     {{-- Histórico de Vendas --}}

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SettingRequest;
 use App\Models\ActivityLog;
-use App\Models\CategoriasProdutos;
 use App\Models\Cliente;
 use App\Models\Contato;
 use App\Models\Eventos;
@@ -39,7 +38,6 @@ class AdminDashboardController extends Controller
                 'fornecedores' => Fornecedores::count(),
                 'materiasPrimas' => MateriasPrimas::count(),
                 'contatos' => Contato::count(),
-                'categorias' => CategoriasProdutos::count(),
             ];
         });
 
