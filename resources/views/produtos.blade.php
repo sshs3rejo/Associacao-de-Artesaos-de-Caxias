@@ -41,7 +41,7 @@
                             @foreach($produtos as $produto)
                                 <tr class="hover:bg-gray-50">
                                     <td class="p-3">
-                                        <x-image :src="$produto->imagem" alt="$produto->nome" class="rounded shadow-sm w-11 h-11 object-cover" />
+                                        <x-image :src="$produto->imagem" alt="$produto->nome" class="rounded shadow-sm w-11 h-11 object-contain bg-gray-100" />
                                     </td>
                                     <td class="font-semibold p-3 text-brand-light">{{ $produto->nome }}</td>
                                     <td class="p-3">{{ $produto->artisan?->name ?? 'Admin' }}</td>
@@ -109,8 +109,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach($produtos as $produto)
                         <div class="bg-white rounded-xl shadow-sm overflow-hidden h-full flex flex-col">
-                            <div class="overflow-hidden relative h-44">
-                                <x-image :src="$produto->imagem" alt="$produto->nome" class="w-full h-full object-cover" />
+                            <div class="overflow-hidden relative h-44 bg-gray-100">
+                                <x-image :src="$produto->imagem" alt="$produto->nome" class="w-full h-full object-contain" />
                             </div>
                             <div class="p-3 flex flex-col flex-1">
                                 <div class="flex items-start justify-between gap-2 mb-1">
@@ -213,7 +213,7 @@
                      data-estoque="{{ $produto->estoque ? $produto->estoque->quantidade : 0 }}"
                      data-imagem="{{ $produto->imagem ? (str_starts_with($produto->imagem, 'imagens/') ? asset($produto->imagem) : asset('storage/' . $produto->imagem)) : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23e8dfd6%22 width=%22200%22 height=%22200%22/%3E%3C/svg%3E' }}">
                     <div class="relative overflow-hidden h-52" style="background: linear-gradient(135deg, #e8dfd6 0%, #f5e6d3 100%);">
-                        <x-image src="{{ $produto->imagem }}" alt="{{ $produto->nome }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                        <x-image src="{{ $produto->imagem }}" alt="{{ $produto->nome }}" class="w-full h-full object-contain" />
                         @if($produto->estoque && $produto->estoque->quantidade <= 0)
                             <span class="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500 text-white">Esgotado</span>
                         @endif
