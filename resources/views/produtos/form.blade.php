@@ -300,8 +300,8 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
                 erroDiv.classList.remove('hidden');
             }
         })
-        .catch(() => {
-            erroDiv.textContent = 'Erro de conexão. Tente novamente.';
+        .catch(function(err) {
+            erroDiv.textContent = 'Erro ao criar categoria. Veja o console (F12).';
             erroDiv.classList.remove('hidden');
         })
         .finally(() => {

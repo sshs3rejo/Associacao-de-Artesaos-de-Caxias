@@ -14,6 +14,7 @@
     <meta property="og:image" content="{{ asset(config('association.logo')) }}">
     <meta name="twitter:card" content="summary">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset(config('association.logo')) }}">
     <link rel="preload" href="{{ asset('fonts/outfit-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
 
