@@ -34,6 +34,7 @@ class ProdutoRequest extends FormRequest
             'id_categoria.required' => 'Selecione uma categoria.',
             'id_categoria.exists' => 'A categoria selecionada é inválida.',
             'imagem.image' => 'O arquivo deve ser uma imagem.',
+            'imagem.uploaded' => 'A imagem excede o limite de tamanho permitido pelo servidor (20MB).',
             'quantidade.required' => 'A quantidade é obrigatória.',
             'quantidade.min' => 'A quantidade não pode ser negativa.',
         ];
