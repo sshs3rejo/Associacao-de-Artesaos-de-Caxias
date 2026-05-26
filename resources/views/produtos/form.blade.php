@@ -116,7 +116,7 @@
                 @endif
 
                 <div class="flex gap-2">
-                    <input class="w-full border bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm {{ $errors->has('imagem') ? 'border-red-500' : 'border-gray-300' }}" type="file" id="imagem" name="imagem" accept="image/*" onchange="window.validarTamanhoImagem(this) && previewImagem(this)">
+                    <input class="w-full border bg-white rounded-lg px-4 py-2.5 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm {{ $errors->has('imagem') ? 'border-red-500' : 'border-gray-300' }}" type="file" id="imagem" name="imagem" accept="image/*" onchange="comprimirEExibir(this)">
                     <button type="button" class="px-4 py-2.5 border border-gray-300 bg-white rounded-lg hover:bg-gray-100 text-gray-600 cursor-pointer transition flex items-center justify-center" onclick="document.getElementById('imagem').click()" title="Tirar Foto">
                         <x-icon name="camera" class="w-5 h-5" />
                     </button>
@@ -238,16 +238,6 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
         }
     }
 
-    // Se selecionar uma nova imagem, cancela a exclusão da atual automaticamente
-    const fileInput = document.getElementById('imagem');
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                desfazerRemocao();
-            }
-        });
-    }
-
     function previewImagem(input) {
         const preview = document.getElementById('preview-imagem');
         const img = document.getElementById('preview-img');
@@ -262,6 +252,53 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
             preview.classList.add('hidden');
             img.src = '';
         }
+    }
+
+    function comprimirEExibir(input) {
+        if (!input.files || !input.files[0]) return;
+        desfazerRemocao();
+
+        const file = input.files[0];
+        if (file.size <= 1024 * 1024) {
+            previewImagem(input);
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                let w = img.width, h = img.height;
+                const maxDim = 1200;
+                if (w > maxDim) { h *= maxDim / w; w = maxDim; }
+                if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+
+                canvas.toBlob(function (blob) {
+                    const compressed = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                    });
+
+                    const dt = new DataTransfer();
+                    dt.items.add(compressed);
+                    input.files = dt.files;
+
+                    previewImagem(input);
+
+                    if (window.mostrarToast) {
+                        window.mostrarToast('Imagem comprimida de ' + Math.round(file.size / 1024) + 'KB para ' + Math.round(blob.size / 1024) + 'KB', 'info');
+                    }
+                }, 'image/jpeg', 0.8);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 
     /* ── Modal Categorias ── */
