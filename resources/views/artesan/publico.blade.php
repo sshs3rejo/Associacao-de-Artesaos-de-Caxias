@@ -49,7 +49,7 @@
                 <div>
                     <div class="bg-white rounded-xl shadow-sm h-full overflow-hidden">
                         <div class="overflow-hidden bg-gray-100" style="height: 180px;">
-                            <x-image src="{{ $produto->imagem }}" alt="{{ $produto->nome }}" fallback="{{ config('association.placeholder') }}" class="w-full h-full object-contain" />
+                            <x-image src="{{ $produto->imagem }}" alt="{{ $produto->nome }}" fallback="{{ config('association.placeholder') }}" class="w-full h-full object-cover" />
                         </div>
                         <div class="p-3">
                             <h5 class="font-bold mb-1 text-brand">{{ $produto->nome }}</h5>
