@@ -24,7 +24,7 @@
 @section('titulo', $pageTitle)
 
 @section('style')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" integrity="sha512-8HZ2eQgY1rAI4NcD3B7MNCsWlsPjeVc6sW4Nm3Rw0oAUss/lEZf+UYQQp5bXG9OZqgIh15fHZC/mU4cFok3DQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" integrity="sha512-UtLOu9C7NuThQhuXXrGwx9Jb/z9zPQJctuAgNUBK3Z6kkSYT9wJ+2+dh6klS+TDBCV9kNPBbAxbVD+vCcfGPaA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endsection
 
 @section('content')
@@ -200,8 +200,8 @@
 </div>
 
 {{-- Modal Corte de Imagem --}}
-<div id="modal-corte-imagem" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60" style="backdrop-filter: blur(4px);">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-4 relative flex flex-col" style="max-height: 90vh;">
+<div id="modal-corte-imagem" class="fixed inset-0 z-50 hidden flex-col sm:items-center sm:justify-center bg-black/60 sm:p-4">
+    <div class="bg-white w-full h-full sm:h-auto sm:max-w-3xl sm:rounded-2xl sm:max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
         <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4 rounded-t-2xl shrink-0">
             <h3 class="text-lg font-bold text-brand m-0 flex items-center gap-2">
                 <i class="fas fa-crop-alt" style="font-size:18px"></i>
@@ -237,7 +237,7 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
 @endsection
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js" integrity="sha512-7eDe3+E1NzeC5O2XK1lM5U8R4FkxMGBi+xXoRf9TVMWdLkEZTRJ0b4a8GXv6QZwcM4nCj+GB8K2sKmFaBsQLw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js" integrity="sha512-JyCZjCOZoyeQZSd5+YEAcFgz2fowJ1F1hyJOXgtKu4llIa0KneLcidn5bwfutiehUTiOuK87A986BZJMko0eWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     let cropper = null;
     let cropFileInput = null;
@@ -279,7 +279,7 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
     }
 
     function comprimirEExibir(input) {
-        if (!input.files || !input.files[0]) return;
+        if (!input || !input.files || !input.files[0]) return;
         if (typeof desfazerRemocao === 'function') desfazerRemocao();
         cropFileInput = input;
         abrirModalCorte(input.files[0]);
@@ -304,94 +304,156 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
     /* ── Modal Corte de Imagem ── */
 
     function abrirModalCorte(file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const img = document.getElementById('crop-img');
-            img.src = e.target.result;
-            const modal = document.getElementById('modal-corte-imagem');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+        if (!file) return;
 
-            if (cropper) cropper.destroy();
-            img.onload = function () {
-                cropper = new Cropper(img, {
-                    aspectRatio: 4 / 3,
-                    viewMode: 1,
-                    dragMode: 'move',
-                    cropBoxResizable: true,
-                    cropBoxMovable: true,
-                    zoomable: true,
-                    wheelZoomRatio: 0.1,
-                    minCropBoxWidth: 200,
-                    minCropBoxHeight: 150,
-                    background: false,
-                });
-            };
+        var modal = document.getElementById('modal-corte-imagem');
+        var img = document.getElementById('crop-img');
+
+        if (cropper) { cropper.destroy(); cropper = null; }
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+        img.onload = function () {
+            setTimeout(function () {
+                try {
+                    cropper = new Cropper(img, {
+                        aspectRatio: NaN,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        zoomable: true,
+                        zoomOnTouch: true,
+                        zoomOnWheel: true,
+                        wheelZoomRatio: 0.05,
+                        toggleDragModeOnDblclick: false,
+                        minCropBoxWidth: 30,
+                        minCropBoxHeight: 30,
+                        background: true,
+                        responsive: true,
+                        restore: false,
+                        center: true,
+                        highlight: true,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        autoCropArea: 0.8,
+                    });
+                } catch (e) {
+                    cropper = null;
+                    comprimirDireto(cropFileInput);
+                }
+            }, 150);
         };
+        img.onerror = function () {
+            fecharModalCorte();
+            comprimirDireto(cropFileInput);
+        };
+
+        img.src = '';
+        var reader = new FileReader();
+        reader.onerror = function () {
+            fecharModalCorte();
+            if (window.mostrarToast) window.mostrarToast('Erro ao ler arquivo', 'error');
+        };
+        reader.onload = function (e) { img.src = e.target.result; };
         reader.readAsDataURL(file);
     }
 
     function fecharModalCorte() {
         if (cropper) { cropper.destroy(); cropper = null; }
-        const modal = document.getElementById('modal-corte-imagem');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        document.getElementById('crop-img').removeAttribute('src');
+        var modal = document.getElementById('modal-corte-imagem');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
     }
 
     function confirmarCorte() {
         if (!cropper || !cropFileInput) return;
 
-        const btn = document.getElementById('btn-confirmar-corte');
+        var btn = document.getElementById('btn-confirmar-corte');
         btn.disabled = true;
-        btn.textContent = 'Processando...';
+        btn.innerHTML = 'Processando...';
 
-        const cropData = cropper.getData(true);
-        const img = cropFileInput.files[0];
-        const origReader = new FileReader();
+        var cropData = cropper.getData(true);
+        var originalFile = cropFileInput.files[0];
+        var w = cropData.width, h = cropData.height;
+        var maxDim = 1600;
+        if (w > maxDim) { h *= maxDim / w; w = maxDim; }
+        if (h > maxDim) { w *= maxDim / h; h = maxDim; }
 
-        origReader.onload = function (oe) {
-            const origImg = new Image();
-            origImg.onload = function () {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
+        var croppedCanvas;
+        try {
+            croppedCanvas = cropper.getCroppedCanvas({
+                width: Math.round(w),
+                height: Math.round(h),
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+        } catch (e) {
+            if (window.mostrarToast) window.mostrarToast('Erro ao processar corte', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle" style="font-size:16px"></i> Confirmar Corte';
+            return;
+        }
 
-                let w = cropData.width, h = cropData.height;
-                const maxDim = 1600;
+        croppedCanvas.toBlob(function (blob) {
+            try {
+                var name = (originalFile.name || 'imagem').replace(/\.[^.]+$/, '.jpg');
+                var compressed = new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+                var dt = new DataTransfer();
+                dt.items.add(compressed);
+                cropFileInput.files = dt.files;
+
+                var kb = Math.round(blob.size / 1024);
+                if (window.mostrarToast) {
+                    window.mostrarToast('Imagem cortada e comprimida: ' + kb + 'KB', 'info');
+                }
+            } catch (err) {
+                console.warn('DataTransfer fallback', err);
+            }
+            previewImagem(cropFileInput);
+            fecharModalCorte();
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle" style="font-size:16px"></i> Confirmar Corte';
+        }, 'image/jpeg', 0.85);
+    }
+
+    function comprimirDireto(input) {
+        if (!input || !input.files || !input.files[0]) return;
+        var file = input.files[0];
+        if (file.size <= 1024 * 1024) {
+            previewImagem(input);
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () {
+                var w = img.width, h = img.height;
+                var maxDim = 1600;
                 if (w > maxDim) { h *= maxDim / w; w = maxDim; }
                 if (h > maxDim) { w *= maxDim / h; h = maxDim; }
-
-                canvas.width = Math.round(w);
-                canvas.height = Math.round(h);
-
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-
-                ctx.drawImage(origImg, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, canvas.width, canvas.height);
-
+                var canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
                 canvas.toBlob(function (blob) {
                     try {
-                        const name = img.name.replace(/\.[^.]+$/, '.jpg');
-                        const compressed = new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
-                        const dt = new DataTransfer();
+                        var name = file.name.replace(/\.[^.]+$/, '.jpg');
+                        var compressed = new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+                        var dt = new DataTransfer();
                         dt.items.add(compressed);
-                        cropFileInput.files = dt.files;
-
-                        const kb = Math.round(blob.size / 1024);
+                        input.files = dt.files;
+                        var kb = Math.round(blob.size / 1024);
                         if (window.mostrarToast) {
-                            window.mostrarToast('Imagem cortada e comprimida: ' + kb + 'KB', 'info');
+                            window.mostrarToast('Imagem comprimida de ' + Math.round(file.size / 1024) + 'KB para ' + kb + 'KB', 'info');
                         }
-                    } catch (err) {
-                        console.warn('DataTransfer fallback', err);
-                    }
-                    previewImagem(cropFileInput);
-                    fecharModalCorte();
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-check-circle" style="font-size:16px"></i> Confirmar Corte';
+                    } catch (err) {}
+                    previewImagem(input);
                 }, 'image/jpeg', 0.85);
             };
-            origImg.src = oe.target.result;
+            img.src = e.target.result;
         };
-        origReader.readAsDataURL(img);
+        reader.readAsDataURL(file);
     }
 
     /* ── Modal Categorias ── */
