@@ -20,6 +20,8 @@ class ProdutoRequest extends FormRequest
             'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'quantidade' => 'required|integer|min:0',
+            'id_artesan' => 'nullable|exists:users,id',
+            'mostrar_artesao' => 'nullable|boolean',
         ];
     }
 

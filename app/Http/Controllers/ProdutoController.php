@@ -9,6 +9,7 @@ use App\Models\CategoriasProdutos;
 use App\Models\Cliente;
 use App\Models\ItensVenda;
 use App\Models\Produto;
+use App\Models\User;
 use App\Models\Vendas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +60,9 @@ class ProdutoController extends Controller
         $isArtisan = request()->routeIs('artesan.*');
         $produto = new Produto();
 
-        return view('produtos.form', compact('isArtisan', 'produto'));
+        $artesaos = $isArtisan ? collect() : User::where('role', 'artisan')->where('is_active', true)->orderBy('name')->get();
+
+        return view('produtos.form', compact('isArtisan', 'produto', 'artesaos'));
     }
 
     public function store(ProdutoRequest $request)
@@ -74,8 +77,10 @@ class ProdutoController extends Controller
         if ($isArtisan) {
             $validated['id_artesan'] = auth()->id();
             $validated['is_approved'] = false;
+            $validated['mostrar_artesao'] = true;
         } else {
             $validated['is_approved'] = true;
+            $validated['mostrar_artesao'] = $request->boolean('mostrar_artesao', true);
         }
 
         $produto = Produto::create($validated);
@@ -104,7 +109,9 @@ class ProdutoController extends Controller
             abort(403);
         }
 
-        return view('produtos.form', compact('produto', 'isArtisan'));
+        $artesaos = $isArtisan ? collect() : User::where('role', 'artisan')->where('is_active', true)->orderBy('name')->get();
+
+        return view('produtos.form', compact('produto', 'isArtisan', 'artesaos'));
     }
 
     public function update(ProdutoRequest $request, $id)
@@ -128,6 +135,12 @@ class ProdutoController extends Controller
                 Storage::disk('public')->delete($produto->imagem);
             }
             $validated['imagem'] = null;
+        }
+
+        if ($isArtisan) {
+            $validated['mostrar_artesao'] = true;
+        } else {
+            $validated['mostrar_artesao'] = $request->boolean('mostrar_artesao', true);
         }
 
         $produto->update($validated);

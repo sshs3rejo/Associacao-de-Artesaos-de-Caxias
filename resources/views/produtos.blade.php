@@ -169,35 +169,13 @@
                                         </a>
                                     </li>
                                     <li><hr class="my-1 border-gray-200"></li>
-                                    @foreach($categorias as $parent)
-                                        @if($parent->children->isEmpty())
-                                            <li>
-                                                <a class="block px-3 py-2 text-sm rounded-lg {{ request('categoria') == $parent->id_categoria ? 'bg-gray-100 font-bold text-brand-dark' : 'text-gray-700 hover:bg-gray-100' }} no-underline transition-colors"
-                                                   href="{{ route('produtos', ['categoria' => $parent->id_categoria, 'busca' => request('busca')]) }}">
-                                                    {{ $parent->nome_categoria }}
-                                                </a>
-                                            </li>
-                                        @else
-                                            <li>
-                                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-light bg-brand/5 rounded mt-2 select-none">
-                                                    {{ $parent->nome_categoria }}
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <a class="block px-3 py-1.5 text-xs font-semibold pl-5 rounded-lg {{ request('categoria') == $parent->id_categoria ? 'bg-gray-100 font-bold text-brand-dark' : 'text-gray-500 hover:bg-gray-100' }} no-underline transition-colors"
-                                                   href="{{ route('produtos', ['categoria' => $parent->id_categoria, 'busca' => request('busca')]) }}">
-                                                    — Ver tudo em {{ $parent->nome_categoria }}
-                                                </a>
-                                            </li>
-                                            @foreach($parent->children as $child)
-                                                <li>
-                                                    <a class="block px-3 py-1.5 text-sm pl-6 rounded-lg {{ request('categoria') == $child->id_categoria ? 'bg-gray-100 font-bold text-brand-dark' : 'text-gray-600 hover:bg-gray-100' }} no-underline transition-colors"
-                                                       href="{{ route('produtos', ['categoria' => $child->id_categoria, 'busca' => request('busca')]) }}">
-                                                        ↳ {{ $child->nome_categoria }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        @endif
+                                    @foreach($categorias as $cat)
+                                        <li>
+                                            <a class="block px-3 py-2 text-sm rounded-lg {{ request('categoria') == $cat->id_categoria ? 'bg-gray-100 font-bold text-brand-dark' : 'text-gray-700 hover:bg-gray-100' }} no-underline transition-colors"
+                                               href="{{ route('produtos', ['categoria' => $cat->id_categoria, 'busca' => request('busca')]) }}">
+                                                {{ $cat->nome_categoria }}
+                                            </a>
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -243,7 +221,7 @@
 
                     <div class="p-3 flex flex-col">
                         <h3 class="text-sm font-bold mb-1 truncate text-brand" title="{{ $produto->nome }}">{{ $produto->nome }}</h3>
-                        @if($produto->artisan)
+                        @if($produto->artisan && $produto->mostrar_artesao)
                             <div class="mb-2 flex items-center gap-2">
                                 @if($produto->artisan->artisanProfile && $produto->artisan->artisanProfile->profile_photo)
                                     <x-image src="{{ $produto->artisan->artisanProfile->profile_photo }}" alt="Foto de {{ $produto->artisan->name }}" class="rounded-full w-5 h-5 object-cover border border-brand" />

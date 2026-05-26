@@ -13,10 +13,11 @@ class Produto extends Model
 
     use SoftDeletes;
 
-    protected $fillable = ['nome', 'descricao', 'preco', 'id_categoria', 'imagem', 'id_artesan', 'is_approved'];
+    protected $fillable = ['nome', 'descricao', 'preco', 'id_categoria', 'imagem', 'id_artesan', 'is_approved', 'mostrar_artesao'];
 
     protected $casts = [
         'is_approved' => 'boolean',
+        'mostrar_artesao' => 'boolean',
         'preco' => 'decimal:2',
     ];
 

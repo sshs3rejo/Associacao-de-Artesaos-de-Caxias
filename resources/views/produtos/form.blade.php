@@ -128,6 +128,28 @@
                 </div>
                 @error('imagem') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
             </div>
+
+            @if(!$isArtisan)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold mb-2 text-brand text-sm">Artesão</label>
+                    <select name="id_artesan" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm">
+                        <option value="">Nenhum</option>
+                        @foreach($artesaos as $artesao)
+                            <option value="{{ $artesao->id }}" {{ old('id_artesan', $produto->id_artesan) == $artesao->id ? 'selected' : '' }}>{{ $artesao->name }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1">Atribua este produto a um artesão (opcional).</p>
+                </div>
+                <div class="flex items-end pb-3">
+                    <label class="flex items-center gap-3 cursor-pointer select-none">
+                        <input type="hidden" name="mostrar_artesao" value="0">
+                        <input type="checkbox" name="mostrar_artesao" value="1" class="w-5 h-5 rounded border-gray-300 text-brand focus:ring-brand-light cursor-pointer" {{ old('mostrar_artesao', $produto->mostrar_artesao ?? true) ? 'checked' : '' }}>
+                        <span class="text-sm font-bold text-brand">Mostrar artesão na página pública</span>
+                    </label>
+                </div>
+            </div>
+            @endif
         </div>
 
         {{-- Actions Buttons --}}
