@@ -1,0 +1,3 @@
+[php]
+uploadMaxFilesize = "20M"
+postMaxSize = "20M"
