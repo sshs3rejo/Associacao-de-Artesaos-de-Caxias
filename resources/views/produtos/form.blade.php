@@ -347,7 +347,6 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
             comprimirDireto(cropFileInput);
         };
 
-        img.src = '';
         var reader = new FileReader();
         reader.onerror = function () {
             fecharModalCorte();
