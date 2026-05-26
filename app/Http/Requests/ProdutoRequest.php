@@ -19,7 +19,7 @@ class ProdutoRequest extends FormRequest
             'preco' => 'required|numeric|min:0',
             'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
             'imagem' => 'nullable|sometimes|image|mimes:jpeg,png,jpg,gif',
-            'imagem_base64' => 'nullable|string|regex:/^data:image\//',
+            'imagem_base64' => 'nullable|string',
             'quantidade' => 'required|integer|min:0',
             'id_artesan' => 'nullable|exists:users,id',
             'mostrar_artesao' => 'nullable|boolean',
@@ -36,7 +36,6 @@ class ProdutoRequest extends FormRequest
             'id_categoria.exists' => 'A categoria selecionada é inválida.',
             'imagem.image' => 'O arquivo deve ser uma imagem.',
             'imagem.uploaded' => 'A imagem excede o limite de tamanho permitido pelo servidor (20MB).',
-            'imagem_base64.regex' => 'A imagem enviada possui formato inválido.',
             'quantidade.required' => 'A quantidade é obrigatória.',
             'quantidade.min' => 'A quantidade não pode ser negativa.',
         ];
