@@ -15,7 +15,7 @@ class ProdutoRequest extends FormRequest
     {
         return [
             'nome' => 'required|string|max:255',
-            'descricao' => 'required|string',
+            'descricao' => 'nullable|string',
             'preco' => 'required|numeric|min:0',
             'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -27,7 +27,6 @@ class ProdutoRequest extends FormRequest
     {
         return [
             'nome.required' => 'O nome do produto é obrigatório.',
-            'descricao.required' => 'A descrição é obrigatória.',
             'preco.required' => 'O preço é obrigatório.',
             'preco.min' => 'O preço não pode ser negativo.',
             'id_categoria.required' => 'Selecione uma categoria.',

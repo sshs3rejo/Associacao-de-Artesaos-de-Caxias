@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\Cache;
 
 class CategoriaProdutoController extends Controller
 {
+    public function index()
+    {
+        $categorias = CategoriasProdutos::with('parent')
+            ->withCount('children', 'produtos')
+            ->orderBy('nome_categoria')
+            ->paginate(15);
+
+        return view('admin.categorias.index', compact('categorias'));
+    }
+
     public function quickStore(Request $request)
     {
         $validated = $request->validate([

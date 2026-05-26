@@ -66,7 +66,7 @@
         <div class="space-y-4">
             <x-input name="nome" label="Nome do Produto" value="{{ old('nome', $produto->nome) }}" placeholder="Ex: Escultura de Leão em Madeira" required />
 
-            <x-textarea name="descricao" label="{{ $descLabel }}" placeholder="{{ $descPlaceholder }}" rows="4" required>{{ old('descricao', $produto->descricao) }}</x-textarea>
+            <x-textarea name="descricao" label="{{ $descLabel }}" placeholder="{{ $descPlaceholder }}" rows="4">{{ old('descricao', $produto->descricao) }}</x-textarea>
 
             {{-- Grid Categoria / Preço / Estoque --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -162,11 +162,9 @@
                     <input type="text" id="modal-categoria-nome" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Ex: Artesanato em Cerâmica" required />
                 </div>
                 <div>
-                    <label for="modal-categoria-parent" class="block font-bold mb-1 text-brand text-sm">Categoria Pai</label>
-                    <select id="modal-categoria-parent" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm">
-                        <option value="">Nenhuma (categoria raiz)</option>
-                    </select>
-                    <p class="text-xs text-gray-400 mt-1">Selecione uma categoria existente para criar uma subcategoria.</p>
+                    <label for="modal-categoria-parent" class="block font-bold mb-1 text-brand text-sm">ID da Categoria Pai</label>
+                    <input type="text" id="modal-categoria-parent" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-brand-light focus:ring-1 focus:ring-brand-light outline-none text-sm" placeholder="Deixe em branco para criar categoria raiz" />
+                    <p class="text-xs text-gray-400 mt-1">Informe o ID da categoria pai (opcional).</p>
                 </div>
             </div>
             <div class="flex justify-end gap-3 mt-6">
@@ -182,9 +180,7 @@
     </div>
 </div>
 
-@php $categoriasTreeJson = $categoriasTree->toArray(); @endphp
 <script>
-window._categoriasTree = @json($categoriasTreeJson);
 window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
 </script>
 @endsection
@@ -256,18 +252,8 @@ window._quickStoreUrl = '{{ route("admin.categorias.quick-store") }}';
     /* ── Modal Categorias ── */
 
     function abrirModalCategoria() {
-        const parentSelect = document.getElementById('modal-categoria-parent');
-        parentSelect.innerHTML = '<option value="">Nenhuma (categoria raiz)</option>';
-        
-        const tree = window._categoriasTree || [];
-        tree.forEach(cat => {
-            const opt = document.createElement('option');
-            opt.value = cat.id_categoria;
-            opt.textContent = cat.nome_categoria;
-            parentSelect.appendChild(opt);
-        });
-        
         document.getElementById('modal-categoria-nome').value = '';
+        document.getElementById('modal-categoria-parent').value = '';
         document.getElementById('erro-modal-categoria').classList.add('hidden');
         const modal = document.getElementById('modal-nova-categoria');
         modal.classList.remove('hidden');

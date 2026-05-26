@@ -60,11 +60,10 @@ class ProdutoController extends Controller
 
     public function create()
     {
-        $categoriasTree = CategoriasProdutos::getTreeCached();
         $isArtisan = request()->routeIs('artesan.*');
         $produto = new Produto();
 
-        return view('produtos.form', compact('categoriasTree', 'isArtisan', 'produto'));
+        return view('produtos.form', compact('isArtisan', 'produto'));
     }
 
     public function store(ProdutoRequest $request)
@@ -109,9 +108,7 @@ class ProdutoController extends Controller
             abort(403);
         }
 
-        $categoriasTree = CategoriasProdutos::getTreeCached();
-
-        return view('produtos.form', compact('produto', 'categoriasTree', 'isArtisan'));
+        return view('produtos.form', compact('produto', 'isArtisan'));
     }
 
     public function update(ProdutoRequest $request, $id)

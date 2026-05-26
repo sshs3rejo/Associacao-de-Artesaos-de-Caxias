@@ -167,7 +167,8 @@ Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
     Route::put('/admin/instrutores/{instrutor}', [InstrutorController::class, 'update'])->name('admin.instrutores.update');
     Route::delete('/admin/instrutores/{instrutor}', [InstrutorController::class, 'destroy'])->name('admin.instrutores.destroy');
 
-    // Gestão de categorias (inline no form de produto)
+    // Gestão de categorias
+    Route::get('/admin/categorias', [CategoriaProdutoController::class, 'index'])->name('admin.categorias.index');
     Route::post('/admin/categorias/quick-store', [CategoriaProdutoController::class, 'quickStore'])->name('admin.categorias.quick-store');
     Route::put('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'update'])->name('admin.categorias.update');
     Route::delete('/admin/categorias/{categoria}', [CategoriaProdutoController::class, 'destroy'])->name('admin.categorias.destroy');
