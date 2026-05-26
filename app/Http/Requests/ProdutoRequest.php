@@ -19,7 +19,6 @@ class ProdutoRequest extends FormRequest
             'preco' => 'required|numeric|min:0',
             'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
             'imagem' => 'nullable|sometimes|image|mimes:jpeg,png,jpg,gif',
-            'imagem_base64' => 'nullable|string',
             'quantidade' => 'required|integer|min:0',
             'id_artesan' => 'nullable|exists:users,id',
             'mostrar_artesao' => 'nullable|boolean',

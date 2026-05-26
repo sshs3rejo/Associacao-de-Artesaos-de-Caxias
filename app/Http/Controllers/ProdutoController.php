@@ -14,7 +14,6 @@ use App\Models\Vendas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ProdutoController extends Controller
 {
@@ -71,9 +70,7 @@ class ProdutoController extends Controller
         $validated = $request->validated();
         $isArtisan = request()->routeIs('artesan.*');
 
-        if ($request->filled('imagem_base64')) {
-            $validated['imagem'] = $this->saveBase64Image($request->imagem_base64);
-        } elseif ($request->hasFile('imagem')) {
+        if ($request->hasFile('imagem')) {
             $validated['imagem'] = $request->file('imagem')->store('produtos', 'public');
         }
 
@@ -128,12 +125,7 @@ class ProdutoController extends Controller
 
         $validated = $request->validated();
 
-        if ($request->filled('imagem_base64')) {
-            if ($produto->imagem) {
-                Storage::disk('public')->delete($produto->imagem);
-            }
-            $validated['imagem'] = $this->saveBase64Image($request->imagem_base64);
-        } elseif ($request->hasFile('imagem')) {
+        if ($request->hasFile('imagem')) {
             if ($produto->imagem) {
                 Storage::disk('public')->delete($produto->imagem);
             }
@@ -258,13 +250,4 @@ class ProdutoController extends Controller
         ]);
     }
 
-    private function saveBase64Image(string $dataUrl): string
-    {
-        $parts = explode(',', $dataUrl, 2);
-        $encoded = $parts[1] ?? $parts[0];
-        $decoded = base64_decode($encoded, true);
-        $filename = 'produtos/' . Str::random(40) . '.jpg';
-        Storage::disk('public')->put($filename, $decoded);
-        return $filename;
-    }
 }
