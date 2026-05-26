@@ -160,12 +160,12 @@ window.mascaraCPF = function (input) {
 window.validarTamanhoImagem = function (input) {
     if (input.files && input.files[0]) {
         var file = input.files[0];
-        var maxSize = 2 * 1024 * 1024; // 2MB
+        var maxSize = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSize) {
             if (typeof window.mostrarToast === 'function') {
-                window.mostrarToast('A imagem selecionada é muito grande! Escolha um arquivo de até 2MB.', 'danger');
+                window.mostrarToast('A imagem selecionada é muito grande! Escolha um arquivo de até 5MB.', 'danger');
             } else {
-                alert('A imagem selecionada é muito grande! Escolha um arquivo de até 2MB.');
+                alert('A imagem selecionada é muito grande! Escolha um arquivo de até 5MB.');
             }
             input.value = ''; // Limpa o input
             

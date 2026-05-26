@@ -18,7 +18,7 @@ class ProdutoRequest extends FormRequest
             'descricao' => 'nullable|string',
             'preco' => 'required|numeric|min:0',
             'id_categoria' => 'required|exists:categorias_produtos,id_categoria',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'quantidade' => 'required|integer|min:0',
             'id_artesan' => 'nullable|exists:users,id',
             'mostrar_artesao' => 'nullable|boolean',
@@ -34,7 +34,7 @@ class ProdutoRequest extends FormRequest
             'id_categoria.required' => 'Selecione uma categoria.',
             'id_categoria.exists' => 'A categoria selecionada é inválida.',
             'imagem.image' => 'O arquivo deve ser uma imagem.',
-            'imagem.max' => 'A imagem deve ter no máximo 2MB.',
+            'imagem.max' => 'A imagem deve ter no máximo 5MB.',
             'quantidade.required' => 'A quantidade é obrigatória.',
             'quantidade.min' => 'A quantidade não pode ser negativa.',
         ];

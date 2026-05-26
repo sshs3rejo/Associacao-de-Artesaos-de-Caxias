@@ -91,7 +91,7 @@
             {{-- Image Upload --}}
             <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mt-2">
                 <label class="block font-bold mb-2 text-brand text-sm">Imagem do Produto</label>
-                <p class="text-xs text-gray-500 mb-3">Recomendamos uma foto bem iluminada do produto. Formatos aceitos: JPG, PNG até 2MB.</p>
+                <p class="text-xs text-gray-500 mb-3">Recomendamos uma foto bem iluminada do produto. Formatos aceitos: JPG, PNG até 5MB.</p>
 
                 @if ($isEdit && $produto->imagem)
                     <div id="container-imagem-atual" class="mb-4 bg-white p-3 rounded-lg border border-gray-200 inline-block">
