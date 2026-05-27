@@ -32,16 +32,18 @@
 ### Front-end
 - **Tailwind CSS 3.x** — Compilado estaticamente (~35KB), sem Vite/Node em produção
 - **Font Awesome 6.7.2** — via CDN com SRI
+- **Cropper.js 1.6.2** — via CDN com SRI (corte de imagem client-side)
 - **Fonte Outfit** — Self-hosted em `public/fonts/`
 - **Vanilla JavaScript** — Transições SPA-like, carrinho (localStorage), validação cliente
 
 ### Banco de Dados
 - **PostgreSQL 16** hospedado no **Neon** (serverless)
-- 32 migrations executadas
+- 34 migrations executadas
 
 ### Infraestrutura
 - **Railway** — Hosting do container Laravel com SSL automático
 - **Neon** — PostgreSQL serverless com autoscaling
+- **Railway Volume** — Armazenamento persistente de imagens em `/app/storage/app/public`
 
 ---
 
@@ -51,6 +53,7 @@
 - PHP 8.2+
 - Composer
 - PostgreSQL 16
+- Node.js + npx (apenas para recompilar Tailwind)
 
 ### Instalação
 
@@ -66,6 +69,9 @@ php artisan key:generate
 
 ```env
 APP_URL=http://localhost:8000
+APP_NAME="Associação dos Artesãos de Caxias"
+APP_ENV=local
+APP_DEBUG=true
 
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
@@ -75,27 +81,52 @@ DB_USERNAME=postgres
 DB_PASSWORD=seu-password
 ```
 
-### Migrations + Seed
+### Criar banco PostgreSQL
+
+```bash
+createdb associacao_artesaos
+# ou via psql:
+# CREATE DATABASE associacao_artesaos;
+```
+
+### Migrations
 
 ```bash
 php artisan migrate --force
 ```
 
-> **Nota:** O sistema roda **sem seeders**. O primeiro usuário admin deve ser criado manualmente via Tinker:
-> ```bash
-> php artisan tinker
-> > User::create(['name' => 'Admin', 'email' => 'admin@associacao.com', 'password' => bcrypt('senha123'), 'role' => 'admin', 'is_active' => true]);
-> ```
+### Storage Link
 
-### Assets (sem Node)
+```bash
+php artisan storage:link
+```
 
-O Tailwind é pré-compilado. Para recompilar:
+> O symlink `public/storage` → `storage/app/public` é necessário para servir imagens. Em produção (Railway) ele é criado automaticamente no `AppServiceProvider::boot()`.
+
+### Criar usuário admin
+
+```bash
+php artisan tinker
+> User::create([
+>     'name' => 'Admin',
+>     'email' => 'admin@admin.com',
+>     'password' => bcrypt('admin123'),
+>     'role' => 'admin',
+>     'is_active' => true,
+> ]);
+```
+
+> **Credenciais padrão (produção):** `admin@admin.com` / `admin123`
+
+### Compilar assets (opcional)
+
+O Tailwind é pré-compilado. Para recompilar após alterações:
 
 ```bash
 npx tailwindcss -i resources/css/app.css -o public/css/tailwind.css --minify
 ```
 
-### Servir
+### Servir localmente
 
 ```bash
 php artisan serve
@@ -103,11 +134,40 @@ php artisan serve
 
 Acessar `http://localhost:8000`
 
+### Otimização (produção)
+
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+```
+
 ---
 
 ## 3. Deploy
 
-O deploy é feito via **Railway** conectado ao repositório GitHub.
+O deploy é feito via **Railway** conectado ao repositório GitHub, usando **Nixpacks** como builder.
+
+### Configuração Railway
+
+```json
+// railway.json
+{
+  "build": {
+    "builder": "NIXPACKS"
+  }
+}
+```
+
+### Configuração PHP (Nixpacks)
+
+```toml
+# nixpacks.toml
+[php]
+uploadMaxFilesize = "100M"
+postMaxSize = "100M"
+```
 
 ### Variáveis de Ambiente (Produção)
 
@@ -127,10 +187,21 @@ DB_SSLMODE=require
 
 **⚠️ Use endpoint direto do Neon** (sem `-pooler`) para evitar erro `25P02` em transações.
 
-### Comando pós-deploy
+### Volume Railway (imagens persistentes)
+
+Um **Volume Railway** de 500MB é montado em `/app/storage/app/public` para persistir imagens entre deploys. Configurar no dashboard Railway:
+1. Abrir o projeto → **Volumes** → **Add Volume**
+2. Mount path: `/app/storage/app/public`
+3. Tamanho: 500MB (gratuito)
+
+### Comandos pós-deploy
 
 ```bash
 php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
 ```
 
 ---
@@ -140,6 +211,8 @@ php artisan migrate --force
 ```
                     ┌─────────────────────────┐
                     │       Navegador         │
+                    │  + Cropper.js (crop)    │
+                    │  + Canvas (compressão)  │
                     └────────────┬────────────┘
                                  │ Requisição HTTP
                                  ▼
@@ -171,14 +244,27 @@ php artisan migrate --force
               └──────────┘ └──────────┘ └──────────┘
 ```
 
+### Fluxo de Upload de Imagem
+
+1. Usuário seleciona foto no formulário de produto
+2. **Cropper.js** abre modal de corte (corte livre, sem aspect ratio fixo)
+3. Usuário ajusta enquadramento com drag + zoom (pinça no mobile)
+4. Ao confirmar, `cropper.getCroppedCanvas()` gera canvas cortado
+5. Canvas exportado como JPEG (qualidade 0.85, max 1600px)
+6. Arquivo substitui o `<input>` original via `DataTransfer`
+7. Formulário envia `multipart/form-data` normalmente
+8. Controller salva via `$request->file('imagem')->store('produtos', 'public')`
+9. Arquivo fica em `storage/app/public/produtos/` (persistente via Volume Railway)
+10. Vitrine renderiza com `asset('storage/' . $produto->imagem)`
+
 ### Segurança
 
-- **CSRF**: Todas as rotas POST/PUT/DELETE exigem token
+- **CSRF**: Todas as rotas POST/PUT/DELETE exigem token (`<meta name="csrf-token">` no layout)
 - **Throttle**: `5/10min` contato, `20/1min` auth, `30/1min` artisan, `60/1min` admin
 - **Middleware por role**: `admin`, `artisan`, `auth`
 - **Senhas**: `Hash::make()` com BCrypt
 - **Contas inativas**: Bloqueadas no login (`is_active = false`)
-- **Form Requests**: 11 classes com validação desacoplada dos controllers
+- **Form Requests**: 12 classes com validação desacoplada dos controllers
 
 ---
 
@@ -186,7 +272,7 @@ php artisan migrate --force
 
 ### Portal Público
 - Vitrine de produtos com busca por nome/descrição
-- Filtro por categoria (hierárquico)
+- Filtro por categoria (lista plana)
 - Agenda de eventos públicos
 - Perfil público do artesão
 - Carrinho de compras com localStorage + checkout
@@ -196,7 +282,7 @@ php artisan migrate --force
 ### Painel do Artesão
 - Dashboard com vendas dos próprios produtos
 - Gerenciamento de perfil público (bio, foto, redes sociais)
-- Proposição de novos produtos (pendente de aprovação)
+- Proposição de novos produtos (pendente de aprovação) com crop de imagem integrado
 - Proposição de novos eventos (pendente de aprovação)
 - CRUD de produtos e eventos próprios
 
@@ -206,18 +292,19 @@ php artisan migrate --force
 - Gestão de usuários (CRUD, roles, ativar/desativar)
 - Gestão de clientes
 - Gestão de vendas (confirmar pagamento)
-- Gestão de categorias (hierárquicas)
+- Gestão de categorias (lista plana, sem hierarquia)
 - Gestão de instrutores, fornecedores, matérias-primas
 - Gestão de compras, oficinas, inscrições
 - Configurações da associação (persistidas em BD)
 - Activity log com filtro por ação
+- Atribuição de artesão ao produto + opção "Mostrar artesão na página pública"
 
 ### Performance
-- Cache das categorias (`3600s`)
-- Cache hierárquico das categorias (`3600s`)
+- Cache de categorias (`getAllCached()` — 3600s)
 - Cache de eventos públicos (`300s`)
 - Cache de configurações (`3600s`)
 - Cache do dashboard (`60s`)
+- Compressão client-side de imagens (Canvas API, max 1600px, JPEG 0.85)
 - N+1 eliminado em todas as queries
 - Transações com `DB::transaction()` em operações críticas
 
@@ -225,7 +312,7 @@ php artisan migrate --force
 
 ## 6. Banco de Dados
 
-32 migrations, PostgreSQL.
+34 migrations, PostgreSQL.
 
 ### Principais Tabelas
 
@@ -233,9 +320,9 @@ php artisan migrate --force
 |--------|-----------|
 | `users` | Usuários do sistema (admin, artisan, user) |
 | `artisan_profiles` | Perfil público do artesão (1:1 com users) |
-| `produto` | Produtos cadastrados |
+| `produto` | Produtos cadastrados (com `mostrar_artesao` boolean, `id_artesan` FK, `imagem` path) |
 | `_estoques` | Estoque por produto (1:1) |
-| `categorias_produtos` | Categorias hierárquicas (parent_id FK auto-referencial) |
+| `categorias_produtos` | Categorias planas (sem `parent_id`) |
 | `_vendas` | Pedidos |
 | `itens_venda` | Itens do pedido |
 | `_eventos` | Eventos/workshops |
@@ -254,7 +341,7 @@ php artisan migrate --force
 ### Casts (tipagem forte)
 
 Todas as models possuem `$casts` definidos:
-- `boolean`: `is_approved`, `is_active`, `lido`, `is_public`
+- `boolean`: `is_approved`, `is_active`, `lido`, `is_public`, `mostrar_artesao`
 - `date`: `data_venda`, `data_compra`
 - `datetime`: `data_inicio`, `data_fim`, `data_inscricao`
 - `decimal`: `preco`, `valor_total`, `preco_unitario`, `carga_horaria`
@@ -274,7 +361,7 @@ app/
 │   ├── Controllers/        # 21 controllers
 │   │   ├── Admin/          # 12 admin controllers
 │   │   └── ...             # Controllers públicos
-│   ├── Requests/           # 11 Form Requests
+│   ├── Requests/           # 12 Form Requests
 │   └── Middleware/         # CheckAdmin, CheckArtisan
 ├── Models/                 # 19 Eloquent models
 ├── Observers/              # CategoriaProdutosObserver
@@ -293,7 +380,7 @@ public/
 ├── js/app.js               # SPA-like navigation
 └── fonts/                  # Outfit (self-hosted)
 database/
-└── migrations/             # 32 migrations
+└── migrations/             # 34 migrations
 routes/
 └── web.php                 # ~60 rotas
 ```
