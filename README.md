@@ -2,7 +2,7 @@
 
 > Plataforma web institucional, administrativa e de gerenciamento de pedidos de artesanato da Associação de Artesãos de Caxias (MA).
 >
-> **Faculdade UniFacema**
+> **Centro Universitário de Ciências e Tecnologia do Maranhão – UniFacema**
 > **Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)
 > **Disciplina:** Projeto Integrador Extensionista: Back-end
 
