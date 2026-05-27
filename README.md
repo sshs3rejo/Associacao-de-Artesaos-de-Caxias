@@ -107,16 +107,9 @@ php artisan storage:link
 
 ```bash
 php artisan tinker
-> User::create([
->     'name' => 'Admin',
->     'email' => 'admin@admin.com',
->     'password' => bcrypt('admin123'),
->     'role' => 'admin',
->     'is_active' => true,
-> ]);
+> User::factory()->admin()->create();
 ```
 
-> **Credenciais padrão (produção):** `admin@admin.com` / `admin123`
 
 ### Compilar assets (opcional)
 
