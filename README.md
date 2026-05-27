@@ -58,7 +58,7 @@
 ### Instalação
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/sshs3rejo/Associacao-de-Artesaos-de-Caxias.git
 cd "Associação de Artesãos de Caxias"
 composer install
 cp .env.example .env
