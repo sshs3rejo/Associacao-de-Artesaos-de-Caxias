@@ -38,7 +38,7 @@
 
 ### Banco de Dados
 - **PostgreSQL 16** hospedado no **Neon** (serverless)
-- 34 migrations executadas
+- 39 migrations executadas
 
 ### Infraestrutura
 - **Railway** — Hosting do container Laravel com SSL automático
@@ -102,14 +102,6 @@ php artisan storage:link
 ```
 
 > O symlink `public/storage` → `storage/app/public` é necessário para servir imagens. Em produção (Railway) ele é criado automaticamente no `AppServiceProvider::boot()`.
-
-### Criar usuário admin
-
-```bash
-php artisan tinker
-> User::factory()->admin()->create();
-```
-
 
 ### Compilar assets (opcional)
 
@@ -210,10 +202,9 @@ php artisan optimize
                                  │ Requisição HTTP
                                  ▼
                     ┌─────────────────────────┐
-                    │  Roteador (web.php)     │
-                    │  + Middleware (auth,    │
-                    │    admin, artisan,      │
-                    │    throttle)            │
+                     │  Roteador (web.php)     │
+                     │  + Middleware (auth,    │
+                     │    throttle)            │
                     └────────────┬────────────┘
                                  │
                                  ▼
@@ -253,11 +244,12 @@ php artisan optimize
 ### Segurança
 
 - **CSRF**: Todas as rotas POST/PUT/DELETE exigem token (`<meta name="csrf-token">` no layout)
-- **Throttle**: `5/10min` contato, `20/1min` auth, `30/1min` artisan, `60/1min` admin
-- **Middleware por role**: `admin`, `artisan`, `auth`
+- **Security Headers**: Middleware `SecurityHeaders` aplica headers de segurança nas respostas
+- **Throttle**: `5/10min` contato, `20/1min` auth, `30/1min` perfil, `60/1min` operações restritas
+- **Middleware por role**: `auth`
 - **Senhas**: `Hash::make()` com BCrypt
 - **Contas inativas**: Bloqueadas no login (`is_active = false`)
-- **Form Requests**: 12 classes com validação desacoplada dos controllers
+- **Form Requests**: 10 classes com validação desacoplada dos controllers
 
 ---
 
@@ -279,15 +271,11 @@ php artisan optimize
 - Proposição de novos eventos (pendente de aprovação)
 - CRUD de produtos e eventos próprios
 
-### Painel Administrativo
-- Dashboard com estatísticas em tempo real
-- Aprovação/rejeição de artesãos, produtos e eventos
-- Gestão de usuários (CRUD, roles, ativar/desativar)
-- Gestão de clientes
-- Gestão de vendas (confirmar pagamento)
-- Gestão de categorias (lista plana, sem hierarquia)
-- Gestão de instrutores, fornecedores, matérias-primas
-- Gestão de compras, oficinas, inscrições
+### Painel de Gestão
+- Dashboard com estatísticas e relatórios
+- Aprovação/rejeição de produtos e eventos propostos
+- Gestão de usuários, clientes, vendas e categorias
+- Gestão de instrutores, fornecedores, matérias-primas, compras, oficinas e inscrições
 - Configurações da associação (persistidas em BD)
 - Activity log com filtro por ação
 - Atribuição de artesão ao produto + opção "Mostrar artesão na página pública"
@@ -305,13 +293,13 @@ php artisan optimize
 
 ## 6. Banco de Dados
 
-34 migrations, PostgreSQL.
+39 migrations, PostgreSQL.
 
 ### Principais Tabelas
 
 | Tabela | Descrição |
 |--------|-----------|
-| `users` | Usuários do sistema (admin, artisan, user) |
+| `users` | Usuários do sistema (artesão, cliente) |
 | `artisan_profiles` | Perfil público do artesão (1:1 com users) |
 | `produto` | Produtos cadastrados (com `mostrar_artesao` boolean, `id_artesan` FK, `imagem` path) |
 | `_estoques` | Estoque por produto (1:1) |
@@ -352,16 +340,15 @@ Models: `User`, `Produto`, `Vendas`, `Eventos`, `InscricoesEvento`
 app/
 ├── Http/
 │   ├── Controllers/        # 21 controllers
-│   │   ├── Admin/          # 12 admin controllers
-│   │   └── ...             # Controllers públicos
-│   ├── Requests/           # 12 Form Requests
-│   └── Middleware/         # CheckAdmin, CheckArtisan
+│   │   └── ...             # Controllers da aplicação
+│   ├── Requests/           # 10 Form Requests
+│   │   └── Auth/           # LoginRequest
+│   └── Middleware/         # SecurityHeaders
 ├── Models/                 # 19 Eloquent models
 ├── Observers/              # CategoriaProdutosObserver
 └── Providers/              # AppServiceProvider
 resources/
-├── views/                  # ~50 Blade views
-│   ├── admin/              # Views do painel admin
+├── views/                  # 75+ Blade views
 │   ├── artesan/            # Views do painel artesão
 │   ├── components/         # 14 Blade components
 │   ├── layouts/            # Layout principal
@@ -370,12 +357,12 @@ public/
 ├── css/tailwind.css        # Tailwind compilado (~35KB)
 ├── css/app.css             # CSS customizado
 ├── js/cart.js              # Carrinho (localStorage)
-├── js/app.js               # SPA-like navigation
+├── js/app.js               # Navegação e funcionalidades
 └── fonts/                  # Outfit (self-hosted)
 database/
-└── migrations/             # 34 migrations
+└── migrations/             # 39 migrations
 routes/
-└── web.php                 # ~60 rotas
+└── web.php                 # Rotas da aplicação
 ```
 
 ---
